@@ -1,3 +1,39 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+@import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css);
+
+@layer components {
+  .divider-thick {
+    @apply w-full h-6 bg-secondary;
+  }
+}
+
+@layer utilities {
+  /* font */
+  .title-lg {
+    @apply text-title-xl font-normal;
+  }
+  .title01 {
+    @apply text-title-lg font-bold;
+  }
+  .title02 {
+    @apply text-title-md font-bold;
+  }
+  .title03 {
+    @apply text-title-sm font-bold;
+  }
+  .card-caption {
+    @apply font-spoqa text-caption;
+  }
+  .rank-caption {
+    font-family:
+      'Spoqa Han Sans',
+      'Spoqa Han Sans Neo',
+      Apple SD Gothic Neo,
+      Arial,
+      sans-serif;
+    font-size: 12px;
+  }
+}
