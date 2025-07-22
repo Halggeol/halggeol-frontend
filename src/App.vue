@@ -1,18 +1,17 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
+import Header from '@/components/layout/Header.vue'
+import Footer from '@/components/layout/Footer.vue'
+import QuickButton from '@/components/layout/QuickButton.vue'
 </script>
 
 <template>
-  <header>
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/404">NotFound</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <Header />
+  <div class="wrapper mt-14">
+    <RouterView />
+  </div>
+  <QuickButton />
+  <Footer />
 </template>
 
 <style scoped></style>
