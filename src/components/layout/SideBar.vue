@@ -45,7 +45,7 @@ defineProps({
   </div>
 </template>
 
-<style scope>
+<style scoped>
 /* 메뉴 활성화 스타일 초기화 */
 .menu-active,
 :active {
