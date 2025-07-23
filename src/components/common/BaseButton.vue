@@ -6,7 +6,7 @@ props:
 - hasIconFst/hasIconLst: 왼쪽/오른쪽 아이콘 사용 여부, 슬롯에 #icon_fst/icon_lst 명시
 - label: 버튼 표시 텍스트 작성
 
-emtis:
+emits:
 - 클릭 이벤트 관련. 부모 컴포넌트 script에 function 정의
 
 e.g.
