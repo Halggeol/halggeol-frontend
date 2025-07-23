@@ -25,7 +25,7 @@ const isActive = (to, exact = false) => (exact ? route.path === to : route.path.
           :key="item.to"
           :to="item.to"
           :class="[
-            '-m-4 p-4 body02 text-fg-primary',
+            '-m-4 p-4 text-body02 text-fg-primary',
             isActive(item.to, item.exact) ? 'font-bold' : '',
           ]"
         >
