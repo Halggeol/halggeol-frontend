@@ -36,7 +36,7 @@ defineProps({
       <li v-for="item in navItems" :key="item.to">
         <RouterLink
           :to="item.to"
-          :class="['px-6 py-4 mb-6 rounded-lg', route.path == item.to ? 'menu-active' : '']"
+          :class="['px-6 py-4 mb-6 rounded-lg', route.path === item.to ? 'menu-active' : '']"
         >
           {{ item.label }}
         </RouterLink>
