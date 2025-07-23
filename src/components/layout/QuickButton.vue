@@ -8,7 +8,7 @@ function scrollToTop() {
   <!-- 우측 하단 퀵 버튼 영역 -->
   <div class="fixed flex justify-end w-full bottom-[20%] right-[5%] z-30">
     <div class="flex flex-col flex-wrap gap-2">
-      <!-- 관심상품 이통 버튼 -->
+      <!-- 관심상품 이동 버튼 -->
       <RouterLink
         to="/scrap"
         class="w-10 h-10 bg-fg-primary rounded-full flex items-center justify-center"
