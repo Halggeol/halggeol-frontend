@@ -13,13 +13,16 @@ const isActive = (to, exact = false) => (exact ? route.path === to : route.path.
 <template>
   <!-- 헤더 영역 -->
   <header class="bg-white fixed inset-x-0 top-0 z-50">
-    <nav aria-label="Global" class="mx-[10.8%] flex items-center justify-between py-4">
+    <nav
+      aria-label="Global"
+      class="mx-[10.8%] flex items-center justify-between py-4 mobile:hidden"
+    >
       <!-- 헤더 - 로고 영역 -->
-      <h1 class="flex mobile:hidden">
+      <h1 class="flex">
         <RouterLink to="/" class="-m-4 p-4"> 그때 할 걸 </RouterLink>
       </h1>
       <!-- 헤더 - gnb 영역 -->
-      <div class="flex gap-x-12 mobile:hidden">
+      <div class="flex gap-x-12">
         <RouterLink
           v-for="item in navItems"
           :key="item.to"
@@ -47,9 +50,15 @@ const isActive = (to, exact = false) => (exact ? route.path === to : route.path.
         </button>
       </div>
       <!-- 헤더 - 유저 영역 -->
-      <div class="flex gap-x-6 justify-end mobile:hidden">
-        <RouterLink to="/" class="-m-4 p-4 body02 text-fg-primary">로그인</RouterLink>
-        <RouterLink to="/" class="-m-4 p-4 body02 text-fg-primary">회원가입</RouterLink>
+      <div class="flex gap-x-6 justify-end">
+        <template v-if="isLoggedIn">
+          <button>로그인 연장</button>
+          <button>{{ username }} 님</button>
+        </template>
+        <template v-else>
+          <RouterLink to="/login" class="-m-4 p-4 body02 text-fg-primary">로그인</RouterLink>
+          <RouterLink to="/signup" class="-m-4 p-4 body02 text-fg-primary">회원가입</RouterLink>
+        </template>
       </div>
     </nav>
   </header>
