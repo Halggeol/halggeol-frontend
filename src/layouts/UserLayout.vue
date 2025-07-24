@@ -1,6 +1,6 @@
 <script setup>
-import UserHeader from '@/components/layout/UserHeader.vue'
-import { RouterView } from 'vue-router'
+import UserHeader from '@/components/layout/UserHeader.vue';
+import { RouterView } from 'vue-router';
 </script>
 
 <template>
