@@ -53,13 +53,28 @@ const categoryMap = {
 function isHighRisk(risk) {
   return risk <= 3;
 } // 고위험상품 추출
+
+// 상세페이지 이동
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+function goToDetail(productId) {
+  // router.push(`/product/${productId}`);
+  router.push('/product/detail');
+} // 상세페이지 구현 이후 라우터 수정
 </script>
 
 <template>
   <h2 class="title01 pb-12 pt-40">이때 살 걸 금융상품 랭킹</h2>
   <!-- <span><i></i>고위험상품 숨기기</span> -->
   <div class="ranking pb-40 grid grid-rows-2 grid-cols-3 gap-6">
-    <BaseCard variant="tinted" size="lg" class="row-span-2">
+    <BaseCard
+      @click="goToDetail(topItem.productId)"
+      variant="tinted"
+      size="lg"
+      class="row-span-2 cursor-pointer"
+    >
       <div class="relative">
         <div class="rank">
           <span class="title02 mt-6">1</span>
@@ -88,9 +103,11 @@ function isHighRisk(risk) {
     <BaseCard
       v-for="item in restItems"
       :key="item.productId"
+      @click="goToDetail(item.productId)"
       variant="tinted"
       size="lg"
       ratio="sm"
+      class="cursor-pointer"
     >
       <div class="rank">
         <span class="title02 mt-6">{{ item.rank }}</span>
