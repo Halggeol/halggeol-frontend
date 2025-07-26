@@ -29,43 +29,49 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-})
+});
 
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 // 카드 크기
 const sizeClass = computed(() => {
   switch (props.size) {
     case 'lg':
-      return 'w-full p-12 lg:p-8'
+      return 'w-full p-8';
     default:
-      return 'w-1/4 p-8 lg:p-6'
+      return 'w-1/4 p-6';
   }
-})
+});
 
 // 카드 비율
 const ratioClass = computed(() => {
   switch (props.ratio) {
     case 'lg':
-      return 'aspect-[1/1.2]'
+      return 'aspect-[1/1.2]';
     case 'sm':
-      return 'aspect-[1/0.6]'
+      return 'aspect-[1/0.6]';
     default:
-      return ''
+      return '';
   }
-})
+});
 
 // 카드 스타일
 const variantClass = computed(() => {
   switch (props.variant) {
     case 'outline':
-      return props.shadow ? 'shadow-card border border-[#EDEDED]' : 'border border-gray-400'
+      return props.shadow
+        ? 'shadow-card border border-[#EDEDED]'
+        : 'border border-gray-400';
     case 'tinted':
-      return ['bg-secondary', props.shadow && 'shadow-card'].filter(Boolean).join(' ')
+      return ['bg-secondary', props.shadow && 'shadow-card']
+        .filter(Boolean)
+        .join(' ');
     default:
-      return ['bg-white', props.shadow && 'shadow-card'].filter(Boolean).join(' ')
+      return ['bg-white', props.shadow && 'shadow-card']
+        .filter(Boolean)
+        .join(' ');
   }
-})
+});
 </script>
 
 <template>
