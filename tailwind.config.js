@@ -1,13 +1,14 @@
 /** @type {import('tailwindcss').Config} */
-import defaultTheme from 'tailwindcss/defaultTheme'
-import daisyui from 'daisyui'
-import { toneMap } from '@nextcss/color-tools'
+import defaultTheme from 'tailwindcss/defaultTheme';
+import daisyui from 'daisyui';
+import { toneMap } from '@nextcss/color-tools';
+import forms from '@tailwindcss/forms';
 
 function generateColors(color) {
   return {
     DEFAULT: color,
     ...toneMap(color),
-  }
+  };
 }
 
 export default {
@@ -67,5 +68,5 @@ export default {
       },
     },
   },
-  plugins: [daisyui],
-}
+  plugins: [daisyui, forms],
+};
