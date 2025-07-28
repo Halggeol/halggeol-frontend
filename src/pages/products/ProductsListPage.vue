@@ -157,11 +157,6 @@ const filteredProducts = computed(() => {
         .slice()
         .sort((a, b) => b.rate - a.rate);
       break;
-    case 'rateAsc':
-      productsToFilter = productsToFilter
-        .slice()
-        .sort((a, b) => a.rate - b.rate);
-      break;
     case 'popularDesc':
       productsToFilter = productsToFilter
         .slice()
