@@ -1,12 +1,12 @@
 <script setup>
-import SideBar from '@/components/layout/SideBar.vue'
-import Header from '@/components/layout/Header.vue'
-import QuickButton from '@/components/layout/QuickButton.vue'
-import Footer from '@/components/layout/Footer.vue'
-import { RouterView, useRoute } from 'vue-router'
+import SideBar from '@/components/layout/SideBar.vue';
+import Header from '@/components/layout/Header.vue';
+import QuickButton from '@/components/layout/QuickButton.vue';
+import Footer from '@/components/layout/Footer.vue';
+import { RouterView, useRoute } from 'vue-router';
 
-const route = useRoute()
-const navItems = route.meta.navItems
+const route = useRoute();
+const navItems = route.meta.navItems;
 </script>
 
 <template>
