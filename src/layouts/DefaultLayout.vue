@@ -9,8 +9,7 @@ import ProductsDetailPage from '@/pages/products/ProductsDetailPage.vue';
 <template>
   <Header />
   <main class="wrapper mt-14">
-    <!-- <RouterView /> -->
-    <ProductsDetailPage></ProductsDetailPage>
+    <RouterView />
   </main>
   <QuickButton />
   <Footer />

@@ -1,36 +1,36 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 // Layout
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
-import SideBarLayout from '@/layouts/SideBarLayout.vue'
-import UserLayout from '@/layouts/UserLayout.vue'
+import DefaultLayout from '@/layouts/DefaultLayout.vue';
+import SideBarLayout from '@/layouts/SideBarLayout.vue';
+import UserLayout from '@/layouts/UserLayout.vue';
 
 // Page
-import HomePage from '@/pages/HomePage.vue'
-import NotFound from '@/pages/NotFound.vue'
-import ProductsListPage from '@/pages/products/ProductsListPage.vue'
-import InsightPage from '@/pages/insight/InsightPage.vue'
-import InsightCollectionPage from '@/pages/insight/InsightCollectionPage.vue'
-import MyPage from '@/pages/user/mypage/MyPage.vue'
-import TermsPage from '@/pages/user/mypage/TermsPage.vue'
-import LoginPage from '@/pages/user/auth/LoginPage.vue'
-import SignupPage from '@/pages/user/auth/SignupPage.vue'
-import SurveyPage from '@/pages/user/survey/SurveyPage.vue'
-import ScrapPage from '@/pages/ScrapPage.vue'
-import SyncMydataPage from '@/pages/user/auth/SyncMydataPage.vue'
-import FindPage from '@/pages/user/auth/FindPage.vue'
-import ProductsDetailPage from '@/pages/products/ProductsDetailPage.vue'
+import HomePage from '@/pages/HomePage.vue';
+import NotFound from '@/pages/NotFound.vue';
+import ProductsListPage from '@/pages/products/ProductsListPage.vue';
+import InsightPage from '@/pages/insight/InsightPage.vue';
+import InsightCollectionPage from '@/pages/insight/InsightCollectionPage.vue';
+import MyPage from '@/pages/user/mypage/MyPage.vue';
+import TermsPage from '@/pages/user/mypage/TermsPage.vue';
+import LoginPage from '@/pages/user/auth/LoginPage.vue';
+import SignupPage from '@/pages/user/auth/SignupPage.vue';
+import SurveyPage from '@/pages/user/survey/SurveyPage.vue';
+import ScrapPage from '@/pages/ScrapPage.vue';
+import SyncMydataPage from '@/pages/user/auth/SyncMydataPage.vue';
+import FindPage from '@/pages/user/auth/FindPage.vue';
+import ProductsDetailPage from '@/pages/products/ProductsDetailPage.vue';
 
 // 사이드바 네비게이션 아이템 정의
 const insightNavItems = [
   { to: '/insight', label: '이달의 인사이트' },
   { to: '/insight/fund', label: '펀드 모아보기' },
   { to: '/insight/forex', label: '공격형 연금 모아보기' },
-]
+];
 
 const mypageNavItems = [
   { to: '/mypage', label: '내 정보' },
   { to: '/mypage/terms', label: '약관 및 정책' },
-]
+];
 
 const commonRoutes = [
   // 홈(메인)+금융상품 둘러보기
@@ -40,7 +40,11 @@ const commonRoutes = [
     children: [
       { path: '', name: 'home', component: HomePage },
       { path: 'products', name: 'products-list', component: ProductsListPage },
-      { path: 'products/detail', name: 'products-detail', component: ProductsDetailPage },
+      {
+        path: 'products/detail/:productId',
+        name: 'products-detail',
+        component: ProductsDetailPage,
+      },
     ],
   },
   // 회고 인사이트
@@ -50,8 +54,16 @@ const commonRoutes = [
     meta: { navItems: insightNavItems },
     children: [
       { path: '', name: 'insight-monthly', component: InsightPage },
-      { path: 'fund', name: 'collection-fund', component: InsightCollectionPage },
-      { path: 'forex', name: 'collection-forex', component: InsightCollectionPage },
+      {
+        path: 'fund',
+        name: 'collection-fund',
+        component: InsightCollectionPage,
+      },
+      {
+        path: 'forex',
+        name: 'collection-forex',
+        component: InsightCollectionPage,
+      },
     ],
   },
   // 마이페이지
@@ -117,14 +129,14 @@ const commonRoutes = [
     name: 'NotFound',
     component: NotFound,
   },
-]
+];
 
-const routes = [...commonRoutes]
+const routes = [...commonRoutes];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-})
+});
 
 // 전역 가드 (로그인 여부 확인 등)
 // router.beforeEach((to, from, next) => {
@@ -135,4 +147,4 @@ const router = createRouter({
 //   }
 // })
 
-export default router
+export default router;

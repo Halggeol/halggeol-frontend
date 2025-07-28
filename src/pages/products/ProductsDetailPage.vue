@@ -1,6 +1,11 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import { getProductDetail, addScrap, delScrap } from '@/api/products';
+// authState import 추가 - 실제 경로에 맞게 수정 필요
+// import { authState } from '@/stores/auth'; 또는
+// import { useAuthStore } from '@/stores/auth';
+
 import BaseCard from '@/components/common/BaseCard.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
 import ProfitCalculator from '@/components/products/ProfitCalculator.vue';
@@ -9,6 +14,14 @@ const productDetail = ref(null);
 const isLoading = ref(true);
 const error = ref(null);
 const renewDate = '25.06.20';
+
+// 라우트 정보 가져오기
+const route = useRoute();
+
+// authState 임시 처리 - 실제 auth store 연결 시 수정 필요
+const authState = {
+  userId: 1, // 임시값, 실제로는 store에서 가져와야 함
+};
 
 const idPrefix = computed(() => {
   if (
@@ -36,24 +49,36 @@ const productTypeName = computed(() => {
 // prefix별 계산기 설정
 const calculatorProps = computed(() => {
   if (!productDetail.value) return {};
-  
+
   const prefix = idPrefix.value;
-  
+
   switch (prefix) {
     case 'F': // 펀드
       return {
         rateOptions: [
-          { label: '기본 수익률', value: parseFloat(productDetail.value.rate) || 0 },
-          { label: '기본 수익률', value: parseFloat(productDetail.value.rate) || 0 }, // 펀드는 primeRate가 rate와 같음
+          {
+            label: '기본 수익률',
+            value: parseFloat(productDetail.value.rate) || 0,
+          },
+          {
+            label: '기본 수익률',
+            value: parseFloat(productDetail.value.rate) || 0,
+          }, // 펀드는 primeRate가 rate와 같음
         ],
         period: 12, // 펀드는 기본 12개월
         minAmount: parseFloat(productDetail.value.minimumCost) || 10000,
       };
-    case 'X': // 외화  
+    case 'X': // 외화
       return {
         rateOptions: [
-          { label: '기본 금리', value: parseFloat(productDetail.value.rate) || 0 },
-          { label: '기본 금리', value: parseFloat(productDetail.value.rate) || 0 }, // 외화도 동일
+          {
+            label: '기본 금리',
+            value: parseFloat(productDetail.value.rate) || 0,
+          },
+          {
+            label: '기본 금리',
+            value: parseFloat(productDetail.value.rate) || 0,
+          }, // 외화도 동일
         ],
         period: 12, // 자동연장 기간은 숫자가 아님
         minAmount: parseFloat(productDetail.value.minimumCost) || 10000,
@@ -61,8 +86,14 @@ const calculatorProps = computed(() => {
     case 'P': // 연금
       return {
         rateOptions: [
-          { label: '기본 금리', value: parseFloat(productDetail.value.rate) || 0 },
-          { label: '전년도 수익률', value: parseFloat(productDetail.value.primeRate) || 0 },
+          {
+            label: '기본 금리',
+            value: parseFloat(productDetail.value.rate) || 0,
+          },
+          {
+            label: '전년도 수익률',
+            value: parseFloat(productDetail.value.primeRate) || 0,
+          },
         ],
         period: 12, // 연금 타입은 문자열
         minAmount: parseFloat(productDetail.value.minimumCost) || 10000,
@@ -70,8 +101,14 @@ const calculatorProps = computed(() => {
     default: // D, S (예금, 적금)
       return {
         rateOptions: [
-          { label: '일반 금리', value: parseFloat(productDetail.value.rate) || 0 },
-          { label: '최대 금리', value: parseFloat(productDetail.value.primeRate) || 0 },
+          {
+            label: '일반 금리',
+            value: parseFloat(productDetail.value.rate) || 0,
+          },
+          {
+            label: '최대 금리',
+            value: parseFloat(productDetail.value.primeRate) || 0,
+          },
         ],
         period: parseInt(productDetail.value.saveTerm) || 12,
         minAmount: parseFloat(productDetail.value.minimumCost) || 10000,
@@ -86,8 +123,11 @@ const navigateToLink = () => {
 
 onMounted(async () => {
   try {
-    const productId = 'F0001';
-    const userId = 1;
+    // 라우트에서 productId 가져오기
+    const productId = route.params.productId;
+    const userId = authState.userId;
+
+    console.log('Loading product:', productId, 'for user:', userId);
 
     const response = await getProductDetail(productId);
     productDetail.value = response.data;
