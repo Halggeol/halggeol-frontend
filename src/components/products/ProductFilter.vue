@@ -1,8 +1,14 @@
 <template>
   <div class="w-64 p-5 border-r border-gray-200 bg-gray-50 flex-shrink-0">
     <!-- 상품 유형 필터 -->
-    <div class="mb-6">
+    <div class="mb-6 relative">
       <h3 class="text-lg font-semibold mb-3 text-gray-800">상품 유형</h3>
+      <button
+        @click="resetFilters"
+        class="absolute top-0 right-0 text-sm text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-0"
+      >
+        초기화
+      </button>
       <ul>
         <li class="mb-2 flex items-center">
           <input
@@ -275,6 +281,17 @@ const clearInputAmount = () => {
   selectedAmount.value = 0;
 };
 
+// 모든 필터를 초기화하는 함수
+const resetFilters = () => {
+  selectedProductTypes.value = [];
+  selectedBanks.value = [];
+  selectedSubscriptionPeriod.value = ''; // '자유'로 초기화
+  inputAmount.value = null;
+  selectedAmount.value = 0;
+  errorMessage.value = '';
+  // 필터 초기화 후, 바로 상위 컴포넌트로 변경된 필터 상태를 emit (watch에 의해 자동 호출될 것임)
+};
+
 watch(
   [
     selectedProductTypes,
@@ -310,7 +327,9 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+/* placeholder 폰트 크기 및 색상 조정 */
 input::placeholder {
   font-size: 0.8rem; /* 80% 크기 */
+  color: #a0aec0; /* gray-400 */
 }
 </style>
