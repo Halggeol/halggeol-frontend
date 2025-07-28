@@ -1,36 +1,46 @@
 <template>
-  <div class="profit-calculator bg-white rounded-lg border border-gray-200 p-6">
-    <h3 class="text-lg font-medium text-gray-900 mb-6">수익 계산기</h3>
+  <div
+    class="profit-calculator bg-white rounded-xl shadow-card border border-1/2 border-secondary-200 p-8"
+  >
+    <h3 class="text-title-sm font-semibold text-fg-primary mb-8">
+      수익 계산기
+    </h3>
 
     <div class="space-y-6">
       <!-- 금액 입력 영역 -->
       <div class="space-y-4">
-        <div class="bg-gray-50 rounded-lg p-4">
-          <div class="text-gray-700 text-base leading-relaxed">
+        <div class="bg-secondary-50 rounded-lg p-6">
+          <div class="text-fg-secondary text-body02 leading-relaxed">
             <span
               @click="dropdownOpen = !dropdownOpen"
-              class="font-medium text-blue-600 cursor-pointer border-b-2 border-blue-300 hover:border-blue-500 transition-colors duration-200"
-              >{{ rateOptions[selectedRateIndex]?.label }} ({{
-                currentInterestRate
-              }}%)
+              class="font-semibold text-status-blue cursor-pointer border-b-2 border-status-blue hover:border-status-blue transition-colors duration-200"
+              >{{
+                (rateOptions &&
+                  rateOptions[selectedRateIndex] &&
+                  rateOptions[selectedRateIndex].label) ||
+                '금리'
+              }}
+              ({{ currentInterestRate }}%)
             </span>
             <div
               v-if="dropdownOpen"
-              class="absolute bg-white border border-gray-200 rounded-lg shadow-lg z-10 p-2 mt-1"
+              class="absolute bg-white border border-secondary-200 rounded-lg shadow-card z-10 p-2 mt-1"
             >
               <button
-                v-for="(option, index) in rateOptions"
+                v-for="(option, index) in rateOptions || []"
                 :key="index"
                 @click="selectRate(index)"
                 :class="[
-                  'w-full px-3 py-2 text-left hover:bg-gray-50 transition-colors rounded-md',
+                  'w-full px-3 py-2 text-left hover:bg-secondary-50 transition-colors rounded-md',
                   selectedRateIndex === index
-                    ? 'bg-blue-50 text-blue-700 font-semibold'
-                    : 'text-gray-900',
+                    ? 'bg-status-blue/10 text-status-blue font-semibold'
+                    : 'text-fg-primary',
                 ]"
               >
                 <span class="font-medium">{{ option.label }}</span>
-                <span class="text-gray-500 ml-2">({{ option.value }}%)</span>
+                <span class="text-fg-secondary ml-2"
+                  >({{ option.value }}%)</span
+                >
               </button>
             </div>
             금리로
@@ -40,14 +50,14 @@
                 @input="updateFromInput"
                 @blur="formatAmount"
                 @focus="selectAllText"
-                class="inline-block text-blue-600 font-bold bg-transparent border-b-2 border-blue-300 focus:border-blue-500 outline-none px-1 py-0 text-center min-w-[80px] max-w-[120px]"
+                class="inline-block text-status-blue font-bold bg-transparent border-b-2 border-status-blue/50 focus:border-status-blue outline-none px-1 py-0 text-center min-w-[80px] max-w-[120px]"
                 type="text"
                 placeholder="금액"
               />
-              <span class="font-medium text-blue-600 ml-1">원</span>
+              <span class="font-semibold text-status-blue ml-1">원</span>
             </div>
             만큼 저축했다면 예상수익액은
-            <span class="font-bold text-lg text-green-600"
+            <span class="font-bold text-title-sm text-status-blue"
               >{{ formattedProfit }}원</span
             >입니다.
           </div>
@@ -55,14 +65,14 @@
 
         <!-- 게이지바 슬라이더 -->
         <div class="relative">
-          <div class="w-full bg-gray-200 rounded-full h-3 relative">
+          <div class="w-full bg-secondary-200 rounded-full h-3 relative">
             <div
-              class="bg-gradient-to-r from-blue-400 to-blue-600 h-3 rounded-full transition-all duration-200"
+              class="bg-gradient-to-r from-status-blue to-status-blue/80 h-3 rounded-full transition-all duration-200"
               :style="{ width: sliderPercentage + '%' }"
             ></div>
             <!-- 슬라이더 핸들 -->
             <div
-              class="absolute top-1/2 transform -translate-y-1/2 w-5 h-5 bg-white border-2 border-blue-500 rounded-full cursor-pointer shadow-lg hover:shadow-xl transition-shadow"
+              class="absolute top-1/2 transform -translate-y-1/2 w-5 h-5 bg-white border-2 border-status-blue rounded-full cursor-pointer shadow-lg hover:shadow-xl transition-shadow"
               :style="{ left: 'calc(' + sliderPercentage + '% - 10px)' }"
               @mousedown="startDrag"
             ></div>
@@ -76,7 +86,7 @@
         </div>
 
         <!-- 금액 범위 표시 -->
-        <div class="flex justify-between text-sm text-gray-500">
+        <div class="flex justify-between text-footnote text-fg-secondary">
           <span>{{ minAmountFormatted }}</span>
           <span>{{ maxAmountFormatted }}</span>
         </div>
@@ -95,10 +105,21 @@ const props = defineProps({
       { label: '기본금리', value: 2.55 },
       { label: '최대금리', value: 3.15 },
     ],
+    validator: value => {
+      return (
+        Array.isArray(value) &&
+        value.every(
+          item =>
+            typeof item === 'object' &&
+            typeof item.label === 'string' &&
+            typeof item.value === 'number'
+        )
+      );
+    },
   },
   defaultRateIndex: {
     type: Number,
-    default: 1, // 기본값으로 두 번째 옵션(최대금리) 선택
+    default: 0,
   },
   minAmount: {
     type: Number,
@@ -110,7 +131,7 @@ const props = defineProps({
   },
   period: {
     type: Number,
-    default: 12, // 개월
+    default: 12,
   },
 });
 
@@ -122,12 +143,11 @@ const dropdownOpen = ref(false);
 
 // 현재 선택된 금리
 const currentInterestRate = computed(() => {
-  return props.rateOptions[selectedRateIndex.value]?.value || 3.15;
-});
-
-// 표시용 금액 (콤마 포함)
-const displayAmount = computed(() => {
-  return amount.value.toLocaleString();
+  /** @type {Array} */
+  const options = props.rateOptions || [];
+  /** @type {Object} */
+  const selectedOption = options[selectedRateIndex.value];
+  return selectedOption && selectedOption.value ? selectedOption.value : 3.15;
 });
 
 // 입력창용 금액
@@ -163,6 +183,10 @@ const minAmountFormatted = computed(() => {
   return props.minAmount.toLocaleString() + '원';
 });
 
+const maxAmountFormatted = computed(() => {
+  return props.maxAmount.toLocaleString() + '원';
+});
+
 // 금리 선택
 const selectRate = index => {
   selectedRateIndex.value = index;
@@ -192,7 +216,7 @@ const formatAmount = () => {
 
 // 슬라이더 클릭 처리
 const handleSliderClick = event => {
-  if (isDragging.value) return;
+  if (isDragging.value || !sliderTrack.value) return;
 
   const rect = sliderTrack.value.getBoundingClientRect();
   const x = event.clientX - rect.left;
@@ -211,7 +235,7 @@ const startDrag = event => {
   event.preventDefault();
 
   const handleMouseMove = e => {
-    if (!isDragging.value) return;
+    if (!isDragging.value || !sliderTrack.value) return;
 
     const rect = sliderTrack.value.getBoundingClientRect();
     const x = e.clientX - rect.left;

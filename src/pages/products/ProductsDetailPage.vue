@@ -33,6 +33,52 @@ const productTypeName = computed(() => {
   return typeMapping[idPrefix.value] || '금융상품';
 });
 
+// prefix별 계산기 설정
+const calculatorProps = computed(() => {
+  if (!productDetail.value) return {};
+  
+  const prefix = idPrefix.value;
+  
+  switch (prefix) {
+    case 'F': // 펀드
+      return {
+        rateOptions: [
+          { label: '기본 수익률', value: parseFloat(productDetail.value.rate) || 0 },
+          { label: '기본 수익률', value: parseFloat(productDetail.value.rate) || 0 }, // 펀드는 primeRate가 rate와 같음
+        ],
+        period: 12, // 펀드는 기본 12개월
+        minAmount: parseFloat(productDetail.value.minimumCost) || 10000,
+      };
+    case 'X': // 외화  
+      return {
+        rateOptions: [
+          { label: '기본 금리', value: parseFloat(productDetail.value.rate) || 0 },
+          { label: '기본 금리', value: parseFloat(productDetail.value.rate) || 0 }, // 외화도 동일
+        ],
+        period: 12, // 자동연장 기간은 숫자가 아님
+        minAmount: parseFloat(productDetail.value.minimumCost) || 10000,
+      };
+    case 'P': // 연금
+      return {
+        rateOptions: [
+          { label: '기본 금리', value: parseFloat(productDetail.value.rate) || 0 },
+          { label: '전년도 수익률', value: parseFloat(productDetail.value.primeRate) || 0 },
+        ],
+        period: 12, // 연금 타입은 문자열
+        minAmount: parseFloat(productDetail.value.minimumCost) || 10000,
+      };
+    default: // D, S (예금, 적금)
+      return {
+        rateOptions: [
+          { label: '일반 금리', value: parseFloat(productDetail.value.rate) || 0 },
+          { label: '최대 금리', value: parseFloat(productDetail.value.primeRate) || 0 },
+        ],
+        period: parseInt(productDetail.value.saveTerm) || 12,
+        minAmount: parseFloat(productDetail.value.minimumCost) || 10000,
+      };
+  }
+});
+
 const navigateToLink = () => {
   //   window.location.href = productDetail.value.regLink;
   window.open(productDetail.value.regLink, '_blank');
@@ -261,11 +307,11 @@ onMounted(async () => {
 
         <!-- 수익 계산기 -->
         <ProfitCalculator
-          :rateOptions="[
-            { label: '일반 금리', value: productDetail.rate },
-            { label: '최대 금리', value: productDetail.primeRate },
-          ]"
+          :rateOptions="calculatorProps.rateOptions || []"
           :defaultRateIndex="0"
+          :minAmount="calculatorProps.minAmount || 10000"
+          :maxAmount="100000000"
+          :period="calculatorProps.period || 12"
         />
       </div>
     </div>
