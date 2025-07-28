@@ -23,12 +23,12 @@ const idPrefix = computed(() => {
 
 const productTypeName = computed(() => {
   const typeMapping = {
-    'D': '예금',
-    'S': '적금',
-    'A': '공격형 연금',
-    'C': '안정형 연금',
-    'F': '펀드',
-    'X': '외화'
+    D: '예금',
+    S: '적금',
+    A: '공격형 연금',
+    C: '안정형 연금',
+    F: '펀드',
+    X: '외화',
   };
   return typeMapping[idPrefix.value] || '금융상품';
 });
@@ -88,23 +88,30 @@ onMounted(async () => {
               >
             </div>
 
-            <h1 class="text-title-lg lg:text-title-xl font-bold text-fg-primary mb-6">
+            <h1
+              class="text-title-lg lg:text-title-xl font-bold text-fg-primary mb-6"
+            >
               {{ productDetail.name }}
             </h1>
 
             <div class="flex items-center gap-2 mb-8">
               <span class="text-status-red">❤️</span>
               <span class="text-footnote text-fg-secondary">
-                <strong class="text-fg-primary">{{ productDetail.scrapCnt }}</strong
+                <strong class="text-fg-primary">{{
+                  productDetail.scrapCnt
+                }}</strong
                 >명이 관심갖고있음
               </span>
             </div>
 
-            <div class="text-body02 text-fg-secondary leading-relaxed max-w-2xl">
-              제공되는 정보는 금융감독원 <strong class="text-fg-primary">{{ renewDate }}</strong
+            <div
+              class="text-body02 text-fg-secondary leading-relaxed max-w-2xl"
+            >
+              제공되는 정보는 금융감독원
+              <strong class="text-fg-primary">{{ renewDate }}</strong
               >일에 공시된 내용을 기반으로 작성되었으며, 금융상품 광고가
-              아닙니다. 실제 상품 가입 시점에 변동될 수 있으므로 상품 가입 시
-              꼭 다시 확인하시기 바랍니다.
+              아닙니다. 실제 상품 가입 시점에 변동될 수 있으므로 상품 가입 시 꼭
+              다시 확인하시기 바랍니다.
             </div>
           </div>
 
@@ -137,7 +144,9 @@ onMounted(async () => {
         >
           <!-- 최고금리 -->
           <div class="text-center">
-            <h3 class="text-callout font-medium text-fg-secondary mb-3">최고금리</h3>
+            <h3 class="text-callout font-medium text-fg-secondary mb-3">
+              최고금리
+            </h3>
             <p class="text-title-sm font-bold text-fg-primary">
               {{ productDetail.primeRate }} %
             </p>
@@ -145,13 +154,19 @@ onMounted(async () => {
 
           <!-- 기본금리 -->
           <div class="text-center">
-            <h3 class="text-callout font-medium text-fg-secondary mb-3">기본금리</h3>
-            <p class="text-title-sm font-bold text-fg-primary">{{ productDetail.rate }} %</p>
+            <h3 class="text-callout font-medium text-fg-secondary mb-3">
+              기본금리
+            </h3>
+            <p class="text-title-sm font-bold text-fg-primary">
+              {{ productDetail.rate }} %
+            </p>
           </div>
 
           <!-- 기간 -->
           <div class="text-center">
-            <h3 class="text-callout font-medium text-fg-secondary mb-3">기간</h3>
+            <h3 class="text-callout font-medium text-fg-secondary mb-3">
+              기간
+            </h3>
             <p class="text-title-sm font-bold text-fg-primary">
               {{ productDetail.saveTerm }} 개월
             </p>
@@ -159,55 +174,87 @@ onMounted(async () => {
 
           <!-- 나와의 적합도 -->
           <div class="text-center">
-            <h3 class="text-callout font-medium text-fg-secondary mb-3">나와의 적합도</h3>
+            <h3 class="text-callout font-medium text-fg-secondary mb-3">
+              나와의 적합도
+            </h3>
             <!-- TODO: 이후 연결 -->
             <p class="text-title-sm font-bold text-status-blue">50 %</p>
           </div>
         </BaseCard>
 
         <!-- AI 한 줄 요약 -->
-        <div class="bg-white rounded-xl shadow-card border border-1/2 border-secondary-200 p-8">
-          <h3 class="text-title-sm font-semibold text-fg-primary mb-6">AI 한 줄 요약</h3>
+        <div
+          class="bg-white rounded-xl shadow-card border border-1/2 border-secondary-200 p-8"
+        >
+          <h3 class="text-title-sm font-semibold text-fg-primary mb-6">
+            AI 한 줄 요약
+          </h3>
           <div class="space-y-4">
             <p class="text-body02 text-fg-secondary leading-relaxed">
-              <span class="text-callout font-medium text-status-blue">장점</span> : {{ productDetail.advantage }}
+              <span class="text-callout font-medium text-status-blue"
+                >장점</span
+              >
+              : {{ productDetail.advantage }}
             </p>
             <p class="text-body02 text-fg-secondary leading-relaxed">
-              <span class="text-callout font-medium text-status-red">단점</span> : {{ productDetail.disadvantage }}
+              <span class="text-callout font-medium text-status-red">단점</span>
+              : {{ productDetail.disadvantage }}
             </p>
           </div>
         </div>
 
         <!-- 상품 정보 -->
-        <div class="bg-white rounded-xl shadow-card border border-1/2 border-secondary-200 p-8">
-          <h3 class="text-title-sm font-semibold text-fg-primary mb-8">상품 정보</h3>
+        <div
+          class="bg-white rounded-xl shadow-card border border-1/2 border-secondary-200 p-8"
+        >
+          <h3 class="text-title-sm font-semibold text-fg-primary mb-8">
+            상품 정보
+          </h3>
 
           <div class="space-y-6">
             <div class="flex items-start">
-              <span class="w-28 text-callout text-fg-secondary flex-shrink-0">최소 금액</span>
+              <span class="w-28 text-callout text-fg-secondary flex-shrink-0"
+                >최소 금액</span
+              >
               <span class="text-body02 text-fg-primary font-medium"
                 >{{ productDetail.minimumCost }} 원 이상</span
               >
             </div>
 
             <div class="flex items-start">
-              <span class="w-28 text-callout text-fg-secondary flex-shrink-0">운용 회사</span>
-              <span class="text-body02 text-fg-primary font-medium">{{ productDetail.company }}</span>
+              <span class="w-28 text-callout text-fg-secondary flex-shrink-0"
+                >운용 회사</span
+              >
+              <span class="text-body02 text-fg-primary font-medium">{{
+                productDetail.company
+              }}</span>
             </div>
 
             <div class="flex items-start" v-if="productDetail.joinMember">
-              <span class="w-28 text-callout text-fg-secondary flex-shrink-0">가입 대상</span>
-              <span class="text-body02 text-fg-primary font-medium">{{ productDetail.joinMember }}</span>
+              <span class="w-28 text-callout text-fg-secondary flex-shrink-0"
+                >가입 대상</span
+              >
+              <span class="text-body02 text-fg-primary font-medium">{{
+                productDetail.joinMember
+              }}</span>
             </div>
 
             <div class="flex items-start" v-if="productDetail.joinWay">
-              <span class="w-28 text-callout text-fg-secondary flex-shrink-0">가입 방법</span>
-              <span class="text-body02 text-fg-primary font-medium">{{ productDetail.joinWay }}</span>
+              <span class="w-28 text-callout text-fg-secondary flex-shrink-0"
+                >가입 방법</span
+              >
+              <span class="text-body02 text-fg-primary font-medium">{{
+                productDetail.joinWay
+              }}</span>
             </div>
 
             <div class="flex items-start" v-if="productDetail.caution">
-              <span class="w-28 text-callout text-fg-secondary flex-shrink-0">기타 사항</span>
-              <span class="text-body02 text-fg-primary leading-relaxed">{{ productDetail.caution }}</span>
+              <span class="w-28 text-callout text-fg-secondary flex-shrink-0"
+                >기타 사항</span
+              >
+              <span class="text-body02 text-fg-primary leading-relaxed">{{
+                productDetail.caution
+              }}</span>
             </div>
           </div>
         </div>
