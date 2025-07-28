@@ -5,14 +5,14 @@ import vue from '@vitejs/plugin-vue';
 import vueDevTools from 'vite-plugin-vue-devtools';
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   // GitHub Pages 배포를 위한 base path 설정
-  base: process.env.NODE_ENV === 'production' ? '/halggeol-frontend/' : '/',
+  base: mode === 'production' ? '/halggeol-frontend/' : '/',
 
   plugins: [
     vue(),
     // 개발 환경에서만 vueDevTools 사용
-    ...(process.env.NODE_ENV === 'development' ? [vueDevTools()] : []),
+    ...(mode === 'development' ? [vueDevTools()] : []),
   ],
   resolve: {
     alias: {
@@ -35,4 +35,4 @@ export default defineConfig({
     host: true,
     port: 3000,
   },
-});
+}));
