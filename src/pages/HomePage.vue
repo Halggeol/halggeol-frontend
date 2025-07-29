@@ -10,21 +10,20 @@ import { ref, onMounted, provide } from 'vue';
 
 import { getDashboardMain } from '@/api/dashboard';
 
-const isLoggedIn = ref(true);
+const isLoggedIn = ref(false);
 function onLoginClick() {
   router.push('/login');
 }
 
 const dashboardData = ref(null);
 
-// 임시 토큰 처리
 const fetchDashboard = async () => {
   try {
-    // 토큰 설정
-    localStorage.setItem(
-      'accessToken',
-      'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtMm51dXVAZ21haWwuY29tIiwiaWF0IjoxNzUzNzUxMjA0LCJleHAiOjE3NzE3NTEyMDR9.Ho1fXfC2ane0PxTNKnaov2p8lYiQEGWXthjW72av-Y8'
-    );
+    // 임시 토큰 처리
+    // localStorage.setItem(
+    //   'accessToken',
+    //   'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtMm51dXVAZ21haWwuY29tIiwiaWF0IjoxNzUzNzUxMjA0LCJleHAiOjE3NzE3NTEyMDR9.Ho1fXfC2ane0PxTNKnaov2p8lYiQEGWXthjW72av-Y8'
+    // );
 
     // API 호출
     const response = await getDashboardMain();
@@ -52,7 +51,10 @@ onMounted(() => {
       </h2>
       <div class="pb-40 grid grid-rows-2 grid-cols-3 gap-6">
         <RegretScoreCard :regret-score="dashboardData?.avgRegretScore" />
-        <AssetCard class="row-span-2 col-span-2" :assets="dashboardData?.assets" />
+        <AssetCard
+          class="row-span-2 col-span-2"
+          :assets="dashboardData?.assets"
+        />
         <AssetPortfolioCard :portfolio="dashboardData?.portfolio" />
       </div>
     </div>
