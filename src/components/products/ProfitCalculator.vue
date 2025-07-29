@@ -43,7 +43,7 @@
                 >
               </button>
             </div>
-            금리로
+            로
             <div class="inline-flex items-center mx-1">
               <input
                 v-model="displayAmountInput"
@@ -74,7 +74,9 @@
             <!-- 슬라이더 핸들 -->
             <div
               class="absolute top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white border-3 border-status-blue rounded-full cursor-grab active:cursor-grabbing shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 ease-out z-10"
-              :style="{ right: 'calc(' + (100 - sliderPercentage) + '% - 12px)' }"
+              :style="{
+                right: 'calc(' + (100 - sliderPercentage) + '% - 12px)',
+              }"
               @mousedown="startDrag"
               @click.stop
             ></div>
@@ -132,11 +134,15 @@ const idPrefix = computed(() => {
 
 // prefix별 계산기 설정
 const calculatorProps = computed(() => {
-  if (!props.productDetail) return {
-    rateOptions: [{ label: '기본금리', value: 2.55 }, { label: '최대금리', value: 3.15 }],
-    period: 12,
-    minAmount: 10000,
-  };
+  if (!props.productDetail)
+    return {
+      rateOptions: [
+        { label: '기본금리', value: 2.55 },
+        { label: '최대금리', value: 3.15 },
+      ],
+      period: 12,
+      minAmount: 10000,
+    };
 
   const prefix = idPrefix.value;
 
@@ -145,7 +151,7 @@ const calculatorProps = computed(() => {
       return {
         rateOptions: [
           {
-            label: '기본 수익률',
+            label: '연 수익률',
             value: parseFloat(props.productDetail.rate) || 0,
           },
           {
@@ -154,37 +160,37 @@ const calculatorProps = computed(() => {
           },
         ],
         period: 12,
-        minAmount: parseFloat(props.productDetail.minimumCost) || 10000,
+        minAmount: 10000,
       };
     case 'X': // 외화
       return {
         rateOptions: [
           {
-            label: '기본 금리',
+            label: '3개월 전 대비',
             value: parseFloat(props.productDetail.rate) || 0,
           },
           {
-            label: '기본 금리',
+            label: '1년 전 대비',
             value: parseFloat(props.productDetail.rate) || 0,
           },
         ],
         period: 12,
-        minAmount: parseFloat(props.productDetail.minimumCost) || 10000,
+        minAmount: 10000,
       };
-    case 'P': // 연금
+    case 'A' || 'C': // 연금
       return {
         rateOptions: [
           {
-            label: '기본 금리',
+            label: '연 수익률',
             value: parseFloat(props.productDetail.rate) || 0,
           },
           {
-            label: '전년도 수익률',
-            value: parseFloat(props.productDetail.primeRate) || 0,
+            label: '연 수익률',
+            value: parseFloat(props.productDetail.rate) || 0,
           },
         ],
         period: 12,
-        minAmount: parseFloat(props.productDetail.minimumCost) || 10000,
+        minAmount: 10000,
       };
     default: // D, S (예금, 적금)
       return {
@@ -199,7 +205,7 @@ const calculatorProps = computed(() => {
           },
         ],
         period: parseInt(props.productDetail.saveTerm) || 12,
-        minAmount: parseFloat(props.productDetail.minimumCost) || 10000,
+        minAmount: 10000,
       };
   }
 });
@@ -229,9 +235,7 @@ const profit = computed(() => {
 
   // 단리 계산: 원금 × 이율 × 기간
   const grossProfit = principal * rate * time;
-  // 세후 수익 (이자소득세 15.4% 적용)
-  const tax = grossProfit * 0.154;
-  return Math.floor(grossProfit - tax);
+  return Math.floor(grossProfit);
 });
 
 // 수익 포맷팅
@@ -261,18 +265,15 @@ const selectAllText = event => {
 // 입력값 업데이트
 const updateFromInput = event => {
   const value = event.target.value.replace(/,/g, '');
-  
+
   // 빈 문자열이면 0으로 설정
   if (value === '' || value === null || value === undefined) {
     amount.value = 0;
     return;
   }
-  
+
   const numValue = parseInt(value) || 0;
-  const clampedValue = Math.max(
-    0,
-    Math.min(props.maxAmount, numValue)
-  );
+  const clampedValue = Math.max(0, Math.min(props.maxAmount, numValue));
   amount.value = clampedValue;
   displayAmountInput.value = clampedValue.toLocaleString();
 };
@@ -287,9 +288,9 @@ const formatAmount = () => {
 };
 
 // 공통 드래그 로직
-const updateSliderFromMouse = (clientX) => {
+const updateSliderFromMouse = clientX => {
   if (!sliderTrack.value) return;
-  
+
   const rect = sliderTrack.value.getBoundingClientRect();
   const x = clientX - rect.left;
   const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
