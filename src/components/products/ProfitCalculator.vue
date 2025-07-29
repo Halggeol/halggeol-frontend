@@ -27,7 +27,7 @@
               class="absolute bg-white border border-secondary-200 rounded-lg shadow-card z-10 p-2 mt-1"
             >
               <button
-                v-for="(option, index) in rateOptions || []"
+                v-for="(option, index) in calculatorProps.rateOptions || []"
                 :key="index"
                 @click="selectRate(index)"
                 :class="[
@@ -102,53 +102,111 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
-  rateOptions: {
-    type: Array,
-    default: () => [
-      { label: '기본금리', value: 2.55 },
-      { label: '최대금리', value: 3.15 },
-    ],
-    validator: value => {
-      return (
-        Array.isArray(value) &&
-        value.every(
-          item =>
-            typeof item === 'object' &&
-            typeof item.label === 'string' &&
-            typeof item.value === 'number'
-        )
-      );
-    },
-  },
-  defaultRateIndex: {
-    type: Number,
-    default: 0,
-  },
-  minAmount: {
-    type: Number,
-    default: 10000,
+  productDetail: {
+    type: Object,
+    required: true,
   },
   maxAmount: {
     type: Number,
-    default: 10000000,
-  },
-  period: {
-    type: Number,
-    default: 12,
+    default: 100000000,
   },
 });
 
 const amount = ref(100000);
 const isDragging = ref(false);
 const sliderTrack = ref(null);
-const selectedRateIndex = ref(props.defaultRateIndex);
+const selectedRateIndex = ref(0);
 const dropdownOpen = ref(false);
+
+// prefix 추출
+const idPrefix = computed(() => {
+  if (
+    props.productDetail &&
+    props.productDetail.id &&
+    typeof props.productDetail.id === 'string'
+  ) {
+    return props.productDetail.id.charAt(0).toUpperCase();
+  }
+  return '';
+});
+
+// prefix별 계산기 설정
+const calculatorProps = computed(() => {
+  if (!props.productDetail) return {
+    rateOptions: [{ label: '기본금리', value: 2.55 }, { label: '최대금리', value: 3.15 }],
+    period: 12,
+    minAmount: 10000,
+  };
+
+  const prefix = idPrefix.value;
+
+  switch (prefix) {
+    case 'F': // 펀드
+      return {
+        rateOptions: [
+          {
+            label: '기본 수익률',
+            value: parseFloat(props.productDetail.rate) || 0,
+          },
+          {
+            label: '기본 수익률',
+            value: parseFloat(props.productDetail.rate) || 0,
+          },
+        ],
+        period: 12,
+        minAmount: parseFloat(props.productDetail.minimumCost) || 10000,
+      };
+    case 'X': // 외화
+      return {
+        rateOptions: [
+          {
+            label: '기본 금리',
+            value: parseFloat(props.productDetail.rate) || 0,
+          },
+          {
+            label: '기본 금리',
+            value: parseFloat(props.productDetail.rate) || 0,
+          },
+        ],
+        period: 12,
+        minAmount: parseFloat(props.productDetail.minimumCost) || 10000,
+      };
+    case 'P': // 연금
+      return {
+        rateOptions: [
+          {
+            label: '기본 금리',
+            value: parseFloat(props.productDetail.rate) || 0,
+          },
+          {
+            label: '전년도 수익률',
+            value: parseFloat(props.productDetail.primeRate) || 0,
+          },
+        ],
+        period: 12,
+        minAmount: parseFloat(props.productDetail.minimumCost) || 10000,
+      };
+    default: // D, S (예금, 적금)
+      return {
+        rateOptions: [
+          {
+            label: '일반 금리',
+            value: parseFloat(props.productDetail.rate) || 0,
+          },
+          {
+            label: '최대 금리',
+            value: parseFloat(props.productDetail.primeRate) || 0,
+          },
+        ],
+        period: parseInt(props.productDetail.saveTerm) || 12,
+        minAmount: parseFloat(props.productDetail.minimumCost) || 10000,
+      };
+  }
+});
 
 // 현재 선택된 금리
 const currentInterestRate = computed(() => {
-  /** @type {Array} */
-  const options = props.rateOptions || [];
-  /** @type {Object} */
+  const options = calculatorProps.value.rateOptions || [];
   const selectedOption = options[selectedRateIndex.value];
   return selectedOption && selectedOption.value ? selectedOption.value : 3.15;
 });
@@ -167,7 +225,7 @@ const sliderPercentage = computed(() => {
 const profit = computed(() => {
   const principal = amount.value;
   const rate = currentInterestRate.value / 100;
-  const time = props.period / 12;
+  const time = calculatorProps.value.period / 12;
 
   // 단리 계산: 원금 × 이율 × 기간
   const grossProfit = principal * rate * time;
