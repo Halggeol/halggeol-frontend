@@ -18,6 +18,7 @@ const PRODUCT_COLUMN_MAPPING = {
     bonusCondition: 'bonusCondition',
     advantage: 'advantage',
     disadvantage: 'disadvantage',
+    isScraped: 'isScraped',
   },
   S: {
     name: 'name',
@@ -38,6 +39,7 @@ const PRODUCT_COLUMN_MAPPING = {
     bonusCondition: 'bonusCondition',
     advantage: 'advantage',
     disadvantage: 'disadvantage',
+    isScraped: 'isScraped',
   },
   F: {
     name: 'name',
@@ -62,6 +64,7 @@ const PRODUCT_COLUMN_MAPPING = {
     managementFee: 'managementFee',
     advantage: 'advantage',
     disadvantage: 'disadvantage',
+    isScraped: 'isScraped',
   },
   X: {
     name: 'name',
@@ -84,6 +87,7 @@ const PRODUCT_COLUMN_MAPPING = {
     protect: 'protect',
     advantage: 'advantage',
     disadvantage: 'disadvantage',
+    isScraped: 'isScraped',
   },
   P: {
     name: 'name',
@@ -104,6 +108,7 @@ const PRODUCT_COLUMN_MAPPING = {
     lastYearProfitRate: 'lastYearProfitRate',
     advantage: 'advantage',
     disadvantage: 'disadvantage',
+    isScraped: 'isScraped',
   },
 };
 
@@ -139,6 +144,8 @@ export const addScrap = productId => {
 
 export const delScrap = productId => {
   return api.delete('/scrap', {
-    productId: productId,
+    data: {
+      productId: productId,
+    }
   });
 };

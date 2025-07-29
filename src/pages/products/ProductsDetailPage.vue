@@ -20,7 +20,7 @@ const navigateToLink = () => {
   window.open(productDetail.value.regLink, '_blank');
 };
 
-const handleAddScrap = (productId) => {
+const handleAddScrap = productId => {
   addScrap(productId);
 };
 
@@ -48,7 +48,6 @@ onMounted(async () => {
       <p>{{ error }}</p>
     </div>
     <div v-else-if="productDetail">
-      <!-- <div v-if="idPrefix === 'D'"> -->
       <!-- 헤더 섹션 -->
       <ProductHeader
         :productDetail="productDetail"

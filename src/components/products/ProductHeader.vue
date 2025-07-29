@@ -31,39 +31,36 @@
         <div class="flex items-center gap-2 mb-8">
           <span class="text-status-red">❤️</span>
           <span class="text-footnote text-fg-secondary">
-            <strong class="text-fg-primary">{{
-              productDetail.scrapCnt
-            }}</strong
+            <strong class="text-fg-primary">{{ productDetail.scrapCnt }}</strong
             >명이 관심갖고있음
           </span>
         </div>
 
-        <div
-          class="text-body02 text-fg-secondary leading-relaxed max-w-2xl"
-        >
+        <div class="text-body02 text-fg-secondary leading-relaxed max-w-2xl">
           제공되는 정보는 금융감독원
           <strong class="text-fg-primary">{{ renewDate }}</strong
-          >일에 공시된 내용을 기반으로 작성되었으며, 금융상품 광고가
-          아닙니다. 실제 상품 가입 시점에 변동될 수 있으므로 상품 가입 시 꼭
-          다시 확인하시기 바랍니다.
+          >일에 공시된 내용을 기반으로 작성되었으며, 금융상품 광고가 아닙니다.
+          실제 상품 가입 시점에 변동될 수 있으므로 상품 가입 시 꼭 다시
+          확인하시기 바랍니다.
         </div>
       </div>
 
       <!-- 오른쪽 버튼들 -->
       <div class="flex flex-col gap-3 ml-6 lg:ml-8 mt-auto">
         <BaseButton
-          @click="$emit('addScrap', productDetail.id)"
-          label="🤍 관심상품"
+          :label="isScraped ? '❤️ 관심상품' : '🤍 관심상품'"
           size="sm"
           variant="outline"
-          class="!w-auto !px-6 md:!px-8 lg:!px-10 !whitespace-nowrap !text-footnote md:!text-callout"
+          :disabled="isScrapLoading"
+          class="!w-auto !px-6 md:!px-8 lg:!px-10 !whitespace-nowrap !text-footnote md:!text-callout hover:bg-gray-50 transition-colors"
+          @click="handleAddScrap"
         />
         <BaseButton
-          @click="$emit('navigate')"
           label="가입하기"
           size="sm"
           variant="filled"
           class="!w-auto !px-6 md:!px-8 lg:!px-10 !whitespace-nowrap !text-footnote md:!text-callout"
+          @click="handleNavigate"
         />
       </div>
     </div>
@@ -71,8 +68,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import BaseButton from '@/components/common/BaseButton.vue';
+import { addScrap, delScrap } from '@/api/product-detail';
 
 const props = defineProps({
   productDetail: {
@@ -85,7 +83,10 @@ const props = defineProps({
   },
 });
 
-defineEmits(['addScrap', 'navigate']);
+const emit = defineEmits(['navigate']);
+
+const isScrapLoading = ref(false);
+const isScraped = ref(props.productDetail.isScraped || false);
 
 const idPrefix = computed(() => {
   if (
@@ -109,4 +110,45 @@ const productTypeName = computed(() => {
   };
   return typeMapping[idPrefix.value] || '금융상품';
 });
+
+const handleAddScrap = async () => {
+  if (isScrapLoading.value) return;
+
+  console.log('버튼 클릭 - 현재 isScraped:', isScraped.value);
+  isScrapLoading.value = true;
+
+  try {
+    if (isScraped.value) {
+      // 이미 관심상품이면 삭제
+      console.log('delScrap 호출');
+      await delScrap(props.productDetail.id);
+      isScraped.value = false;
+      console.log('삭제 완료, isScraped:', isScraped.value);
+    } else {
+      // 관심상품이 아니면 추가
+      console.log('addScrap 호출');
+      await addScrap(props.productDetail.id);
+      isScraped.value = true;
+      console.log('추가 완료, isScraped:', isScraped.value);
+    }
+  } catch (error) {
+    console.error('관심상품 처리 실패:', error);
+  } finally {
+    isScrapLoading.value = false;
+  }
+};
+
+const handleNavigate = () => {
+  emit('navigate');
+};
+
+// productDetail이 변경될 때 isScraped 상태 업데이트
+watch(
+  () => props.productDetail?.isScraped,
+  (newValue, oldValue) => {
+    console.log('watch 실행 - props.isScraped 변경:', oldValue, '->', newValue);
+    isScraped.value = newValue || false;
+  },
+  { immediate: true }
+);
 </script>
