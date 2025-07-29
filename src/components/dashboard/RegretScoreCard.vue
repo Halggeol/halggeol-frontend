@@ -6,7 +6,18 @@ import { ref, computed } from 'vue';
 const isFlipped = ref(false);
 
 // 목업데이터
-const avgRegretScore = ref(87);
+// const avgRegretScore = ref(87);
+
+const props = defineProps({
+  regretScore: {
+    type: Number,
+    default: 0,
+  },
+});
+
+const avgRegretScore = computed(() => {
+  return props.regretScore; // api 호출값이 null이면 0 처리
+});
 
 // 후회 관련 차트
 import { Doughnut } from 'vue-chartjs';
