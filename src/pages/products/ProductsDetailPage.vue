@@ -1,10 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { getProductDetail, addScrap, delScrap } from '@/api/products';
-// authState import 추가 - 실제 경로에 맞게 수정 필요
-// import { authState } from '@/stores/auth'; 또는
-// import { useAuthStore } from '@/stores/auth';
+import { getProductDetail, addScrap, delScrap } from '@/api/product-detail';
 
 import BaseCard from '@/components/common/BaseCard.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
@@ -15,7 +12,6 @@ const isLoading = ref(true);
 const error = ref(null);
 const renewDate = '25.06.20';
 
-// 라우트 정보 가져오기
 const route = useRoute();
 
 // authState 임시 처리 - 실제 auth store 연결 시 수정 필요
