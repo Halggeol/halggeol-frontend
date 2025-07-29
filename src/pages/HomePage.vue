@@ -52,7 +52,7 @@ onMounted(() => {
       </h2>
       <div class="pb-40 grid grid-rows-2 grid-cols-3 gap-6">
         <RegretScoreCard :regret-score="dashboardData?.avgRegretScore" />
-        <AssetCard class="row-span-2 col-span-2" />
+        <AssetCard class="row-span-2 col-span-2" :assets="dashboardData?.assets" />
         <AssetPortfolioCard :portfolio="dashboardData?.portfolio" />
       </div>
     </div>

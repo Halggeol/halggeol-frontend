@@ -2,18 +2,6 @@
 import { computed } from 'vue';
 import BaseCard from '../common/BaseCard.vue';
 
-// // 목업 데이터
-// const portfolio = [
-//   {
-//     type: 'savings',
-//     ratio: 0.4,
-//   },
-//   {
-//     type: 'fund',
-//     ratio: 0.3,
-//   },
-// ];
-
 const props = defineProps({
   portfolio: {
     type: Array,
@@ -22,9 +10,17 @@ const props = defineProps({
 });
 
 const portfolioData = computed(() => {
-  // API 데이터가 없으면 기본 목업 데이터 사용
   if (!props.portfolio || props.portfolio.length === 0) {
-    return [];
+    return [
+      // {
+      //   type: 'savings',
+      //   ratio: 0.4,
+      // },
+      // {
+      //   type: 'fund',
+      //   ratio: 0.3,
+      // },
+    ];
   }
   return props.portfolio;
 });
