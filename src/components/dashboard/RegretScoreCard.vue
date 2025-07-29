@@ -10,12 +10,13 @@ const isFlipped = ref(false);
 
 const props = defineProps({
   regretScore: {
-    type: String,
+    type: Number,
+    default: 0,
   },
 });
 
 const avgRegretScore = computed(() => {
-  return parseInt(props.regretScore || 0); // api 호출값이 null이면 0 처리
+  return props.regretScore; // api 호출값이 null이면 0 처리
 });
 
 // 후회 관련 차트
