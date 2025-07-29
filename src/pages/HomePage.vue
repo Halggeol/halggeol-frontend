@@ -8,10 +8,39 @@ import RecommendCards from '@/components/recommand/RecommendCards.vue';
 import router from '@/router';
 import { ref } from 'vue';
 
-const isLoggedIn = ref(false);
+const isLoggedIn = ref(true);
 function onLoginClick() {
   router.push('/login');
 }
+// 목업데이터
+const userName = '김금융';
+const recommendItems = [
+  {
+    productId: 'S11',
+    name: '청년우대적금',
+    matchScore: 50,
+  },
+  {
+    productId: 'A11',
+    name: 'KB퇴직연금배당40증권자투자신탁(채권혼합)C-E',
+    matchScore: 50,
+  },
+  {
+    productId: 'S11',
+    name: '청년우대적금',
+    matchScore: 50,
+  },
+  {
+    productId: 'F10',
+    name: '교보악사 내일환매 초단기우량채증권투자신탁(채권) Ce',
+    matchScore: 50,
+  },
+  {
+    productId: 'S11',
+    name: '청년우대적금',
+    matchScore: 50,
+  },
+];
 </script>
 <template>
   <!-- 대시보드 영역 -->
@@ -44,5 +73,12 @@ function onLoginClick() {
   <div class="mx-[10.8%]">
     <RankCards />
   </div>
-  <RecommendCards v-if="isLoggedIn" />
+  <h2 class="title01 pb-12 pt-40 mx-[10.8%]">
+    {{ userName }} 님을 위한 추천 상품
+  </h2>
+  <RecommendCards
+    v-if="isLoggedIn"
+    :items="recommendItems"
+    :has-padding="true"
+  />
 </template>

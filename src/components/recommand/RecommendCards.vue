@@ -1,35 +1,17 @@
 <script setup>
 import BaseCard from '../common/BaseCard.vue';
 
-// 목업데이터
-const userName = '김금융';
-const recommendItems = [
-  {
-    productId: 'S11',
-    name: '청년우대적금',
-    matchScore: 50,
+// 추천 상품 카드 콘텐츠 커스텀
+const props = defineProps({
+  items: {
+    type: Array,
+    required: true,
   },
-  {
-    productId: 'A11',
-    name: 'KB퇴직연금배당40증권자투자신탁(채권혼합)C-E',
-    matchScore: 50,
+  hasPadding: {
+    type: Boolean,
+    default: true,
   },
-  {
-    productId: 'S11',
-    name: '청년우대적금',
-    matchScore: 50,
-  },
-  {
-    productId: 'F10',
-    name: '교보악사 내일환매 초단기우량채증권투자신탁(채권) Ce',
-    matchScore: 50,
-  },
-  {
-    productId: 'S11',
-    name: '청년우대적금',
-    matchScore: 50,
-  },
-];
+});
 
 // 카테고리 매핑
 const categoryMap = {
@@ -46,20 +28,22 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-function goToDetail(productId) {
-  // router.push(`/product/${productId}`);
-  router.push('/product/detail');
+function goToDetail(id) {
+  router.push(`/products/detail/${id}`);
 } // 상세페이지 구현 이후 라우터 수정
+
+// 패딩값 여부
+import { computed } from 'vue';
+const wrapperClass = computed(() => {
+  return props.hasPadding ? 'scroller-wrapper pl-[10.8%]' : 'scroller-wrapper';
+});
 </script>
 
 <template>
-  <h2 class="title01 pb-12 pt-40 mx-[10.8%]">
-    {{ userName }} 님을 위한 추천 상품
-  </h2>
   <div class="scroller">
-    <div class="scroller-wrapper pl-[10.8%]">
+    <div :class="wrapperClass">
       <BaseCard
-        v-for="item in recommendItems"
+        v-for="item in props.items"
         :key="item.productId"
         @click="goToDetail(item.productId)"
         variant="tinted"
