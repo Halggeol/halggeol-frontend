@@ -83,13 +83,11 @@ const commonRoutes = [
     component: DefaultLayout,
     children: [{ path: '', name: 'scrap', component: ScrapPage }],
   },
-  // 가입상품 추가해야 함
+  // 가입상품
   {
     path: '/myproduct',
     component: DefaultLayout,
-    children: [
-      { path: '', name: 'myproduct', component: MyProductPage }
-    ]
+    children: [{ path: '', name: 'myproduct', component: MyProductPage }],
   },
 
   // 로그인
