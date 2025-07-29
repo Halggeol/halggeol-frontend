@@ -14,11 +14,6 @@ const renewDate = '25.06.20';
 
 const route = useRoute();
 
-// authState 임시 처리 - 실제 auth store 연결 시 수정 필요
-const authState = {
-  userId: 1, // 임시값, 실제로는 store에서 가져와야 함
-};
-
 const idPrefix = computed(() => {
   if (
     productDetail.value &&
@@ -121,10 +116,6 @@ onMounted(async () => {
   try {
     // 라우트에서 productId 가져오기
     const productId = route.params.productId;
-    const userId = authState.userId;
-
-    console.log('Loading product:', productId, 'for user:', userId);
-
     const response = await getProductDetail(productId);
     productDetail.value = response.data;
   } catch (err) {
@@ -218,7 +209,7 @@ onMounted(async () => {
       </div>
 
       <!-- 메인 컨텐츠 섹션 -->
-      <div class="space-y-8 py-8">
+      <div class="space-y-4 py-8">
         <!-- 상품 주요 정보 카드 -->
         <BaseCard
           size="lg"
