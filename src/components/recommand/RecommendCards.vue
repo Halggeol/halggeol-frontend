@@ -42,7 +42,6 @@ function goToDetail(id) {
 } // 상세페이지 구현 이후 라우터 수정
 
 // 패딩값 여부
-import { computed } from 'vue';
 const wrapperClass = computed(() => {
   return props.hasPadding ? 'scroller-wrapper pl-[10.8%]' : 'scroller-wrapper';
 });
