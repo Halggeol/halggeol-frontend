@@ -10,13 +10,12 @@ import { ref, onMounted, provide } from 'vue';
 
 import { getDashboardMain } from '@/api/dashboard';
 
-const isLoggedIn = ref(false);
+const isLoggedIn = ref(true);
 function onLoginClick() {
   router.push('/login');
 }
 
 const dashboardData = ref(null);
-
 const fetchDashboard = async () => {
   try {
     // 임시 토큰 처리
@@ -39,6 +38,7 @@ onMounted(() => {
   fetchDashboard();
 });
 </script>
+
 <template>
   <!-- {{ dashboardData }} -->
   <!-- 대시보드 영역 -->
@@ -76,9 +76,13 @@ onMounted(() => {
   <div class="mx-[10.8%]">
     <RankCards :ranking="dashboardData?.regretRanking" />
   </div>
+  <h2 class="title01 pb-12 pt-40 mx-[10.8%]">
+    {{ dashboardData?.userName || '사용자' }} 님을 위한 추천 상품
+  </h2>
   <RecommendCards
     v-if="isLoggedIn"
     :user-name="dashboardData?.userName"
-    :recommend-items="dashboardData?.recommendItems"
+    :items="dashboardData?.recommendItems"
+    :has-padding="true"
   />
 </template>

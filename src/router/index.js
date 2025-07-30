@@ -23,7 +23,7 @@ import MyProductPage from '@/pages/user/myproduct/MyProductPage.vue';
 
 // 사이드바 네비게이션 아이템 정의
 const insightNavItems = [
-  { to: '/insight', label: '이달의 인사이트' },
+  { to: '/insight', label: '회고 인사이트' },
   { to: '/insight/fund', label: '펀드 모아보기' },
   { to: '/insight/forex', label: '공격형 연금 모아보기' },
 ];
