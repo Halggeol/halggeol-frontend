@@ -19,6 +19,7 @@ import ScrapPage from '@/pages/ScrapPage.vue';
 import SyncMydataPage from '@/pages/user/auth/SyncMydataPage.vue';
 import FindPage from '@/pages/user/auth/FindPage.vue';
 import ProductsDetailPage from '@/pages/products/ProductsDetailPage.vue';
+import MyProductPage from '@/pages/user/myproduct/MyProductPage.vue';
 
 // 사이드바 네비게이션 아이템 정의
 const insightNavItems = [
@@ -41,7 +42,7 @@ const commonRoutes = [
       { path: '', name: 'home', component: HomePage },
       { path: 'products', name: 'products-list', component: ProductsListPage },
       {
-        path: 'products/detail/:id',
+        path: 'products/detail/:productId',
         name: 'products-detail',
         component: ProductsDetailPage,
       },
@@ -82,8 +83,12 @@ const commonRoutes = [
     component: DefaultLayout,
     children: [{ path: '', name: 'scrap', component: ScrapPage }],
   },
-
-  // 가입상품 추가해야 함
+  // 가입상품
+  {
+    path: '/myproduct',
+    component: DefaultLayout,
+    children: [{ path: '', name: 'myproduct', component: MyProductPage }],
+  },
 
   // 로그인
   {

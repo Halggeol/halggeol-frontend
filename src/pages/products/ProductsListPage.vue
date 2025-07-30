@@ -3,6 +3,9 @@
     <ProductFilter @update:filters="handleFilterChange" />
 
     <div class="flex-1 p-5">
+      <div class="flex justify-end mb-4">
+        <ProductSort v-model:sort="currentSort" />
+      </div>
       <h2 class="text-2xl font-bold mb-6 text-gray-800">상품 목록</h2>
       <div
         v-if="filteredProducts.length === 0"
@@ -25,6 +28,7 @@
 import { ref, computed } from 'vue';
 import ProductCard from '@/components/products/ProductCard.vue';
 import ProductFilter from '@/components/products/ProductFilter.vue';
+import ProductSort from '@/components/products/ProductSort.vue';
 
 // 예시 mock 데이터 (이전과 동일)
 const allProducts = ref([
@@ -91,6 +95,8 @@ const currentFilters = ref({
   maxAmount: 100000000,
 });
 
+const currentSort = ref('popularDesc');
+
 const handleFilterChange = filters => {
   currentFilters.value = filters;
   console.log('Parent received filters:', filters);
@@ -142,6 +148,20 @@ const filteredProducts = computed(() => {
         product.min_amount >= filters.minAmount &&
         product.min_amount <= filters.maxAmount
     );
+  }
+
+  // 정렬
+  switch (currentSort.value) {
+    case 'rateDesc':
+      productsToFilter = productsToFilter
+        .slice()
+        .sort((a, b) => b.rate - a.rate);
+      break;
+    case 'popularDesc':
+      productsToFilter = productsToFilter
+        .slice()
+        .sort((a, b) => (b.viewCnt || 0) - (a.viewCnt || 0));
+      break;
   }
 
   return productsToFilter;

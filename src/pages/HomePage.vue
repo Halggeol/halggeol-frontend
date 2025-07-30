@@ -6,53 +6,56 @@ import RegretScoreCard from '@/components/dashboard/RegretScoreCard.vue';
 import RankCards from '@/components/recommand/RankCards.vue';
 import RecommendCards from '@/components/recommand/RecommendCards.vue';
 import router from '@/router';
-import { ref } from 'vue';
+import { ref, onMounted, provide } from 'vue';
+
+import { getDashboardMain } from '@/api/dashboard';
 
 const isLoggedIn = ref(true);
 function onLoginClick() {
   router.push('/login');
 }
-// 목업데이터
-const userName = '김금융';
-const recommendItems = [
-  {
-    productId: 'S11',
-    name: '청년우대적금',
-    matchScore: 50,
-  },
-  {
-    productId: 'A11',
-    name: 'KB퇴직연금배당40증권자투자신탁(채권혼합)C-E',
-    matchScore: 50,
-  },
-  {
-    productId: 'S11',
-    name: '청년우대적금',
-    matchScore: 50,
-  },
-  {
-    productId: 'F10',
-    name: '교보악사 내일환매 초단기우량채증권투자신탁(채권) Ce',
-    matchScore: 50,
-  },
-  {
-    productId: 'S11',
-    name: '청년우대적금',
-    matchScore: 50,
-  },
-];
+
+const dashboardData = ref(null);
+const fetchDashboard = async () => {
+  try {
+    // 임시 토큰 처리
+    // localStorage.setItem(
+    //   'accessToken',
+    //   'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtMm51dXVAZ21haWwuY29tIiwiaWF0IjoxNzUzNzUxMjA0LCJleHAiOjE3NzE3NTEyMDR9.Ho1fXfC2ane0PxTNKnaov2p8lYiQEGWXthjW72av-Y8'
+    // );
+
+    // API 호출
+    const response = await getDashboardMain();
+    dashboardData.value = response.data;
+  } catch (error) {
+    console.error('대시보드 로딩 실패:', error);
+  }
+};
+
+provide('dashboardData', dashboardData);
+
+onMounted(() => {
+  fetchDashboard();
+});
 </script>
+
 <template>
+  <!-- {{ dashboardData }} -->
   <!-- 대시보드 영역 -->
   <div class="dashboard w-full bg-base-200 px-[10.8%]">
     <div
       :class="[{ 'filter blur pointer-events-none select-none': !isLoggedIn }]"
     >
-      <h2 class="title01 pb-12 pt-20">대시보드</h2>
+      <h2 class="title01 pb-12 pt-20">
+        {{ dashboardData?.userName || '사용자' }}님의 대시보드
+      </h2>
       <div class="pb-40 grid grid-rows-2 grid-cols-3 gap-6">
-        <RegretScoreCard />
-        <AssetCard class="row-span-2 col-span-2" />
-        <AssetPortfolioCard />
+        <RegretScoreCard :regret-score="dashboardData?.avgRegretScore" />
+        <AssetCard
+          class="row-span-2 col-span-2"
+          :assets="dashboardData?.assets"
+        />
+        <AssetPortfolioCard :portfolio="dashboardData?.portfolio" />
       </div>
     </div>
     <!-- 블러 영역 -->
@@ -71,14 +74,15 @@ const recommendItems = [
   </div>
   <!-- 추천상품 영역 -->
   <div class="mx-[10.8%]">
-    <RankCards />
+    <RankCards :ranking="dashboardData?.regretRanking" />
   </div>
   <h2 class="title01 pb-12 pt-40 mx-[10.8%]">
-    {{ userName }} 님을 위한 추천 상품
+    {{ dashboardData?.userName || '사용자' }} 님을 위한 추천 상품
   </h2>
   <RecommendCards
     v-if="isLoggedIn"
-    :items="recommendItems"
+    :user-name="dashboardData?.userName"
+    :items="dashboardData?.recommendItems"
     :has-padding="true"
   />
 </template>

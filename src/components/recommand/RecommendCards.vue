@@ -1,17 +1,26 @@
 <script setup>
 import BaseCard from '../common/BaseCard.vue';
+import { computed } from 'vue';
 
 // 추천 상품 카드 콘텐츠 커스텀
 const props = defineProps({
+  userName: {
+    type: String,
+    default: '사용자',
+  },
   items: {
     type: Array,
     required: true,
+    default: () => [],
   },
   hasPadding: {
     type: Boolean,
     default: true,
   },
 });
+
+const userName = computed(() => props.userName);
+const items = computed(() => props.items || []);
 
 // 카테고리 매핑
 const categoryMap = {
