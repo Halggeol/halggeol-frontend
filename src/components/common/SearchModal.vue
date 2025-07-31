@@ -68,6 +68,7 @@
                     'bg-gray-200 cursor-not-allowed': !isSearchButtonActive,
                   }"
                   class="ml-2 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center"
+                  aria-label="검색 실행"
                 >
                   <svg
                     class="h-5 w-5 text-white"
