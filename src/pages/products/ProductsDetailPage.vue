@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { getProductDetail, addScrap, delScrap } from '@/api/product-detail';
 
@@ -13,6 +13,7 @@ const productDetail = ref(null);
 const isLoading = ref(true);
 const error = ref(null);
 const renewDate = '25.06.20';
+const isScrolled = ref(false);
 
 const route = useRoute();
 
@@ -22,6 +23,10 @@ const navigateToLink = () => {
 
 const handleAddScrap = productId => {
   addScrap(productId);
+};
+
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 10;
 };
 
 onMounted(async () => {
@@ -36,6 +41,13 @@ onMounted(async () => {
   } finally {
     isLoading.value = false;
   }
+  
+  // 스크롤 이벤트 리스너 추가
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
 });
 </script>
 
@@ -52,6 +64,7 @@ onMounted(async () => {
       <ProductHeader
         :productDetail="productDetail"
         :renewDate="renewDate"
+        :isScrolled="isScrolled"
         @addScrap="handleAddScrap"
         @navigate="navigateToLink"
       />
@@ -63,6 +76,12 @@ onMounted(async () => {
 
         <!-- AI 한 줄 요약 -->
         <ProductAISummary :productDetail="productDetail" />
+
+        <AISummaryCard
+          summary="AI 한 줄 요약"
+          :good="productDetail.advantage"
+          :bad="productDetail.disadvantage"
+        />
 
         <!-- 상품 정보 -->
         <ProductInfo :productDetail="productDetail" />

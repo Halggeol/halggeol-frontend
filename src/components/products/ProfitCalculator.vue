@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="shouldShowCalculator"
     class="profit-calculator bg-white rounded-xl shadow-card border border-1/2 border-secondary-200 p-8"
   >
     <h3 class="text-title-sm font-semibold text-fg-primary mb-8">
@@ -130,6 +131,12 @@ const idPrefix = computed(() => {
     return props.productDetail.id.charAt(0).toUpperCase();
   }
   return '';
+});
+
+// 계산기 표시 여부 (F, X, A는 숨김)
+const shouldShowCalculator = computed(() => {
+  const prefix = idPrefix.value;
+  return !['F', 'X', 'A'].includes(prefix);
 });
 
 // prefix별 계산기 설정

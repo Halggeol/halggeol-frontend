@@ -112,6 +112,7 @@ const PRODUCT_COLUMN_MAPPING = {
   },
 };
 
+// 데이터값 매핑
 const normalizeProductData = rawData => {
   if (!rawData || !rawData.id) return rawData;
 
@@ -129,7 +130,7 @@ const normalizeProductData = rawData => {
 };
 
 export const getProductDetail = async productId => {
-  const response = await api.get(`/products/detail/${productId}?userId=1`);
+  const response = await api.get(`/products/detail/${productId}`);
   return {
     ...response,
     data: normalizeProductData(response.data),
@@ -146,6 +147,6 @@ export const delScrap = productId => {
   return api.delete('/scrap', {
     data: {
       productId: productId,
-    }
+    },
   });
 };
