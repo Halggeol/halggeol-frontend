@@ -1,36 +1,26 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 // Layout
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
-import SideBarLayout from '@/layouts/SideBarLayout.vue'
-import UserLayout from '@/layouts/UserLayout.vue'
+import DefaultLayout from '@/layouts/DefaultLayout.vue';
+import SideBarLayout from '@/layouts/SideBarLayout.vue';
+import UserLayout from '@/layouts/UserLayout.vue';
 
-// Page
-import HomePage from '@/pages/HomePage.vue'
-import NotFound from '@/pages/NotFound.vue'
-import ProductsListPage from '@/pages/products/ProductsListPage.vue'
-import InsightPage from '@/pages/insight/InsightPage.vue'
-import InsightCollectionPage from '@/pages/insight/InsightCollectionPage.vue'
-import MyPage from '@/pages/user/mypage/MyPage.vue'
-import TermsPage from '@/pages/user/mypage/TermsPage.vue'
-import LoginPage from '@/pages/user/auth/LoginPage.vue'
-import SignupPage from '@/pages/user/auth/SignupPage.vue'
-import SurveyPage from '@/pages/user/survey/SurveyPage.vue'
-import ScrapPage from '@/pages/ScrapPage.vue'
-import SyncMydataPage from '@/pages/user/auth/SyncMydataPage.vue'
-import FindPage from '@/pages/user/auth/FindPage.vue'
-import ProductsDetailPage from '@/pages/products/ProductsDetailPage.vue'
+// 미리 로딩할 페이지
+import HomePage from '@/pages/HomePage.vue';
+import NotFound from '@/pages/NotFound.vue';
+import LoginPage from '@/pages/user/auth/LoginPage.vue';
+import SignupPage from '@/pages/user/auth/SignupPage.vue';
 
 // 사이드바 네비게이션 아이템 정의
 const insightNavItems = [
-  { to: '/insight', label: '이달의 인사이트' },
+  { to: '/insight', label: '회고 인사이트' },
   { to: '/insight/fund', label: '펀드 모아보기' },
   { to: '/insight/forex', label: '공격형 연금 모아보기' },
-]
+];
 
 const mypageNavItems = [
   { to: '/mypage', label: '내 정보' },
   { to: '/mypage/terms', label: '약관 및 정책' },
-]
+];
 
 const commonRoutes = [
   // 홈(메인)+금융상품 둘러보기
@@ -39,8 +29,16 @@ const commonRoutes = [
     component: DefaultLayout,
     children: [
       { path: '', name: 'home', component: HomePage },
-      { path: 'products', name: 'products-list', component: ProductsListPage },
-      { path: 'products/detail', name: 'products-detail', component: ProductsDetailPage },
+      {
+        path: 'products',
+        name: 'products-list',
+        component: () => import('@/pages/products/ProductsListPage.vue'),
+      },
+      {
+        path: 'products/detail/:productId',
+        name: 'products-detail',
+        component: () => import('@/pages/products/ProductsDetailPage.vue'),
+      },
     ],
   },
   // 회고 인사이트
@@ -49,9 +47,21 @@ const commonRoutes = [
     component: SideBarLayout,
     meta: { navItems: insightNavItems },
     children: [
-      { path: '', name: 'insight-monthly', component: InsightPage },
-      { path: 'fund', name: 'collection-fund', component: InsightCollectionPage },
-      { path: 'forex', name: 'collection-forex', component: InsightCollectionPage },
+      {
+        path: '',
+        name: 'insight-monthly',
+        component: () => import('@/pages/insight/InsightPage.vue'),
+      },
+      {
+        path: 'fund',
+        name: 'collection-fund',
+        component: () => import('@/pages/insight/InsightCollectionPage.vue'),
+      },
+      {
+        path: 'forex',
+        name: 'collection-forex',
+        component: () => import('@/pages/insight/InsightCollectionPage.vue'),
+      },
     ],
   },
   // 마이페이지
@@ -60,18 +70,42 @@ const commonRoutes = [
     component: SideBarLayout,
     meta: { navItems: mypageNavItems },
     children: [
-      { path: '', name: 'mypage', component: MyPage },
-      { path: 'terms', name: 'mypage/terms', component: TermsPage },
+      {
+        path: '',
+        name: 'mypage',
+        component: () => import('@/pages/user/mypage/MyPage.vue'),
+      },
+      {
+        path: 'terms',
+        name: 'mypage/terms',
+        component: () => import('@/pages/user/mypage/TermsPage.vue'),
+      },
     ],
   },
   // 관심상품
   {
     path: '/scrap',
     component: DefaultLayout,
-    children: [{ path: '', name: 'scrap', component: ScrapPage }],
+    children: [
+      {
+        path: '',
+        name: 'scrap',
+        component: () => import('@/pages/ScrapPage.vue'),
+      },
+    ],
   },
-
-  // 가입상품 추가해야 함
+  // 가입상품
+  {
+    path: '/myproduct',
+    component: DefaultLayout,
+    children: [
+      {
+        path: '',
+        name: 'myproduct',
+        component: () => import('@/pages/user/myproduct/MyProductPage.vue'),
+      },
+    ],
+  },
 
   // 로그인
   {
@@ -85,8 +119,16 @@ const commonRoutes = [
     path: '/find',
     component: UserLayout,
     children: [
-      { path: 'id', name: 'find/id', component: FindPage },
-      { path: 'pwd', name: 'find/pwd', component: FindPage },
+      {
+        path: 'id',
+        name: 'find/id',
+        component: () => import('@/pages/user/auth/FindPage.vue'),
+      },
+      {
+        path: 'pwd',
+        name: 'find/pwd',
+        component: () => import('@/pages/user/auth/FindPage.vue'),
+      },
     ],
   },
 
@@ -96,9 +138,21 @@ const commonRoutes = [
     component: UserLayout,
     children: [
       { path: '', name: 'signup', component: SignupPage },
-      { path: 'mydata', name: 'mydata', component: SyncMydataPage },
-      { path: 'survey/:type', name: 'survey/knowledge', component: SurveyPage },
-      { path: 'survey/:type', name: 'survey/tendency', component: SurveyPage },
+      {
+        path: 'mydata',
+        name: 'mydata',
+        component: () => import('@/pages/user/auth/SyncMydataPage.vue'),
+      },
+      {
+        path: 'survey/:type',
+        name: 'survey/knowledge',
+        component: () => import('@/pages/user/survey/SurveyPage.vue'),
+      },
+      {
+        path: 'survey/:type',
+        name: 'survey/tendency',
+        component: () => import('@/pages/user/survey/SurveyPage.vue'),
+      },
     ],
   },
 
@@ -107,8 +161,16 @@ const commonRoutes = [
     path: '/mypage',
     component: UserLayout,
     children: [
-      { path: 'survey/:type', name: 'survey/knowledge', component: SurveyPage },
-      { path: 'survey/:type', name: 'survey/tendency', component: SurveyPage },
+      {
+        path: 'survey/:type',
+        name: 'survey/knowledge',
+        component: () => import('@/pages/user/survey/SurveyPage.vue'),
+      },
+      {
+        path: 'survey/:type',
+        name: 'survey/tendency',
+        component: () => import('@/pages/user/survey/SurveyPage.vue'),
+      },
     ],
   },
   // 404 페이지
@@ -117,14 +179,14 @@ const commonRoutes = [
     name: 'NotFound',
     component: NotFound,
   },
-]
+];
 
-const routes = [...commonRoutes]
+const routes = [...commonRoutes];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-})
+});
 
 // 전역 가드 (로그인 여부 확인 등)
 // router.beforeEach((to, from, next) => {
@@ -135,4 +197,21 @@ const router = createRouter({
 //   }
 // })
 
-export default router
+// 첫 페이지 로딩에 불필요한 페이지 이후 로딩
+router.afterEach((to, from) => {
+  setTimeout(() => {
+    import('@/pages/products/ProductsDetailPage.vue');
+    import('@/pages/user/myproduct/MyProductPage.vue');
+    import('@/pages/products/ProductsListPage.vue');
+    import('@/pages/insight/InsightPage.vue');
+    import('@/pages/insight/InsightCollectionPage.vue');
+    import('@/pages/user/mypage/MyPage.vue');
+    import('@/pages/user/mypage/TermsPage.vue');
+    import('@/pages/user/survey/SurveyPage.vue');
+    import('@/pages/ScrapPage.vue');
+    import('@/pages/user/auth/SyncMydataPage.vue');
+    import('@/pages/user/auth/FindPage.vue');
+  }, 3000);
+});
+
+export default router;

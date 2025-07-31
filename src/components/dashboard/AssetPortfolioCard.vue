@@ -2,31 +2,46 @@
 import { computed } from 'vue';
 import BaseCard from '../common/BaseCard.vue';
 
-// 목업 데이터
-const portfolio = [
-  {
-    type: 'savings',
-    ratio: 0.4,
+const props = defineProps({
+  portfolio: {
+    type: Array,
+    default: () => [],
   },
-  {
-    type: 'fund',
-    ratio: 0.3,
-  },
-];
+});
+
+const portfolioData = computed(() => {
+  if (!props.portfolio || props.portfolio.length === 0) {
+    return [
+      // {
+      //   type: 'savings',
+      //   ratio: 0.4,
+      // },
+      // {
+      //   type: 'fund',
+      //   ratio: 0.3,
+      // },
+    ];
+  }
+  return props.portfolio;
+});
 
 // 자산 비율 합계 1 유지
-const normalizedPortfolio = (() => {
+const normalizedPortfolio = computed(() => {
+  const portfolio = portfolioData.value;
+  if (!portfolio || portfolio.length === 0) {
+    return [];
+  }
   const total = portfolio.reduce((sum, item) => sum + item.ratio, 0);
   if (total < 1) {
     return [...portfolio, { type: 'cash', ratio: 1 - total }];
   }
   return portfolio;
-})();
+});
 
 // 공격형 자산 비율 계산
 const aggressiveTypes = ['fund', 'aggressive pension', 'stock'];
 const aggressiveRatio = computed(() =>
-  normalizedPortfolio
+  normalizedPortfolio.value
     .filter(item => aggressiveTypes.includes(item.type))
     .reduce((sum, item) => sum + item.ratio, 0)
 );
