@@ -233,7 +233,6 @@ const selectedProductTypes = ref([]); // 기본 해제 상태
 const banks = [
   { label: '1금융권', value: 'first_tier' },
   { label: '2금융권', value: 'second_tier' },
-  { label: '자산운용', value: 'asset_management' },
 ];
 const bankValues = banks.map(b => b.value);
 const selectedBanks = ref([]); // 기본 해제 상태
