@@ -1,7 +1,14 @@
 <script setup>
 import BaseCard from '../common/BaseCard.vue';
 import { ref, computed } from 'vue';
-import jsonData from './mydata.json'; // 목업 데이터, 추후 실제 api로 수정
+// import jsonData from './mydata.json'; // 목업 데이터, 추후 실제 api로 수정
+
+const props = defineProps({
+  assets: {
+    type: Array,
+    default: () => [],
+  },
+});
 
 // 날짜 필터칩
 const periodMap = {
@@ -12,19 +19,35 @@ const periodMap = {
 };
 const selectedPeriodKey = ref('1M'); // 필터칩 기본: 1개월
 
-// 최근(현재) 자산 계산
-const assetData = jsonData.mydata;
-const today = new Date(assetData.at(-1).date);
-const asset = ref(assetData.at(-1).asset);
+// API 데이터 사용
+const assetData = computed(() => {
+  return props.assets || [];
+});
+
+const today = computed(() => {
+  if (assetData.value.length === 0) return new Date();
+  return new Date(assetData.value.at(-1).date);
+});
+
+const asset = computed(() => {
+  if (assetData.value.length === 0) return 0;
+  return parseInt(assetData.value.at(-1).asset);
+});
+
+// // 목업 데이터 사용 (기존 코드)
+// import jsonData from './mydata.json'; 
+// const assetData = jsonData.mydata;
+// const today = new Date(assetData.at(-1).date);
+// const asset = ref(assetData.at(-1).asset);
 
 // 필터칩 기준 과거 자산
 const pastAsset = computed(() => {
   const offsetDays = periodMap[selectedPeriodKey.value];
-  const pastDate = new Date(today);
-  pastDate.setDate(today.getDate() - offsetDays);
+  const pastDate = new Date(today.value);
+  pastDate.setDate(today.value.getDate() - offsetDays);
   const pastDateStr = pastDate.toISOString().slice(0, 10);
   return (
-    assetData.findLast(entry => entry.date <= pastDateStr)?.asset ?? asset.value
+    assetData.value.findLast(entry => entry.date <= pastDateStr)?.asset ?? asset.value
   );
 });
 
@@ -59,12 +82,12 @@ Chart.register(LineElement, CategoryScale, LinearScale, PointElement, Filler);
 
 const visibleChartData = computed(() => {
   const range = periodMap[selectedPeriodKey.value];
-  const fromDate = new Date(today);
-  fromDate.setDate(today.getDate() - range);
+  const fromDate = new Date(today.value);
+  fromDate.setDate(today.value.getDate() - range);
   const fromStr = fromDate.toISOString().slice(0, 10);
-  const startIdx = assetData.findIndex(entry => entry.date >= fromStr);
+  const startIdx = assetData.value.findIndex(entry => entry.date >= fromStr);
   if (startIdx === -1) return [];
-  return assetData.slice(startIdx);
+  return assetData.value.slice(startIdx);
 });
 
 function groupByWeek(data) {

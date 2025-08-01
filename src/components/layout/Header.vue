@@ -1,13 +1,25 @@
 <script setup>
-import { RouterLink, useRoute } from 'vue-router'
+import { ref } from 'vue'; // ref 추가
+import { RouterLink, useRoute } from 'vue-router';
+import SearchModal from '../common/SearchModal.vue';
 
-const route = useRoute()
+const route = useRoute();
 const navItems = [
   { to: '/', label: '홈', exact: true },
   { to: '/insight', label: '회고 인사이트' },
   { to: '/products', label: '금융상품 둘러보기' },
-]
-const isActive = (to, exact = false) => (exact ? route.path === to : route.path.startsWith(to))
+];
+const isActive = (to, exact = false) =>
+  exact ? route.path === to : route.path.startsWith(to);
+
+// 검색 모달 관련 상태
+const isSearchModalOpen = ref(false); // 검색 모달 열림/닫힘 상태
+
+const handleSearch = query => {
+  console.log('헤더에서 검색 실행:', query);
+  // 실제 검색 로직 (예: 검색 결과 페이지로 이동 또는 검색 결과 표시)
+  // router.push({ path: '/search-results', query: { q: query } });
+};
 </script>
 
 <template>
@@ -34,7 +46,11 @@ const isActive = (to, exact = false) => (exact ? route.path === to : route.path.
         >
           {{ item.label }}
         </RouterLink>
-        <button class="-m-4 p-4" aria-label="Search">
+        <button
+          class="-m-4 p-4"
+          aria-label="Search"
+          @click="isSearchModalOpen = true"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -56,10 +72,20 @@ const isActive = (to, exact = false) => (exact ? route.path === to : route.path.
           <button>{{ username }} 님</button>
         </template>
         <template v-else>
-          <RouterLink to="/login" class="-m-4 p-4 body02 text-fg-primary">로그인</RouterLink>
-          <RouterLink to="/signup" class="-m-4 p-4 body02 text-fg-primary">회원가입</RouterLink>
+          <RouterLink to="/login" class="-m-4 p-4 body02 text-fg-primary"
+            >로그인</RouterLink
+          >
+          <RouterLink to="/signup" class="-m-4 p-4 body02 text-fg-primary"
+            >회원가입</RouterLink
+          >
         </template>
       </div>
     </nav>
   </header>
+
+  <SearchModal
+    :is-open="isSearchModalOpen"
+    @update:is-open="isSearchModalOpen = $event"
+    @search="handleSearch"
+  />
 </template>

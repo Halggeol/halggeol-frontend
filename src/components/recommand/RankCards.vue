@@ -1,44 +1,24 @@
 <script setup>
 import BaseCard from '../common/BaseCard.vue';
+import { computed } from 'vue';
 
-// 목업데이터
-const regretRanking = [
-  {
-    rank: 1,
-    productId: 'A11',
-    productName: 'KB퇴직연금배당40증권자투자신탁(채권혼합)C-E',
-    risk: 1,
-    rate: 4.5,
-    period: 12, //월 단위
+const props = defineProps({
+  ranking: {
+    type: Array,
+    default: () => [],
   },
-  {
-    rank: 2,
-    productId: 'F10',
-    productName: '교보악사 내일환매 초단기우량채증권투자신탁(채권) Ce',
-    risk: 2,
-  },
-  {
-    rank: 3,
-    productId: 'D12',
-    productName: 'KB내맘대로적금',
-    risk: 5,
-  },
-  {
-    rank: 4,
-    productId: 'X12',
-    productName: '상품명',
-    risk: 5,
-  },
-  {
-    rank: 5,
-    productId: 'S19',
-    productName: '상품명',
-    risk: 6,
-  },
-];
+});
 
-const topItem = regretRanking[0];
-const restItems = regretRanking.slice(1);
+const regretRanking = computed(() => {
+  // API 데이터가 없으면 빈 배열 반환
+  if (!props.ranking || props.ranking.length === 0) {
+    return [];
+  }
+  return props.ranking;
+});
+
+const topItem = computed(() => regretRanking.value[0]);
+const restItems = computed(() => regretRanking.value.slice(1));
 
 // 카테고리 매핑
 const categoryMap = {
@@ -70,6 +50,7 @@ function goToDetail(productId) {
   <!-- <span><i></i>고위험상품 숨기기</span> -->
   <div class="ranking pb-40 grid grid-rows-2 grid-cols-3 gap-6">
     <BaseCard
+      v-if="topItem"
       @click="goToDetail(topItem.productId)"
       variant="tinted"
       size="lg"
@@ -95,8 +76,8 @@ function goToDetail(productId) {
           </div>
         </div>
         <div class="rank-1 mt-20 absolute right-0 text-right">
-          <p class="title-lg">{{ topItem.rate }}%</p>
-          <p class="text-body02">{{ topItem.period }}개월 기준</p>
+          <p class="title-lg">{{ topItem.rate || 0 }}%</p>
+          <p class="text-body02">{{ topItem.period || 0 }}개월 기준</p>
         </div>
       </div>
     </BaseCard>
