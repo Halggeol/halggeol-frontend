@@ -1,34 +1,45 @@
 import api from '@/utils/axios';
 
 const PRODUCT_COLUMN_MAPPING = {
+  // Deposit (예금) - DepositDetailResponseDTO 기준
   D: {
     name: 'name',
     rate: 'rate',
     primeRate: 'primeRate',
-    saveTerm: 'saveTerm',
     scrapCnt: 'scrapCnt',
     joinMember: 'joinMember',
     joinWay: 'joinWay',
-    minimumCost: 'minimumCost',
+    minimumCost: 'minLimit',
     company: 'company',
     caution: 'caution',
     regLink: 'regLink',
     id: 'id',
     maxLimit: 'maxLimit',
     bonusCondition: 'bonusCondition',
+    rateType: 'rateType',
+    endDate: 'endDate',
+    joinDeny: 'joinDeny',
+    score: 'score',
+    risk: 'risk',
+    viewCnt: 'viewCnt',
+    regretCnt: 'regretCnt',
+    minSaveTerm: 'minSaveTerm',
+    maxSaveTerm: 'maxSaveTerm',
+    description: 'description',
     advantage: 'advantage',
     disadvantage: 'disadvantage',
     isScraped: 'isScraped',
   },
+
+  // Savings (적금) - SavingsDetailResponseDTO 기준
   S: {
     name: 'name',
     rate: 'rate',
     primeRate: 'primeRate',
-    saveTerm: 'saveTerm',
     scrapCnt: 'scrapCnt',
     joinMember: 'joinMember',
     joinWay: 'joinWay',
-    minimumCost: 'minimumCost',
+    minimumCost: 'minLimit',
     company: 'company',
     caution: 'caution',
     regLink: 'regLink',
@@ -37,82 +48,111 @@ const PRODUCT_COLUMN_MAPPING = {
     rateType: 'rateType',
     saveType: 'saveType',
     bonusCondition: 'bonusCondition',
+    endDate: 'endDate',
+    joinDeny: 'joinDeny',
+    score: 'score',
+    risk: 'risk',
+    viewCnt: 'viewCnt',
+    regretCnt: 'regretCnt',
+    minSaveTerm: 'minSaveTerm',
+    maxSaveTerm: 'maxSaveTerm',
+    description: 'description',
     advantage: 'advantage',
     disadvantage: 'disadvantage',
     isScraped: 'isScraped',
   },
+
+  // Fund (펀드) - FundDetailResponseDTO 기준
   F: {
     name: 'name',
     rate: 'rate',
-    primeRate: 'rate',
-    saveTerm: 'investmentType',
     scrapCnt: 'scrapCnt',
-    joinMember: 'target',
-    joinWay: 'investmentType',
-    minimumCost: 'minimumCost',
     company: 'company',
     caution: 'caution',
     regLink: 'regLink',
     id: 'id',
     fundPrice: 'fundPrice',
     fundPriceMovement: 'fundPriceMovement',
-    ter: 'ter',
+    ter: 'TER',
     category: 'category',
     theme: 'theme',
     investmentWarningGrade: 'investmentWarningGrade',
     upfrontFee: 'upfrontFee',
     managementFee: 'managementFee',
+    minLimit: 'minLimit',
+    target: 'target',
+    investmentType: 'investmentType',
+    score: 'score',
+    risk: 'risk',
+    viewCnt: 'viewCnt',
+    regretCnt: 'regretCnt',
+    description: 'description',
     advantage: 'advantage',
     disadvantage: 'disadvantage',
     isScraped: 'isScraped',
   },
+
+  // Forex (외화) - ForexDetailResponseDTO 기준
   X: {
     name: 'name',
     rate: 'rate',
-    primeRate: 'rate',
-    saveTerm: 'autoRenew',
     scrapCnt: 'scrapCnt',
-    joinMember: 'target',
-    joinWay: 'rateGiveWay',
-    minimumCost: 'regFund',
     company: 'company',
     caution: 'caution',
     regLink: 'regLink',
     id: 'id',
     currency: 'currency',
     description: 'description',
+    minLimit: 'minLimit',
+    maxLimit: 'maxLimit',
     regLimitDate: 'regLimitDate',
+    autoRenew: 'autoRenew',
     extraDeposit: 'extraDeposit',
+    rateGiveWay: 'rateGiveWay',
     taxRefund: 'taxRefund',
     protect: 'protect',
+    score: 'score',
+    risk: 'risk',
+    viewCnt: 'viewCnt',
+    regretCnt: 'regretCnt',
+    rateType: 'rateType',
+    minSaveTerm: 'minSaveTerm',
+    maxSaveTerm: 'maxSaveTerm',
     advantage: 'advantage',
     disadvantage: 'disadvantage',
     isScraped: 'isScraped',
   },
+
+  // Pension (연금) - PensionDetailResponseDTO 기준
   P: {
     name: 'name',
     rate: 'rate',
-    primeRate: 'lastYearProfitRate',
-    saveTerm: 'pensionType',
     scrapCnt: 'scrapCnt',
-    joinMember: 'pensionKind',
-    joinWay: 'pensionType',
-    minimumCost: 'minimumGuaranteeRate',
     company: 'company',
     caution: 'caution',
     regLink: 'regLink',
     id: 'id',
+    pensionPriceMovement: 'pensionPriceMovement',
     pensionKind: 'pensionKind',
     pensionType: 'pensionType',
     minGuaranteeRate: 'minGuaranteeRate',
-    lastYearProfitRate: 'lastYearProfitRate',
+    endDate: 'endDate',
+    score: 'score',
+    risk: 'risk',
+    viewCnt: 'viewCnt',
+    regretCnt: 'regretCnt',
+    saveTerm: 'saveTerm',
+    rateType: 'rateType',
+    minLimit: 'minLimit',
+    maxLimit: 'maxLimit',
+    description: 'description',
     advantage: 'advantage',
     disadvantage: 'disadvantage',
     isScraped: 'isScraped',
   },
 };
 
-// 데이터값 매핑
+// 데이터값 매핑 및 추가 필드 생성
 const normalizeProductData = rawData => {
   if (!rawData || !rawData.id) return rawData;
 
@@ -122,8 +162,47 @@ const normalizeProductData = rawData => {
   if (!mapping) return rawData;
 
   const normalized = {};
+
+  // 기본 매핑
   for (const [normalizedKey, sourceKey] of Object.entries(mapping)) {
     normalized[normalizedKey] = rawData[sourceKey];
+  }
+
+  // 공통 추가 필드들 - 명확한 이름으로
+  normalized.productType = prefix; // 상품 타입
+
+  // 각 상품별 추가 계산 필드들
+  switch (prefix) {
+    case 'D': // 예금
+    case 'S': // 적금
+      normalized.primeRate = rawData.primeRate || rawData.rate; // primeRate가 없으면 rate 사용
+      normalized.saveTerm = rawData.minSaveTerm || 0; // 기본 저축 기간
+      normalized.minimumCost = rawData.minLimit || 0; // 최소 가입 금액
+      break;
+
+    case 'F': // 펀드
+      normalized.primeRate = rawData.rate; // 펀드는 rate를 primeRate로 사용
+      normalized.saveTerm = rawData.investmentType || ''; // 투자 유형을 기간 대신 사용
+      normalized.joinMember = rawData.target || ''; // 투자 대상을 가입 대상으로 사용
+      normalized.joinWay = rawData.investmentType || ''; // 투자 유형을 가입 방법으로 사용
+      normalized.minimumCost = rawData.minLimit || 0;
+      break;
+
+    case 'X': // 외화
+      normalized.primeRate = rawData.rate; // 외화는 rate를 primeRate로 사용
+      normalized.saveTerm = rawData.autoRenew || ''; // 자동 연장을 기간 대신 사용
+      normalized.joinMember = rawData.currency || ''; // 통화를 가입 대상으로 사용
+      normalized.joinWay = rawData.rateGiveWay || ''; // 금리 지급 방식을 가입 방법으로 사용
+      normalized.minimumCost = rawData.minLimit || 0;
+      break;
+
+    case 'P': // 연금
+      normalized.primeRate = rawData.rate; // 연금은 rate를 primeRate로 사용
+      normalized.saveTerm = rawData.pensionType || ''; // 연금 유형을 기간 대신 사용
+      normalized.joinMember = rawData.pensionKind || ''; // 연금 종류를 가입 대상으로 사용
+      normalized.joinWay = rawData.pensionType || ''; // 연금 유형을 가입 방법으로 사용
+      normalized.minimumCost = rawData.minGuaranteeRate || 0; // 최소 보장 이율을 최소 비용으로 사용
+      break;
   }
 
   return normalized;
