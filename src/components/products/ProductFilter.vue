@@ -96,21 +96,21 @@
           <input
             type="radio"
             id="periodFree"
-            value=""
+            :value="null"
             v-model="selectedSubscriptionPeriod"
             class="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
           />
           <label
             for="periodFree"
             class="ml-2 text-sm text-gray-700 cursor-pointer"
-            >자유</label
+            >전체</label
           >
         </li>
         <li class="mb-2 flex items-center">
           <input
             type="radio"
             id="period6M"
-            value="6M"
+            :value="6"
             v-model="selectedSubscriptionPeriod"
             class="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
           />
@@ -124,7 +124,7 @@
           <input
             type="radio"
             id="period12M"
-            value="12M"
+            :value="12"
             v-model="selectedSubscriptionPeriod"
             class="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
           />
@@ -138,7 +138,7 @@
           <input
             type="radio"
             id="period24M"
-            value="24M"
+            :value="24"
             v-model="selectedSubscriptionPeriod"
             class="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
           />
@@ -152,7 +152,7 @@
           <input
             type="radio"
             id="period36M"
-            value="36M"
+            :value="36"
             v-model="selectedSubscriptionPeriod"
             class="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
           />
@@ -215,7 +215,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, defineEmits } from 'vue';
 
 const MIN_AMOUNT = 100000;
 const errorMessage = ref('');
@@ -228,21 +228,21 @@ const productTypes = [
   { label: '외화', value: 'forex' },
 ];
 const productTypeValues = productTypes.map(t => t.value);
-const selectedProductTypes = ref([]); // 기본 해제 상태
+const selectedProductTypes = ref([]);
 
 const banks = [
-  { label: '1금융권', value: 'first_tier' },
-  { label: '2금융권', value: 'second_tier' },
+  { label: '1금융권', value: 1 },
+  { label: '2금융권', value: 2 },
 ];
 const bankValues = banks.map(b => b.value);
-const selectedBanks = ref([]); // 기본 해제 상태
+const selectedBanks = ref([]);
 
-const selectedSubscriptionPeriod = ref(null);
+const selectedSubscriptionPeriod = ref(null); // 빈 문자열 대신 null 사용
 
 const inputAmount = ref(null);
-const selectedAmount = ref(0);
+const selectedAmount = ref(null); // 0 대신 null 사용
 
-const emit = defineEmits(['update:filters']);
+const emit = defineEmits(['filtersChanged']);
 
 function toggleAllProductTypes(event) {
   if (event.target.checked) {
@@ -261,36 +261,52 @@ function toggleAllBanks(event) {
 }
 
 const handleAmountInput = () => {
-  if (inputAmount.value !== null && !isNaN(inputAmount.value)) {
-    if (inputAmount.value >= MIN_AMOUNT) {
-      selectedAmount.value = inputAmount.value;
-      errorMessage.value = ''; // 에러 메시지 제거
-    } else {
-      errorMessage.value = '10만원 이상 입력해 주세요.';
-      selectedAmount.value = 0;
-    }
-  } else {
-    selectedAmount.value = 0;
+  if (
+    inputAmount.value === null ||
+    isNaN(inputAmount.value) ||
+    inputAmount.value === ''
+  ) {
+    selectedAmount.value = null;
     errorMessage.value = '유효한 숫자를 입력해 주세요.';
+  } else if (inputAmount.value >= MIN_AMOUNT) {
+    selectedAmount.value = inputAmount.value;
+    errorMessage.value = '';
+  } else {
+    errorMessage.value = '10만원 이상 입력해 주세요.';
+    selectedAmount.value = null;
   }
 };
 
 const clearInputAmount = () => {
   inputAmount.value = null;
-  selectedAmount.value = 0;
+  selectedAmount.value = null;
+  errorMessage.value = '';
 };
 
-// 모든 필터를 초기화하는 함수
 const resetFilters = () => {
   selectedProductTypes.value = [];
   selectedBanks.value = [];
-  selectedSubscriptionPeriod.value = ''; // '자유'로 초기화
+  selectedSubscriptionPeriod.value = null;
   inputAmount.value = null;
-  selectedAmount.value = 0;
+  selectedAmount.value = null;
   errorMessage.value = '';
-  // 필터 초기화 후, 바로 상위 컴포넌트로 변경된 필터 상태를 emit (watch에 의해 자동 호출될 것임)
 };
 
+// 백엔드 API 파라미터에 맞춰서 필터 데이터를 구성하여 emit
+const emitFilters = () => {
+  const filters = {
+    // 백엔드 파라미터명에 맞춤
+    types:
+      selectedProductTypes.value.length > 0 ? selectedProductTypes.value : null,
+    fSectors: selectedBanks.value.length > 0 ? selectedBanks.value : null,
+    saveTerm: selectedSubscriptionPeriod.value,
+    minAmount: selectedAmount.value ? String(selectedAmount.value) : null,
+  };
+
+  emit('filtersChanged', filters);
+};
+
+// 필터 변경 시 즉시 부모 컴포넌트에 알림
 watch(
   [
     selectedProductTypes,
@@ -298,15 +314,8 @@ watch(
     selectedSubscriptionPeriod,
     selectedAmount,
   ],
-  ([newTypes, newBanks, newPeriod, newSelectedAmount]) => {
-    emit('update:filters', {
-      productTypes: newTypes,
-      banks: newBanks,
-      subscriptionPeriod: newPeriod || null,
-      subscriptionAmount: newSelectedAmount,
-      minAmount: newSelectedAmount,
-      maxAmount: newSelectedAmount > 0 ? newSelectedAmount : 100000000,
-    });
+  () => {
+    emitFilters();
   },
   { deep: true, immediate: true }
 );
