@@ -10,7 +10,7 @@ export const getDashboardMain = async () => {
   }
 };
 
-export const analyzeProductWithGemini = async (productDetail) => {
+export const analyzeProductWithGemini = async productDetail => {
   try {
     const response = await api.post('/gemini/analyze', productDetail);
     return response.data;
