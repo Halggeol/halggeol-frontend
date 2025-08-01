@@ -280,3 +280,26 @@ export const delScrap = productId => {
     },
   });
 };
+
+export const checkRecommendProductStatus = async productId => {
+  try {
+    const response = await api.get(`/products/detail/${productId}/status`);
+    return response.data;
+  } catch (error) {
+    console.error('추천 상품 상태 확인 실패:', error);
+    throw error;
+  }
+};
+
+export const updateProductStatus = async (productId, status) => {
+  try {
+    const response = await api.patch('/products/detail', {
+      id: productId,
+      status: status
+    });
+    return response.data;
+  } catch (error) {
+    console.error('상품 상태 업데이트 실패:', error);
+    throw error;
+  }
+};

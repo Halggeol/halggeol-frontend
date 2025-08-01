@@ -59,9 +59,9 @@ onMounted(() => {
         {{ dashboardData?.userName || '사용자' }}님의 대시보드
       </h2>
       <div class="pb-40 grid grid-rows-2 grid-cols-3 gap-6">
-        <RegretScoreCard 
-          :regret-score="dashboardData?.avgRegretScore" 
-          :feedback-ratio="dashboardData?.feedbackRatio" 
+        <RegretScoreCard
+          :regret-score="dashboardData?.avgRegretScore"
+          :feedback-ratio="dashboardData?.feedbackRatio"
         />
         <AssetCard
           class="row-span-2 col-span-2"
