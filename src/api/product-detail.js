@@ -73,7 +73,7 @@ const PRODUCT_COLUMN_MAPPING = {
     id: 'id',
     fundPrice: 'fundPrice',
     fundPriceMovement: 'fundPriceMovement',
-    ter: 'TER',
+    ter: 'ter',
     category: 'category',
     theme: 'theme',
     investmentWarningGrade: 'investmentWarningGrade',
@@ -123,8 +123,36 @@ const PRODUCT_COLUMN_MAPPING = {
     isScraped: 'isScraped',
   },
 
-  // Pension (연금) - PensionDetailResponseDTO 기준
-  P: {
+  // Aggressive Pension (공격형 연금) - PensionDetailResponseDTO 기준
+  A: {
+    name: 'name',
+    rate: 'rate',
+    scrapCnt: 'scrapCnt',
+    company: 'company',
+    caution: 'caution',
+    regLink: 'regLink',
+    id: 'id',
+    pensionPriceMovement: 'pensionPriceMovement',
+    pensionKind: 'pensionKind',
+    pensionType: 'pensionType',
+    minGuaranteeRate: 'minGuaranteeRate',
+    endDate: 'endDate',
+    score: 'score',
+    risk: 'risk',
+    viewCnt: 'viewCnt',
+    regretCnt: 'regretCnt',
+    saveTerm: 'saveTerm',
+    rateType: 'rateType',
+    minLimit: 'minLimit',
+    maxLimit: 'maxLimit',
+    description: 'description',
+    advantage: 'advantage',
+    disadvantage: 'disadvantage',
+    isScraped: 'isScraped',
+  },
+
+  // Conservative Pension (안정형 연금) - PensionDetailResponseDTO 기준
+  C: {
     name: 'name',
     rate: 'rate',
     scrapCnt: 'scrapCnt',
@@ -191,18 +219,41 @@ const normalizeProductData = rawData => {
     case 'X': // 외화
       normalized.primeRate = rawData.rate; // 외화는 rate를 primeRate로 사용
       normalized.saveTerm = rawData.autoRenew || ''; // 자동 연장을 기간 대신 사용
-      normalized.joinMember = rawData.currency || ''; // 통화를 가입 대상으로 사용
+      normalized.joinMember = ''; // 통화를 가입 대상으로 사용
       normalized.joinWay = rawData.rateGiveWay || ''; // 금리 지급 방식을 가입 방법으로 사용
       normalized.minimumCost = rawData.minLimit || 0;
       break;
 
-    case 'P': // 연금
+    case 'A': // 공격형 연금
+    case 'C': // 안정형 연금
       normalized.primeRate = rawData.rate; // 연금은 rate를 primeRate로 사용
       normalized.saveTerm = rawData.pensionType || ''; // 연금 유형을 기간 대신 사용
-      normalized.joinMember = rawData.pensionKind || ''; // 연금 종류를 가입 대상으로 사용
-      normalized.joinWay = rawData.pensionType || ''; // 연금 유형을 가입 방법으로 사용
+      normalized.joinMember = ''; // 연금 종류를 가입 대상으로 사용
+      normalized.joinWay = ''; // 연금 유형을 가입 방법으로 사용
       normalized.minimumCost = rawData.minGuaranteeRate || 0; // 최소 보장 이율을 최소 비용으로 사용
       break;
+  }
+
+  // 날짜 필드 포맷팅 (timestamp를 YYYY.MM.DD 형식으로 변환)
+  const formatDate = timestamp => {
+    if (!timestamp) return '';
+    try {
+      const date = new Date(parseInt(timestamp));
+      const year = date.getFullYear().toString().slice(-2); // 뒤 2자리만
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}.${month}.${day}`;
+    } catch (error) {
+      return '';
+    }
+  };
+
+  // 날짜 필드들 포맷팅
+  if (normalized.endDate) {
+    normalized.endDate = formatDate(normalized.endDate);
+  }
+  if (normalized.regLimitDate) {
+    normalized.regLimitDate = formatDate(normalized.regLimitDate);
   }
 
   return normalized;

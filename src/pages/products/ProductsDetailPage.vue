@@ -33,7 +33,7 @@ const handleScroll = () => {
 
   const scrollY = window.scrollY;
 
-  if (!isScrolled.value && scrollY > 320) {
+  if (!isScrolled.value && scrollY > 360) {
     isChangingState = true;
     const currentScrollY = window.scrollY;
 
@@ -41,7 +41,7 @@ const handleScroll = () => {
 
     // 헤더 높이 변화로 인한 스크롤 위치 보정
     requestAnimationFrame(() => {
-      const heightDifference = 240; // 320px - 80px = 240px
+      const heightDifference = 280; // 360px - 80px = 280px
       window.scrollTo(0, currentScrollY - heightDifference);
 
       setTimeout(() => {
@@ -56,7 +56,7 @@ const handleScroll = () => {
 
     // 헤더 높이 변화로 인한 스크롤 위치 보정
     requestAnimationFrame(() => {
-      const heightDifference = 240; // 320px - 80px = 240px
+      const heightDifference = 280; // 360px - 80px = 280px
       window.scrollTo(0, currentScrollY + heightDifference);
 
       setTimeout(() => {
@@ -136,7 +136,7 @@ onUnmounted(() => {
         <!-- 상품 주요 정보 카드 (AI 요약 포함) -->
         <ProductSummaryCard :productDetail="productDetail">
           <AISummaryCard
-            summary="AI 한 줄 요약"
+            :summary="productDetail.description"
             :good="productDetail.advantage"
             :bad="productDetail.disadvantage"
           />
