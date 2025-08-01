@@ -2,6 +2,7 @@
   <div class="space-y-4">
     <BaseCard
       size="lg"
+      variant="outline"
       class="gap-8 flex justify-around items-start w-full p-8"
     >
       <!-- 최고금리 -->

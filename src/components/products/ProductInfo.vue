@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="bg-white rounded-xl shadow-card border border-1/2 border-secondary-200 p-8"
-  >
+  <BaseCard size="lg" variant="outline">
     <h3 class="text-title-sm font-semibold text-fg-primary mb-8">상품 정보</h3>
 
     <div class="space-y-6">
@@ -50,10 +48,11 @@
         }}</span>
       </div>
     </div>
-  </div>
+  </BaseCard>
 </template>
 
 <script setup>
+import BaseCard from '@/components/common/BaseCard.vue';
 defineProps({
   productDetail: {
     type: Object,

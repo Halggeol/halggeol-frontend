@@ -1,7 +1,9 @@
 <template>
-  <div
+  <BaseCard 
     v-if="shouldShowCalculator"
-    class="profit-calculator bg-white rounded-xl shadow-card border border-1/2 border-secondary-200 p-8"
+    size="lg" 
+    variant="outline"
+    class="profit-calculator"
   >
     <h3 class="text-title-sm text-fg-primary mb-8">
       <div
@@ -103,10 +105,11 @@
         </div>
       </div>
     </div>
-  </div>
+  </BaseCard>
 </template>
 
 <script setup>
+import BaseCard from '@/components/common/BaseCard.vue';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
