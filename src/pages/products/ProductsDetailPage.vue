@@ -30,36 +30,35 @@ let isChangingState = false;
 
 const handleScroll = () => {
   if (isChangingState) return; // 상태 변경 중에는 스크롤 이벤트 무시
-  
+
   const scrollY = window.scrollY;
-  
+
   if (!isScrolled.value && scrollY > 280) {
     isChangingState = true;
     const currentScrollY = window.scrollY;
-    
+
     isScrolled.value = true;
-    
+
     // 헤더 높이 변화로 인한 스크롤 위치 보정
     requestAnimationFrame(() => {
       const heightDifference = 200; // 280px - 80px = 200px
       window.scrollTo(0, currentScrollY - heightDifference);
-      
+
       setTimeout(() => {
         isChangingState = false;
       }, 100);
     });
-    
   } else if (isScrolled.value && scrollY < 80) {
     isChangingState = true;
     const currentScrollY = window.scrollY;
-    
+
     isScrolled.value = false;
-    
+
     // 헤더 높이 변화로 인한 스크롤 위치 보정
     requestAnimationFrame(() => {
       const heightDifference = 200; // 280px - 80px = 200px
       window.scrollTo(0, currentScrollY + heightDifference);
-      
+
       setTimeout(() => {
         isChangingState = false;
       }, 100);
@@ -106,11 +105,21 @@ onUnmounted(() => {
 
 <template>
   <div class="product-detail-page">
-    <div v-if="isLoading" class="loading-message">
-      <p>상품 상세 정보를 불러오는 중...</p>
+    <div
+      v-if="isLoading"
+      class="flex flex-col items-center justify-center min-h-[400px] space-y-4"
+    >
+      <span class="loading loading-spinner loading-lg"></span>
+      <p class="text-callout text-fg-secondary">
+        상품 상세 정보를 불러오는 중...
+      </p>
     </div>
-    <div v-else-if="error" class="error-message">
-      <p>{{ error }}</p>
+    <div
+      v-else-if="error"
+      class="flex flex-col items-center justify-center min-h-[400px] space-y-4"
+    >
+      <div class="text-status-red text-title-sm">⚠️</div>
+      <p class="text-callout text-fg-secondary text-center">{{ error }}</p>
     </div>
     <div v-else-if="productDetail">
       <!-- 헤더 섹션 -->

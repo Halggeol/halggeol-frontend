@@ -16,8 +16,11 @@ function onLoginClick() {
 }
 
 const dashboardData = ref(null);
+const isLoading = ref(true);
+
 const fetchDashboard = async () => {
   try {
+    isLoading.value = true;
     // 임시 토큰 처리
     // localStorage.setItem(
     //   'accessToken',
@@ -29,6 +32,8 @@ const fetchDashboard = async () => {
     dashboardData.value = response.data;
   } catch (error) {
     console.error('대시보드 로딩 실패:', error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -40,9 +45,15 @@ onMounted(() => {
 </script>
 
 <template>
+  <!-- 로딩 상태 -->
+  <div v-if="isLoading" class="flex flex-col items-center justify-center min-h-screen space-y-6">
+    <span class="loading loading-spinner loading-xl"></span>
+    <p class="text-callout text-fg-secondary">대시보드를 불러오는 중...</p>
+  </div>
+
   <!-- {{ dashboardData }} -->
   <!-- 대시보드 영역 -->
-  <div class="dashboard w-full bg-base-200 px-[10.8%]">
+  <div v-else class="dashboard w-full bg-base-200 px-[10.8%]">
     <div
       :class="[{ 'filter blur pointer-events-none select-none': !isLoggedIn }]"
     >
