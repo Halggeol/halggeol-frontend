@@ -139,6 +139,11 @@ const commonRoutes = [
     children: [
       { path: '', name: 'signup', component: SignupPage },
       {
+        path: 'request',
+        name: 'signup/request',
+        component: () => import('@/pages/user/auth/SignupRequestPage.vue'),
+      },
+      {
         path: 'mydata',
         name: 'mydata',
         component: () => import('@/pages/user/auth/SyncMydataPage.vue'),
