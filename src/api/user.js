@@ -32,3 +32,13 @@ export const join = async (token, body) => {
     throw error;
   }
 };
+
+export const login = async (body) => {
+  try {
+    const response = await api.post('/login', body);
+    return response;
+  } catch (error) {
+    console.error('User Login API Error:', error);
+    throw error;
+  }
+};
