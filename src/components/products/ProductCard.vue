@@ -112,7 +112,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['productClick', 'detailClick', 'toggleLike']);
+const emit = defineEmits(['productClick', 'toggleLike']);
 
 // 상품 유형 라벨 변환
 const getProductTypeLabel = type => {

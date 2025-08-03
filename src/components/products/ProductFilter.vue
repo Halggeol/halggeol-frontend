@@ -301,7 +301,7 @@ const emitFilters = () => {
       selectedProductTypes.value.length > 0 ? selectedProductTypes.value : null,
     fSectors: selectedBanks.value.length > 0 ? selectedBanks.value : null,
     saveTerm: selectedSubscriptionPeriod.value,
-    minAmount: selectedAmount.value ? String(selectedAmount.value) : null,
+    minAmount: selectedAmount.value ? selectedAmount.value : null,
   };
 
   emit('filtersChanged', filters);
