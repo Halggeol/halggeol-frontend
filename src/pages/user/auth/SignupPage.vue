@@ -158,12 +158,10 @@ async function handleJoinSubmit() {
       await join(token.value, form.value);
 
       result.value = {
-        message: '회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.',
+        message: '회원가입이 완료되었습니다.',
         success: true
       };
-      setTimeout(() => {
-        router.push('/login');
-      }, 2000);
+      router.push({ name: 'survey', params: { type: 'knowledge' } });
     } catch (error) {
       if (error.response?.status == 409) {
         result.value = {
