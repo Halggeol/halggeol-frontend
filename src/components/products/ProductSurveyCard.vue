@@ -1,93 +1,88 @@
 <template>
-  <BaseCard size="lg" variant="tinted" ㅇ>
+  <!-- 이미 피드백을 남긴 경우 블러 처리 -->
+  <div v-if="isCompleted" class="relative">
+    <div class="filter blur-sm pointer-events-none select-none">
+      <BaseCard size="lg" variant="tinted">
+        <div class="space-y-6">
+          <h3 class="text-title-sm font-semibold text-fg-primary">
+            금융상품은 어떠셨나요?
+          </h3>
+
+          <div class="flex items-center justify-between">
+            <!-- 라디오 버튼 그룹 -->
+            <div class="flex gap-4">
+              <label
+                v-for="option in statusOptions"
+                :key="option.value"
+                class="flex items-center cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  :value="option.value"
+                  class="mr-2 w-4 h-4 text-primary bg-base-100 border-border-primary focus:ring-primary focus:ring-2"
+                />
+                <span class="text-callout text-fg-primary">{{ option.label }}</span>
+              </label>
+            </div>
+
+            <!-- 제출 버튼 -->
+            <BaseButton
+              variant="primary"
+              size="sm"
+              class="px-6"
+            >
+              제출
+            </BaseButton>
+          </div>
+        </div>
+      </BaseCard>
+    </div>
+    <div class="absolute inset-0 flex items-center justify-center bg-base-100/50">
+      <div class="text-center p-6 bg-base-100 rounded-lg border border-border-primary shadow-lg">
+        <h4 class="text-title-sm font-semibold text-fg-primary mb-2">
+          ✅ 피드백 완료
+        </h4>
+        <p class="text-body02 text-fg-secondary">
+          이미 이 상품에 대한 피드백을 남겨주셨습니다.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 정상 설문 카드 -->
+  <BaseCard v-else size="lg" variant="tinted">
     <div class="space-y-6">
+      <h3 class="text-title-sm font-semibold text-fg-primary">
+        금융상품은 어떠셨나요?
+      </h3>
+
       <div class="flex items-center justify-between">
-        <h3 class="text-title-sm font-semibold text-fg-primary">
-          📝 이 상품은 어떠셨나요?
-        </h3>
-        <button
-          @click="closeSurvey"
-          class="text-fg-secondary hover:text-fg-primary text-lg"
-        >
-          ✕
-        </button>
-      </div>
-
-      <p class="text-body02 text-fg-secondary">
-        추천드린 상품에 대한 피드백을 남겨주세요. 더 나은 추천을 위해
-        활용됩니다.
-      </p>
-
-      <!-- 만족도 평가 -->
-      <div class="space-y-3">
-        <label class="text-callout font-medium text-fg-primary">
-          이 상품 추천에 대해 얼마나 만족하시나요?
-        </label>
-        <div class="flex gap-2">
-          <button
-            v-for="score in [1, 2, 3, 4, 5]"
-            :key="score"
-            @click="satisfaction = score"
-            :class="[
-              'w-10 h-10 rounded-full border-2 transition-all',
-              satisfaction >= score
-                ? 'bg-primary border-primary text-white'
-                : 'border-border-primary hover:border-primary',
-            ]"
-          >
-            {{ score }}
-          </button>
-        </div>
-      </div>
-
-      <!-- 관심도 평가 -->
-      <div class="space-y-3">
-        <label class="text-callout font-medium text-fg-primary">
-          실제로 가입을 고려하고 계신가요?
-        </label>
-        <div class="flex gap-3">
-          <button
-            v-for="option in interestOptions"
+        <!-- 라디오 버튼 그룹 -->
+        <div class="flex gap-4">
+          <label
+            v-for="option in statusOptions"
             :key="option.value"
-            @click="interest = option.value"
-            :class="[
-              'px-4 py-2 rounded-lg border-2 transition-all text-callout',
-              interest === option.value
-                ? 'bg-primary border-primary text-white'
-                : 'border-border-primary hover:border-primary',
-            ]"
+            class="flex items-center cursor-pointer"
           >
-            {{ option.label }}
-          </button>
+            <input
+              type="radio"
+              :value="option.value"
+              v-model="selectedStatus"
+              class="mr-2 w-4 h-4 text-primary bg-base-100 border-border-primary focus:ring-primary focus:ring-2"
+            />
+            <span class="text-callout text-fg-primary">{{ option.label }}</span>
+          </label>
         </div>
-      </div>
 
-      <!-- 추가 의견 -->
-      <div class="space-y-3">
-        <label class="text-callout font-medium text-fg-primary">
-          추가 의견이 있으시다면 자유롭게 남겨주세요 (선택)
-        </label>
-        <textarea
-          v-model="feedback"
-          placeholder="더 나은 추천을 위한 의견을 남겨주세요..."
-          class="w-full p-3 border border-border-primary rounded-lg resize-none focus:outline-none focus:border-primary"
-          rows="3"
-        ></textarea>
-      </div>
-
-      <!-- 제출 버튼 -->
-      <div class="flex gap-3">
+        <!-- 제출 버튼 -->
         <BaseButton
           variant="primary"
           size="sm"
           @click="submitSurvey"
-          :disabled="!satisfaction || !interest"
-          class="flex-1"
+          :disabled="!selectedStatus"
+          class="px-6"
         >
-          피드백 남기기
-        </BaseButton>
-        <BaseButton variant="ghost" size="sm" @click="skipSurvey" class="px-6">
-          건너뛰기
+          제출
         </BaseButton>
       </div>
     </div>
@@ -95,66 +90,71 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import BaseCard from '@/components/common/BaseCard.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
 import { useNavigationStore } from '@/stores/navigation';
+import { updateProductStatus, addScrap } from '@/api/product-detail';
 
 const navigationStore = useNavigationStore();
 
 // 설문 응답 데이터
-const satisfaction = ref(null);
-const interest = ref(null);
-const feedback = ref('');
+const selectedStatus = ref(null);
 
-const interestOptions = [
-  { value: 'high', label: '매우 관심있음' },
-  { value: 'medium', label: '조금 관심있음' },
-  { value: 'low', label: '관심없음' },
+const statusOptions = [
+  { value: '가입', label: '가입 할래요' },
+  { value: '관심', label: '고민해 볼래요' },
+  { value: '회고', label: '가입 안 할래요' },
 ];
-
-const emit = defineEmits(['survey-completed', 'survey-closed']);
 
 const props = defineProps({
   productId: {
     type: String,
     required: true,
   },
+  productDetail: {
+    type: Object,
+    required: true,
+  },
+  productStatus: {
+    type: [String, Object, null],
+    default: null,
+  },
+});
+
+// 이미 완료된 설문인지 확인
+const isCompleted = computed(() => {
+  return props.productStatus !== null;
 });
 
 // 설문 제출
 const submitSurvey = async () => {
-  const surveyData = {
-    productId: props.productId,
-    satisfaction: satisfaction.value,
-    interest: interest.value,
-    feedback: feedback.value,
-    timestamp: new Date().toISOString(),
-  };
+  if (!selectedStatus.value) return;
 
   try {
-    // TODO: API 호출
-    console.log('설문 제출:', surveyData);
+    await updateProductStatus(props.productId, selectedStatus.value);
+    console.log('상품 상태 업데이트 완료:', selectedStatus.value);
 
-    // 성공 시
-    emit('survey-completed', surveyData);
+    // 추가 액션 처리
+    if (selectedStatus.value === '관심') {
+      // 고민해볼래요 선택 시 스크랩 추가
+      await addScrap(props.productId);
+      console.log('스크랩 추가 완료');
+    } else if (selectedStatus.value === '가입') {
+      // 가입할래요 선택 시 새 창에서 가입 링크 열기
+      if (props.productDetail.regLink) {
+        window.open(props.productDetail.regLink, '_blank');
+      }
+    }
+
     closeSurvey();
   } catch (error) {
-    console.error('설문 제출 실패:', error);
-    // 에러 처리
+    console.error('설문 처리 실패:', error);
   }
-};
-
-// 설문 건너뛰기
-const skipSurvey = () => {
-  emit('survey-closed', { skipped: true });
-  closeSurvey();
 };
 
 // 설문 닫기
 const closeSurvey = () => {
-  // 추천에서 온 상태 초기화
   navigationStore.resetNavigation();
-  emit('survey-closed');
 };
 </script>

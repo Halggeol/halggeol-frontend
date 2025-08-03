@@ -30,17 +30,7 @@ const navigationStore = useNavigationStore();
 const productStatus = ref(null);
 const isStatusLoading = ref(false);
 
-// 추천에서 온 경우 설문 컴포넌트 표시 여부 (API 응답이 null인 경우에만)
-const shouldShowSurvey = computed(() => {
-  return navigationStore.shouldShowSurvey; //개발용
-  // return navigationStore.shouldShowSurvey && productStatus.value === null; //서비스용
-});
-
-// 블러 처리 여부 (추천에서 왔지만 이미 피드백을 남긴 경우 - API 응답이 null이 아닌 경우)
-const shouldBlurSurvey = computed(() => {
-  // return navigationStore.shouldShowSurvey; // 개발용
-  return navigationStore.shouldShowSurvey && productStatus.value !== null; //서비스용
-});
+// 이제 ProductSurveyCard 내부에서 블러 처리를 담당하므로 불필요
 
 const navigateToLink = () => {
   window.open(productDetail.value.regLink, '_blank');
@@ -191,31 +181,11 @@ onUnmounted(() => {
 
         <!-- 설문 컴포넌트 (추천에서 온 경우에만 표시) -->
         <ProductSurveyCard
-          v-if="shouldShowSurvey"
+          v-if="navigationStore.shouldShowSurvey"
           :product-id="route.params.productId"
           :product-detail="productDetail"
+          :product-status="productStatus"
         />
-
-        <!-- 이미 피드백을 남긴 경우 블러 처리된 설문 -->
-        <div v-if="shouldBlurSurvey" class="relative">
-          <div class="filter blur-sm pointer-events-none select-none">
-            <ProductSurveyCard :product-id="route.params.productId" />
-          </div>
-          <div
-            class="absolute inset-0 flex items-center justify-center bg-base-100/50"
-          >
-            <div
-              class="text-center p-6 bg-base-100 rounded-lg border border-border-primary shadow-lg"
-            >
-              <h4 class="text-title-sm font-semibold text-fg-primary mb-2">
-                ✅ 피드백 완료
-              </h4>
-              <p class="text-body02 text-fg-secondary">
-                이미 이 상품에 대한 피드백을 남겨주셨습니다.
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
     <div v-else class="no-data-message">
