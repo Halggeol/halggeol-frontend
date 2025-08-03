@@ -58,7 +58,7 @@
         </div>
         <div v-if="product.viewCnt || product.scrapCnt" class="flex space-x-3">
           <span v-if="product.viewCnt">조회 {{ product.viewCnt }}</span>
-          <span v-if="product.scrapCnt">찜 {{ product.scrapCnt }}</span>
+          <span v-if="product.scrapCnt">관심 {{ product.scrapCnt }}</span>
         </div>
       </div>
     </div>
@@ -87,18 +87,10 @@
         <button
           @click.stop="toggleLike"
           class="text-xl hover:scale-110 transition-transform"
-          :title="liked ? '찜 해제' : '찜하기'"
+          :title="isLiked ? '찜 해제' : '찜하기'"
         >
-          <span v-if="liked">❤️</span>
+          <span v-if="isLiked">❤️</span>
           <span v-else>🤍</span>
-        </button>
-
-        <!-- 상세보기 버튼 -->
-        <button
-          @click.stop="handleDetailClick"
-          class="text-xs bg-blue-500 text-white px-3 py-1 rounded-full hover:bg-blue-600 transition-colors"
-        >
-          상세보기
         </button>
       </div>
     </div>
@@ -106,18 +98,21 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 
 const props = defineProps({
   product: {
     type: Object,
     required: true,
   },
+  // 부모 컴포넌트에서 찜 상태를 전달받는 prop
+  isLiked: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['productClick', 'detailClick', 'toggleLike']);
-
-const liked = ref(false);
 
 // 상품 유형 라벨 변환
 const getProductTypeLabel = type => {
@@ -268,19 +263,14 @@ const formatAmount = amount => {
 
 // 이벤트 핸들러들
 const toggleLike = () => {
-  liked.value = !liked.value;
   emit('toggleLike', {
     productId: props.product.productId,
-    liked: liked.value,
+    isLiked: props.isLiked,
   });
 };
 
 const handleProductClick = () => {
   emit('productClick', props.product);
-};
-
-const handleDetailClick = () => {
-  emit('detailClick', props.product);
 };
 </script>
 

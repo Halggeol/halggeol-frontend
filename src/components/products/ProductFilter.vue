@@ -15,10 +15,7 @@
             type="checkbox"
             id="typeAll"
             value="all"
-            :checked="
-              selectedProductTypes.length === productTypeValues.length &&
-              productTypeValues.length > 0
-            "
+            :checked="isAllSelected"
             @change="toggleAllProductTypes"
             class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
           />
@@ -215,7 +212,7 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits } from 'vue';
+import { ref, watch, defineEmits, computed } from 'vue';
 
 const MIN_AMOUNT = 100000;
 const errorMessage = ref('');
@@ -229,6 +226,10 @@ const productTypes = [
 ];
 const productTypeValues = productTypes.map(t => t.value);
 const selectedProductTypes = ref([]);
+
+const isAllSelected = computed(() => {
+  return selectedProductTypes.value.length === productTypeValues.length;
+});
 
 const banks = [
   { label: '1금융권', value: 1 },
@@ -296,7 +297,7 @@ const resetFilters = () => {
 const emitFilters = () => {
   const filters = {
     // 백엔드 파라미터명에 맞춤
-    types:
+    productTypes:
       selectedProductTypes.value.length > 0 ? selectedProductTypes.value : null,
     fSectors: selectedBanks.value.length > 0 ? selectedBanks.value : null,
     saveTerm: selectedSubscriptionPeriod.value,

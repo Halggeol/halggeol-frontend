@@ -7,7 +7,7 @@
       @change="onSortChange"
     >
       <option value="popularDesc">인기순</option>
-      <option value="rateDesc">금리 높은 순</option>
+      <option value="rateDesc">수익률 순</option>
     </select>
   </div>
 </template>
