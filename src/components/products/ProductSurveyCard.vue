@@ -21,31 +21,30 @@
                   :value="option.value"
                   class="mr-2 w-4 h-4 text-primary bg-base-100 border-border-primary focus:ring-primary focus:ring-2"
                 />
-                <span class="text-callout text-fg-primary">{{ option.label }}</span>
+                <span class="text-callout text-fg-primary">{{
+                  option.label
+                }}</span>
               </label>
             </div>
 
             <!-- 제출 버튼 -->
-            <BaseButton
-              variant="primary"
-              size="sm"
-              class="px-6"
-            >
+            <BaseButton variant="primary" size="sm" class="px-6">
               제출
             </BaseButton>
           </div>
         </div>
       </BaseCard>
     </div>
-    <div class="absolute inset-0 flex items-center justify-center bg-base-100/50">
-      <div class="text-center p-6 bg-base-100 rounded-lg border border-border-primary shadow-lg">
-        <h4 class="text-title-sm font-semibold text-fg-primary mb-2">
-          ✅ 피드백 완료
-        </h4>
-        <p class="text-body02 text-fg-secondary">
-          이미 이 상품에 대한 피드백을 남겨주셨습니다.
-        </p>
-      </div>
+    <div
+      class="absolute inset-0 flex flex-col items-center justify-center bg-base-100/50"
+    >
+      <h4 class="text-title-sm font-semibold text-fg-primary mb-2">
+        이 상품에 대한 피드백을 이미
+        <span class="text-primary font-bold">{{
+          getStatusLabel(productStatus)
+        }}</span
+        >로 응답하셨습니다.
+      </h4>
     </div>
   </div>
 
@@ -56,34 +55,47 @@
         금융상품은 어떠셨나요?
       </h3>
 
-      <div class="flex items-center justify-between">
-        <!-- 라디오 버튼 그룹 -->
-        <div class="flex gap-4">
-          <label
-            v-for="option in statusOptions"
-            :key="option.value"
-            class="flex items-center cursor-pointer"
-          >
-            <input
-              type="radio"
-              :value="option.value"
-              v-model="selectedStatus"
-              class="mr-2 w-4 h-4 text-primary bg-base-100 border-border-primary focus:ring-primary focus:ring-2"
-            />
-            <span class="text-callout text-fg-primary">{{ option.label }}</span>
-          </label>
-        </div>
+      <div class="space-y-1">
+        <div class="relative">
+          <div class="flex items-center justify-between">
+            <!-- 라디오 버튼 그룹 -->
+            <div class="flex gap-4">
+              <label
+                v-for="option in statusOptions"
+                :key="option.value"
+                class="relative flex items-center cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  :value="option.value"
+                  v-model="selectedStatus"
+                  class="mr-2 w-4 h-4 text-primary bg-base-100 border-border-primary focus:ring-primary focus:ring-2"
+                />
+                <span class="text-callout text-fg-primary">{{
+                  option.label
+                }}</span>
+                <!-- 각 선택지별 설명 텍스트 -->
+                <div
+                  v-if="selectedStatus === option.value"
+                  class="absolute top-full left-6 mt-1 text-callout text-fg-secondary whitespace-nowrap z-10"
+                >
+                  {{ getStatusDescription(option.value) }}
+                </div>
+              </label>
+            </div>
 
-        <!-- 제출 버튼 -->
-        <BaseButton
-          variant="primary"
-          size="sm"
-          @click="submitSurvey"
-          :disabled="!selectedStatus"
-          class="px-6"
-        >
-          제출
-        </BaseButton>
+            <!-- 제출 버튼 -->
+            <BaseButton
+              variant="primary"
+              size="sm"
+              @click="submitSurvey"
+              :disabled="!selectedStatus"
+              class="px-6"
+              label="제출"
+            >
+            </BaseButton>
+          </div>
+        </div>
       </div>
     </div>
   </BaseCard>
@@ -125,6 +137,7 @@ const props = defineProps({
 // 이미 완료된 설문인지 확인
 const isCompleted = computed(() => {
   return props.productStatus !== null;
+  // return false; // 개발용
 });
 
 // 설문 제출
@@ -156,5 +169,33 @@ const submitSurvey = async () => {
 // 설문 닫기
 const closeSurvey = () => {
   navigationStore.resetNavigation();
+};
+
+// 상태값을 한글 라벨로 변환
+const getStatusLabel = status => {
+  const statusMap = {
+    가입: '가입 할래요',
+    관심: '고민해 볼래요',
+    회고: '가입 안 할래요',
+  };
+
+  // status가 객체인 경우 (예: { status: '가입' }) 처리
+  if (typeof status === 'object' && status !== null) {
+    return statusMap[status.status] || status.status || '알 수 없음';
+  }
+
+  // status가 문자열인 경우
+  return statusMap[status] || status || '알 수 없음';
+};
+
+// 상태별 설명 텍스트 반환
+const getStatusDescription = status => {
+  const descriptionMap = {
+    가입: '금융 상품 가입 링크로 연결해드려요',
+    관심: '고민 중인 상품을 관심상품에 등록해드려요',
+    회고: '이후 인사이트에서 확인해보실 수 있어요',
+  };
+
+  return descriptionMap[status] || '';
 };
 </script>
