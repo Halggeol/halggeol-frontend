@@ -139,18 +139,18 @@ const commonRoutes = [
     children: [
       { path: '', name: 'signup', component: SignupPage },
       {
+        path: 'request',
+        name: 'signup/request',
+        component: () => import('@/pages/user/auth/SignupRequestPage.vue'),
+      },
+      {
         path: 'mydata',
         name: 'mydata',
         component: () => import('@/pages/user/auth/SyncMydataPage.vue'),
       },
       {
-        path: 'survey/:type',
-        name: 'survey/knowledge',
-        component: () => import('@/pages/user/survey/SurveyPage.vue'),
-      },
-      {
-        path: 'survey/:type',
-        name: 'survey/tendency',
+        path: 'survey/:type', // knowledge, tendency
+        name: 'survey',
         component: () => import('@/pages/user/survey/SurveyPage.vue'),
       },
     ],
@@ -162,13 +162,8 @@ const commonRoutes = [
     component: UserLayout,
     children: [
       {
-        path: 'survey/:type',
-        name: 'survey/knowledge',
-        component: () => import('@/pages/user/survey/SurveyPage.vue'),
-      },
-      {
-        path: 'survey/:type',
-        name: 'survey/tendency',
+        path: 'survey/:type', // knowledge, tendency
+        name: 'survey',
         component: () => import('@/pages/user/survey/SurveyPage.vue'),
       },
     ],
