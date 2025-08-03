@@ -42,7 +42,7 @@ async function handleEmailSubmit() {
         success: true
       };
     } catch (error) {
-      if (error.response?.status == 409) {
+      if (error.response?.status === 409) {
         result.value = {
           message: '이미 가입된 이메일입니다.',
           success: false

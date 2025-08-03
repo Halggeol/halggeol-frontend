@@ -54,7 +54,7 @@ function setTokenIfExists() {
 }
 
 function setEmailFromToken() {
-  if (token.value == null) {
+  if (token.value === null) {
     console.error('토큰 누락');
     router.push('/signup/request');
     return;
@@ -163,7 +163,7 @@ async function handleJoinSubmit() {
       };
       router.push({ name: 'survey', params: { type: 'knowledge' } });
     } catch (error) {
-      if (error.response?.status == 409) {
+      if (error.response?.status === 409) {
         result.value = {
           message: '이미 가입된 이메일입니다.',
           success: false
@@ -242,7 +242,7 @@ function inputStyleClass(error) {
             type="text"
             v-model="form.email"
             class="w-full mb-1 px-3 py-3 border rounded-md outline-none transition-colors border-gray-300 bg-gray-100 text-gray-300"
-            disabled="true"
+            disabled
           />
         </div>
 
