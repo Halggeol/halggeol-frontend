@@ -1,65 +1,125 @@
 <template>
   <div
-    class="bg-gradient-to-r from-secondary-200 to-secondary-300 py-12 lg:py-16 px-[10.8%]"
+    :class="[
+      'bg-gradient-to-r from-secondary-200 to-secondary-300 px-[10.8%]',
+      isScrolled ? 'py-4 sticky top-0 z-50 shadow-lg' : 'py-12 lg:py-16',
+    ]"
+    :style="{
+      height: isScrolled ? '80px' : 'auto',
+      minHeight: isScrolled ? '80px' : '360px',
+    }"
   >
-    <div class="flex justify-between items-start">
+    <div
+      :class="[
+        'flex justify-between gap-6',
+        isScrolled ? 'items-center' : 'items-start',
+      ]"
+    >
       <!-- 왼쪽 컨텐츠 -->
-      <div class="flex-1">
-        <div class="flex items-center gap-3 mb-6">
-          <span
-            class="inline-flex items-center px-3 py-1 rounded-full bg-primary text-white text-caption font-medium"
-            >{{ productTypeName }}</span
+      <div class="flex-1 min-w-0">
+        <!-- 헤더 콘텐츠 -->
+        <div class="relative w-full">
+          <!-- 일반 상태 콘텐츠 -->
+          <div
+            :class="[
+              'transition-all duration-300 ease-in-out absolute inset-0',
+              isScrolled
+                ? 'opacity-0 pointer-events-none'
+                : 'opacity-100 pointer-events-auto',
+            ]"
           >
-          <span
-            v-if="productDetail.joinMember"
-            class="inline-flex items-center px-3 py-1 rounded-full bg-fg-secondary-100 text-fg-primary text-caption"
-            >{{ productDetail.joinMember }}</span
+            <div class="flex items-center gap-3 mb-6">
+              <span
+                class="inline-flex items-center px-3 py-1 rounded-full bg-primary text-white text-caption font-medium"
+                >{{ productTypeName }}</span
+              >
+              <span
+                v-if="productDetail.joinMember"
+                class="inline-flex items-center px-3 py-1 rounded-full bg-fg-secondary-100 text-fg-primary text-caption"
+                >{{ productDetail.joinMember }}</span
+              >
+              <span
+                v-if="productDetail.joinWay"
+                class="inline-flex items-center px-3 py-1 rounded-full bg-fg-secondary-100 text-fg-primary text-caption"
+                >{{ productDetail.joinWay }}</span
+              >
+            </div>
+
+            <h1
+              class="text-title-lg lg:text-title-xl font-bold text-fg-primary mb-6"
+            >
+              {{ productDetail.name }}
+            </h1>
+
+            <div class="flex items-center gap-2 mb-8">
+              <span class="text-status-red">❤️</span>
+              <span class="text-footnote text-fg-secondary">
+                <strong class="text-fg-primary">{{
+                  productDetail.scrapCnt
+                }}</strong
+                >명이 관심갖고있음
+              </span>
+            </div>
+
+            <div
+              class="text-footnote text-fg-secondary leading-relaxed pr-4 max-w-2xl overflow-hidden"
+            >
+              제공되는 정보는 금융감독원
+              <strong class="text-fg-primary">{{ renewDate }}</strong
+              >일에 공시된 내용을 기반으로 작성되었으며, 금융상품 광고가
+              아닙니다. 실제 상품 가입 시점에 변동될 수 있으므로 상품 가입 시 꼭
+              다시 확인하시기 바랍니다.
+            </div>
+          </div>
+
+          <!-- 축소된 상태 콘텐츠 -->
+          <div
+            :class="[
+              'transition-all duration-300 ease-in-out absolute inset-0 flex items-center',
+              isScrolled
+                ? 'opacity-100 pointer-events-auto'
+                : 'opacity-0 pointer-events-none',
+            ]"
           >
-          <span
-            v-if="productDetail.joinWay"
-            class="inline-flex items-center px-3 py-1 rounded-full bg-fg-secondary-100 text-fg-primary text-caption"
-            >{{ productDetail.joinWay }}</span
-          >
-        </div>
-
-        <h1
-          class="text-title-lg lg:text-title-xl font-bold text-fg-primary mb-6"
-        >
-          {{ productDetail.name }}
-        </h1>
-
-        <div class="flex items-center gap-2 mb-8">
-          <span class="text-status-red">❤️</span>
-          <span class="text-footnote text-fg-secondary">
-            <strong class="text-fg-primary">{{ productDetail.scrapCnt }}</strong
-            >명이 관심갖고있음
-          </span>
-        </div>
-
-        <div class="text-body02 text-fg-secondary leading-relaxed max-w-2xl">
-          제공되는 정보는 금융감독원
-          <strong class="text-fg-primary">{{ renewDate }}</strong
-          >일에 공시된 내용을 기반으로 작성되었으며, 금융상품 광고가 아닙니다.
-          실제 상품 가입 시점에 변동될 수 있으므로 상품 가입 시 꼭 다시
-          확인하시기 바랍니다.
+            <h1 class="text-title-sm font-bold text-fg-primary">
+              {{ productDetail.name }}
+            </h1>
+          </div>
         </div>
       </div>
 
       <!-- 오른쪽 버튼들 -->
-      <div class="flex flex-col gap-3 ml-6 lg:ml-8 mt-auto">
+      <div
+        :class="[
+          'flex-shrink-0 transition-all duration-300 ease-in-out',
+          isScrolled
+            ? 'flex gap-3 items-center'
+            : 'flex flex-col gap-3 mt-auto',
+        ]"
+      >
         <BaseButton
           :label="isScraped ? '❤️ 관심상품' : '🤍 관심상품'"
-          size="sm"
+          :size="isScrolled ? 'xs' : 'sm'"
           variant="outline"
           :disabled="isScrapLoading"
-          class="!w-auto !px-6 md:!px-8 lg:!px-10 !whitespace-nowrap !text-footnote md:!text-callout hover:bg-gray-50 transition-colors"
+          :class="[
+            '!w-auto !whitespace-nowrap hover:bg-gray-50 transition-all duration-300 ease-in-out',
+            isScrolled
+              ? '!px-4 !text-caption'
+              : '!px-6 md:!px-8 lg:!px-10 !text-footnote md:!text-callout',
+          ]"
           @click="handleAddScrap"
         />
         <BaseButton
           label="가입하기"
-          size="sm"
+          :size="isScrolled ? 'xs' : 'sm'"
           variant="filled"
-          class="!w-auto !px-6 md:!px-8 lg:!px-10 !whitespace-nowrap !text-footnote md:!text-callout"
+          :class="[
+            '!w-auto !whitespace-nowrap transition-all duration-300 ease-in-out',
+            isScrolled
+              ? '!px-4 !text-caption'
+              : '!px-6 md:!px-8 lg:!px-10 !text-footnote md:!text-callout',
+          ]"
           @click="handleNavigate"
         />
       </div>
@@ -80,6 +140,10 @@ const props = defineProps({
   renewDate: {
     type: String,
     default: '25.06.20',
+  },
+  isScrolled: {
+    type: Boolean,
+    default: false,
   },
 });
 

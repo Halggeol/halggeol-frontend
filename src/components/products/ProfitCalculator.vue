@@ -1,9 +1,17 @@
 <template>
-  <div
-    class="profit-calculator bg-white rounded-xl shadow-card border border-1/2 border-secondary-200 p-8"
+  <BaseCard 
+    v-if="shouldShowCalculator"
+    size="lg" 
+    variant="outline"
+    class="profit-calculator"
   >
-    <h3 class="text-title-sm font-semibold text-fg-primary mb-8">
-      수익 계산기
+    <h3 class="text-title-sm text-fg-primary mb-8">
+      <div
+        class="tooltip"
+        data-tip="금융정보로 기록된 기본 금리/최고 금리를 기준으로 저축 금액에 따른 단순한 수익 금액을 산출합니다."
+      >
+        <span class="underline font-semibold">수익 계산기</span>
+      </div>
     </h3>
 
     <div class="space-y-6">
@@ -97,10 +105,11 @@
         </div>
       </div>
     </div>
-  </div>
+  </BaseCard>
 </template>
 
 <script setup>
+import BaseCard from '@/components/common/BaseCard.vue';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
@@ -130,6 +139,12 @@ const idPrefix = computed(() => {
     return props.productDetail.id.charAt(0).toUpperCase();
   }
   return '';
+});
+
+// 계산기 표시 여부 (F, X, A는 숨김)
+const shouldShowCalculator = computed(() => {
+  const prefix = idPrefix.value;
+  return !['F', 'X', 'A'].includes(prefix);
 });
 
 // prefix별 계산기 설정

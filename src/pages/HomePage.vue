@@ -16,19 +16,19 @@ function onLoginClick() {
 }
 
 const dashboardData = ref(null);
+const isLoading = ref(true);
+
 const fetchDashboard = async () => {
   try {
-    // 임시 토큰 처리
-    // localStorage.setItem(
-    //   'accessToken',
-    //   'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtMm51dXVAZ21haWwuY29tIiwiaWF0IjoxNzUzNzUxMjA0LCJleHAiOjE3NzE3NTEyMDR9.Ho1fXfC2ane0PxTNKnaov2p8lYiQEGWXthjW72av-Y8'
-    // );
+    isLoading.value = true;
 
     // API 호출
     const response = await getDashboardMain();
     dashboardData.value = response.data;
   } catch (error) {
     console.error('대시보드 로딩 실패:', error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -40,6 +40,15 @@ onMounted(() => {
 </script>
 
 <template>
+  <!-- 로딩 상태 -->
+  <div
+    v-if="isLoading"
+    class="flex flex-col items-center justify-center min-h-screen space-y-6"
+  >
+    <span class="loading loading-spinner loading-xl"></span>
+    <p class="text-callout text-fg-secondary">대시보드를 불러오는 중...</p>
+  </div>
+
   <!-- {{ dashboardData }} -->
   <!-- 대시보드 영역 -->
   <div class="dashboard w-full bg-base-200 px-[10.8%]">
@@ -50,7 +59,10 @@ onMounted(() => {
         {{ dashboardData?.userName || '사용자' }}님의 대시보드
       </h2>
       <div class="pb-40 grid grid-rows-2 grid-cols-3 gap-6">
-        <RegretScoreCard :regret-score="dashboardData?.avgRegretScore" />
+        <RegretScoreCard
+          :regret-score="dashboardData?.avgRegretScore"
+          :feedback-ratio="dashboardData?.feedbackRatio"
+        />
         <AssetCard
           class="row-span-2 col-span-2"
           :assets="dashboardData?.assets"
