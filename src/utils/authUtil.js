@@ -11,7 +11,7 @@ export const clearAccessToken = () => {
 };
 
 export const parseToken = (token) => {
-  const payload = token.value.split('.')[1];
+  const payload = token.split('.')[1];
   const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/')); // base64 디코딩
   return JSON.parse(decoded);
 }

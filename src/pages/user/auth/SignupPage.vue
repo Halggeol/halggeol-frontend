@@ -64,7 +64,7 @@ function setEmailFromToken() {
   }
 
   try {
-    const parsedToken = parseToken(token);
+    const parsedToken = parseToken(token.value);
     form.value.email = parsedToken.sub;
 
   } catch (e) {

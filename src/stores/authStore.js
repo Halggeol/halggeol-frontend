@@ -10,7 +10,7 @@ export const useAuthStore = defineStore('auth',  {
     initialize() {
       const token = authUtil.getAccessToken();
       if (token) {
-        const parsedToken = authUtil.parseToken(token);
+        const parsedToken = authUtil.parseToken(token.value);
         if (authUtil.isValidToken(parsedToken))
           this.isLoggedIn = true;
         else {
