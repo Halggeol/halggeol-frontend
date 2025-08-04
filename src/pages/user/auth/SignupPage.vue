@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { join } from '@/api/user';
+import { parseToken } from '@/utils/authUtil';
 import PrivacyPolicyModal from '@/components/user/PrivacyPolicyModal.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
 import EyeClose from '@/components/icons/EyeClose.vue';
@@ -63,10 +64,8 @@ function setEmailFromToken() {
   }
 
   try {
-    const payload = token.value.split('.')[1];
-    const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/')); // base64 디코딩
-    const json = JSON.parse(decoded);
-    form.value.email = json.sub;
+    const parsedToken = parseToken(token);
+    form.value.email = parsedToken.sub;
 
   } catch (e) {
     console.error('토큰 형식 오류: ', e);
