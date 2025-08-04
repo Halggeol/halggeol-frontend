@@ -4,17 +4,38 @@
 
     <div class="flex-1 p-5">
       <h2 class="text-2xl font-bold mb-6 text-gray-800">가입한 상품</h2>
+
+      <div v-if="loading" class="text-center py-10">
+        <div
+          class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"
+        ></div>
+        <p class="mt-4 text-gray-600">상품을 불러오는 중...</p>
+      </div>
+
+      <div v-else-if="error" class="text-center py-10 text-red-600">
+        <p>{{ error }}</p>
+        <button
+          @click="fetchMyProducts"
+          class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          다시 시도
+        </button>
+      </div>
+
       <div
-        v-if="filteredProducts.length === 0"
+        v-else-if="filteredProducts.length === 0"
         class="text-gray-600 text-center py-10"
       >
         해당 조건에 맞는 상품이 없습니다.
       </div>
+
       <div v-else class="space-y-4">
         <ProductCard
           v-for="product in filteredProducts"
           :key="product.id"
           :product="product"
+          :isScrapped="product.isScraped"
+          @toggle-scrap="handleToggleScrap"
         />
       </div>
     </div>
@@ -25,10 +46,12 @@
 import { ref, computed, onMounted } from 'vue';
 import ProductCard from '@/components/products/ProductCard.vue';
 import MyProductFilter from '@/components/products/MyProductFilter.vue';
-import { getUserProducts } from '@/api/user';
+import { getUserProductsList } from '@/api/list';
 
-// 사용자 가입 상품 데이터
 const myProducts = ref([]);
+const loading = ref(false);
+const error = ref(null);
+const scrapedProductIds = ref(new Set());
 
 const currentFilters = ref({
   productTypes: [],
@@ -36,41 +59,61 @@ const currentFilters = ref({
 
 // API에서 사용자 가입 상품 조회
 const fetchMyProducts = async () => {
-  try {
-    // const response = await getUserProducts();
-    // myProducts.value = response.data;
+  loading.value = true;
+  error.value = null;
 
-    myProducts.value = [
-      {
-        id: 1,
-        company: '국민은행',
-        name: 'KB Star 정기예금',
-        tags: ['정기예금', '인기'],
-        rate: 3.55,
-        prime_rate: 3.6,
-        product_type: 'deposit',
-        bank_code: 'KB',
-        min_period: 12,
-        max_period: 36,
-        min_amount: 1000000,
-      },
-      {
-        id: 3,
-        company: '우리은행',
-        name: '우리 SUPER 정기적금',
-        tags: ['정기적금', '고금리'],
-        rate: 4.1,
-        prime_rate: 4.3,
-        product_type: 'savings',
-        bank_code: 'Woori',
-        min_period: 6,
-        max_period: 12,
-        min_amount: 100000,
-      },
-    ];
+  try {
+    const response = await getUserProductsList();
+
+    // DTO 구조에 맞게 데이터 매핑
+    myProducts.value = response.data.map(product => ({
+      id: product.productId,
+      productId: product.productId,
+      company: product.company,
+      name: product.name,
+      tag1: product.tag1,
+      tag2: product.tag2,
+      tag3: product.tag3,
+      title: product.title,
+      subTitle: product.subTitle,
+      amount: product.amount,
+      type: getProductType(product), // 상품 유형 추출 함수 필요
+      product_type: getProductType(product),
+      viewCnt: 0, // DTO에서 제공되지 않음
+      scrapCnt: 0, // DTO에서 제공되지 않음
+      isScraped: product.isScraped,
+    }));
+
+    loading.value = false;
   } catch (error) {
     console.error('가입 상품 조회 실패:', error);
+    error.value = '상품을 불러오는 중 오류가 발생했습니다.';
+    loading.value = false;
   }
+};
+
+const getProductType = product => {
+  if (product.tag1 && product.tag1.includes('개월')) {
+    return product.tag2 && product.tag2.includes('개월')
+      ? 'deposit'
+      : 'savings';
+  }
+  if (
+    product.tag1 &&
+    (product.tag1.includes('형') || product.tag1.includes('테마'))
+  ) {
+    return 'fund';
+  }
+  if (product.tag1 && product.tag1.includes('연금')) {
+    return 'pension';
+  }
+  if (
+    product.tag1 &&
+    (product.tag1.includes('USD') || product.tag1.includes('통화'))
+  ) {
+    return 'forex';
+  }
+  return 'deposit'; // 기본값
 };
 
 const handleFilterChange = filters => {
@@ -78,11 +121,22 @@ const handleFilterChange = filters => {
   console.log('MyProduct filters:', filters);
 };
 
+// 스크랩/스크랩 해제 핸들러
+const handleToggleScrap = ({ productId, isScrapped }) => {
+  if (isScrapped) {
+    console.log(`스크랩 해제 요청: productId ${productId}`);
+    scrapedProductIds.value.delete(productId);
+  } else {
+    console.log(`스크랩 요청: productId ${productId}`);
+    scrapedProductIds.value.add(productId);
+  }
+};
+
 const filteredProducts = computed(() => {
-  let productsToFilter = myProducts.value;
+  let productsToFilter = [...myProducts.value];
   const filters = currentFilters.value;
 
-  // 상품 유형 필터링만 적용
+  // 상품 유형 필터링
   if (
     filters.productTypes &&
     filters.productTypes.length > 0 &&
@@ -98,6 +152,10 @@ const filteredProducts = computed(() => {
 
 onMounted(() => {
   fetchMyProducts();
+});
+
+defineExpose({
+  fetchMyProducts,
 });
 </script>
 

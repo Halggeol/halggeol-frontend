@@ -30,8 +30,6 @@ const navigationStore = useNavigationStore();
 const productStatus = ref(null);
 const isStatusLoading = ref(false);
 
-// 이제 ProductSurveyCard 내부에서 블러 처리를 담당하므로 불필요
-
 const navigateToLink = () => {
   window.open(productDetail.value.regLink, '_blank');
 };
