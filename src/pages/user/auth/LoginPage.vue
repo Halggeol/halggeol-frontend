@@ -65,7 +65,7 @@ async function handleLoginSubmit() {
         success: true
       };
 
-      authStore.login(response.data.authResult.token, response.data.authResult.name);
+      authStore.login(response.data?.authResult?.token, response.data?.authResult?.name);
 
       setTimeout(() => {
         router.push('/');
