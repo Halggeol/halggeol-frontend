@@ -45,13 +45,23 @@ const privacyText = `이때 할 걸(이하 "회사")은 「개인정보 보호�
 
 본 방침은 2025년 8월 4일부터 적용됩니다.`;
 
+const dialog = ref();
+
+function showModal() {
+  dialog.value?.showModal();
+}
+
 onMounted(() => {
   privacyHtml.value = privacyText.replace(/\n/g, '<br>');
+});
+
+defineExpose({
+  showModal
 });
 </script>
 
 <template>
-  <dialog id="policy_modal" class="modal">
+  <dialog id="policy_modal" class="modal" ref="dialog">
     <div class="modal-box max-w-2xl max-h-[80vh] overflow-y-auto">
       <h3 class="font-bold text-xl mb-4">개인정보 처리방침</h3>
       <div v-html="privacyHtml" class="text-sm leading-relaxed whitespace-pre-line"></div>
