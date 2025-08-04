@@ -55,7 +55,7 @@ const handleScroll = () => {
 
     // 헤더 높이 변화로 인한 스크롤 위치 보정
     requestAnimationFrame(() => {
-      const heightDifference = 280; // 360px - 80px = 280px
+      const heightDifference = HEADER_HEIGHT_DIFFERENCE;
       window.scrollTo(0, currentScrollY - heightDifference);
 
       setTimeout(() => {
