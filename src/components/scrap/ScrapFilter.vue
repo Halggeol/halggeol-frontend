@@ -4,7 +4,7 @@
       <h3 class="text-lg font-semibold mb-3 text-gray-800">상품 유형</h3>
       <button
         @click="resetFilters"
-        class="absolute top-0 right-0 text-sm text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-0"
+        class="absolute top-0 right-0 text-sm text-gray-500 hover:text-gray-700 underline focus:outline-none focus:ring-0"
       >
         초기화
       </button>
