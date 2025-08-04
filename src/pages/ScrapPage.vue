@@ -70,6 +70,16 @@ const fetchProducts = async () => {
   loading.value = true;
   error.value = null;
 
+  // localStorage에서 토큰을 가져옵니다.
+  const token = localStorage.getItem('accessToken');
+  if (!token) {
+    error.value = '로그인이 필요합니다.';
+    loading.value = false;
+    // 로그인 페이지로 이동
+    router.push('/login');
+    return;
+  }
+
   try {
     const params = new URLSearchParams();
 
@@ -92,28 +102,25 @@ const fetchProducts = async () => {
     const apiUrl = `http://localhost:8080/api/scrap?${params.toString()}`; // 스크랩 API 엔드포인트
     console.log('API 호출:', apiUrl);
 
-    // TODO: 여기에 실제 로그인 후 발급받은 토큰을 사용해야 합니다.
-    const TEST_TOKEN =
-      'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJraW0wMUBleGFtcGxlLmNvbSIsImlhdCI6MTc1NDAwOTkxNywiZXhwIjoyMDY5MzY5OTE3fQ.6A1yPlqRNc0LKiWintUJgL7KpElZx-J6x8zHp-ZndSQ';
-
     const response = await axios.get(apiUrl, {
       headers: {
-        Authorization: `Bearer ${TEST_TOKEN}`,
+        Authorization: `Bearer ${token}`, // localStorage에서 가져온 토큰 사용
       },
     });
     //const response = await fetch(apiUrl);
     products.value = response.data;
     error.value = null;
   } catch (err) {
-    if (
-      axios.isAxiosError(err) &&
-      err.response &&
-      err.response.status === 401
-    ) {
-      error.value = '로그인이 필요합니다.';
-      router.push('/login'); // 필요 시 로그인 페이지로 이동
+    if (axios.isAxiosError(err) && err.response) {
+      if (err.response.status === 401) {
+        error.value = '로그인 세션이 만료되었습니다. 다시 로그인해주세요.';
+        // 로그인 페이지로 이동
+        router.push('/login');
+      } else {
+        error.value = `서버 오류: ${err.response.status}`;
+      }
     } else {
-      error.value = '스크랩 상품 목록을 불러오는 데 실패했습니다.';
+      error.value = '네트워크 연결 상태를 확인해주세요.';
       console.error('API 호출 중 오류 발생:', err);
     }
   } finally {
