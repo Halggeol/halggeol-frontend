@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { login } from '@/api/user';
+import { setAccessToken } from '@/utils/auth';
 import BaseButton from '@/components/common/BaseButton.vue';
 import EyeClose from '@/components/icons/EyeClose.vue';
 import EyeOpen from '@/components/icons/EyeOpen.vue';
@@ -56,14 +57,15 @@ async function handleLoginSubmit() {
   if (canSubmit.value) {
     try {
       console.log('===== login API 호출 =====');
-      await login({ email: email.value, password: password.value });
+      const response = await login({ email: email.value, password: password.value });
 
       result.value = {
         message: '로그인 되었습니다.',
         success: true
       };
+      setAccessToken(response.data.authResult.token);
       setTimeout(() => {
-        router.push('/main');
+        router.push('/');
       }, 1500);
     } catch (error) {
       result.value = {
