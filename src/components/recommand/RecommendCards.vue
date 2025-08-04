@@ -34,12 +34,16 @@ const categoryMap = {
 
 // 상세페이지 이동
 import { useRouter } from 'vue-router';
+import { useNavigationStore } from '@/stores/navigation';
 
 const router = useRouter();
+const navigationStore = useNavigationStore();
 
 function goToDetail(id) {
+  // 추천에서 온 상태로 설정
+  navigationStore.navigateFromRecommend(id);
   router.push(`/products/detail/${id}`);
-} // 상세페이지 구현 이후 라우터 수정
+}
 
 // 패딩값 여부
 const wrapperClass = computed(() => {

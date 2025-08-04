@@ -2,11 +2,14 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { join } from '@/api/user';
+import { parseToken } from '@/utils/authUtil';
+import PrivacyPolicyModal from '@/components/user/PrivacyPolicyModal.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
 import EyeClose from '@/components/icons/EyeClose.vue';
 import EyeOpen from '@/components/icons/EyeOpen.vue';
 
 const router = useRouter();
+const privacyModalRef = ref();
 
 const regex = {
   name: /^[가-힣]{2,}$/,
@@ -61,10 +64,8 @@ function setEmailFromToken() {
   }
 
   try {
-    const payload = token.value.split('.')[1];
-    const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/')); // base64 디코딩
-    const json = JSON.parse(decoded);
-    form.value.email = json.sub;
+    const parsedToken = parseToken(token.value);
+    form.value.email = parsedToken.sub;
 
   } catch (e) {
     console.error('토큰 형식 오류: ', e);
@@ -184,6 +185,12 @@ function inputStyleClass(error) {
     'w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors',
     error ? 'border-red-500 bg-red-100 placeholder-red-500' : 'border-gray-300 focus:border-blue-500',
   ];
+}
+
+function openPolicyModal() {
+  privacyModalRef.value?.showModal();
+  // const modal = document.getElementById('policy_modal');
+  // modal?.showModal();
 }
 
 </script>
@@ -308,7 +315,10 @@ function inputStyleClass(error) {
             :disabled="result.success"
             />
           <span class="leading-snug text-xs">
-            개인정보 처리방침에 따라 개인정보를 수집, 사용, 타사에 대한 제공 및 처리하는 데 동의합니다.
+            <span class="underline cursor-pointer hover:text-black" @click="openPolicyModal">
+              개인정보 처리방침
+            </span>
+            에 따라 개인정보를 수집, 사용, 타사에 대한 제공 및 처리하는 데 동의합니다.
             <small v-if="errors.agree" class="text-red-500 mt-1 block">{{ errors.agree }}</small>
           </span>
         </div>
@@ -335,4 +345,7 @@ function inputStyleClass(error) {
       </form>
     </div>
   </div>
+
+  <!-- 개인정보 처리방침 모달 -->
+  <PrivacyPolicyModal ref="privacyModalRef"></PrivacyPolicyModal>
 </template>

@@ -13,6 +13,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  feedbackRatio: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const avgRegretScore = computed(() => {
@@ -47,12 +51,8 @@ const regretChartOptions = {
 };
 
 // 후회상품비율 차트
-const totalRecommendations = ref(15);
-const regretItems = ref(9);
 const regretItemRatio = computed(() => {
-  return totalRecommendations.value === 0
-    ? 0
-    : Math.round((regretItems.value / totalRecommendations.value) * 100);
+  return Math.round(props.feedbackRatio * 100);
 });
 
 const regretItemChartData = computed(() => ({
