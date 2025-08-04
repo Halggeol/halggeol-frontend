@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onUnmounted, watch } from 'vue';
+import { ref, computed, onUnmounted, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import { extendLogin } from '@/api/user';
@@ -8,6 +8,15 @@ import ExtendLoginModal from '../user/ExtendLoginModal.vue';
 
 const authStore = useAuthStore();
 let interval = null;
+const WARNING_THRESHOLD_SECONDS = 60 * 5;
+
+const remainingMinutes = computed(() =>
+  Math.floor(Math.max(0, authStore.tokenRemainingSeconds / 60))
+);
+
+const remainingSeconds = computed(() =>
+  Math.floor(Math.max(0, authStore.tokenRemainingSeconds % 60))
+);
 
 const route = useRoute();
 const router = useRouter();
@@ -77,7 +86,7 @@ watch(
 watch(
   () => authStore.tokenRemainingSeconds,
   (seconds) => {
-    if (seconds > 0 && seconds <= 60 * 5 && !isExtendLoginModalOpen.value && !hasDeclinedExtendModal.value)
+    if (seconds > 0 && seconds <= WARNING_THRESHOLD_SECONDS && !isExtendLoginModalOpen.value && !hasDeclinedExtendModal.value)
       isExtendLoginModalOpen.value = true;
     if (seconds < 0) {
       // TODO: 시간 만료 시 로그아웃
@@ -140,8 +149,7 @@ onUnmounted(() => {
       <div class="flex gap-x-6 justify-end">
         <template v-if="authStore.isLoggedIn">
           <span class="text-sm text-gray-500">
-            남은 시간: {{ Math.floor(Math.max(0, authStore.tokenRemainingSeconds / 60)) }}분
-            {{ Math.floor(Math.max(0, authStore.tokenRemainingSeconds % 60)) }}초
+            남은 시간: {{ remainingMinutes }}분 {{ remainingSeconds }}초
           </span>
 
           <button @click="handleExtendLogin">로그인 연장</button>
