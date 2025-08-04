@@ -100,7 +100,7 @@ onMounted(async () => {
     console.log('isFromRecommend:', navigationStore.shouldShowSurvey);
     console.log('statusResponse:', statusResponse);
     console.log('productStatus.value:', productStatus.value);
-
+    // Removed debug console.log statements for production
     // if (!productDetail.value.advantage || !productDetail.value.disadvantage) {
     //   console.log(
     //     'advantage 또는 disadvantage 값이 없어 Gemini API를 호출합니다.'
