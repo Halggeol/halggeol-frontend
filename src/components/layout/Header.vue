@@ -1,9 +1,16 @@
 <script setup>
+import { defineOptions } from 'vue';
+
+defineOptions({
+  name: 'AppHeader',
+});
 import { ref } from 'vue'; // ref 추가
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import SearchModal from '../common/SearchModal.vue';
 
 const route = useRoute();
+const router = useRouter();
+
 const navItems = [
   { to: '/', label: '홈', exact: true },
   { to: '/insight', label: '회고 인사이트' },
@@ -18,7 +25,7 @@ const isSearchModalOpen = ref(false); // 검색 모달 열림/닫힘 상태
 const handleSearch = query => {
   console.log('헤더에서 검색 실행:', query);
   // 실제 검색 로직 (예: 검색 결과 페이지로 이동 또는 검색 결과 표시)
-  // router.push({ path: '/search-results', query: { q: query } });
+  router.push({ path: '/products', query: { keyword: query } });
 };
 </script>
 
