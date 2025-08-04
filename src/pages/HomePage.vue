@@ -7,10 +7,13 @@ import RankCards from '@/components/recommand/RankCards.vue';
 import RecommendCards from '@/components/recommand/RecommendCards.vue';
 import router from '@/router';
 import { ref, onMounted, provide } from 'vue';
+import { useAuthStore } from '@/stores/authStore';
 
 import { getDashboardMain } from '@/api/dashboard';
 
-const isLoggedIn = ref(true);
+const authStore = useAuthStore();
+const isLoggedIn = authStore.isLoggedIn;
+
 function onLoginClick() {
   router.push('/login');
 }
