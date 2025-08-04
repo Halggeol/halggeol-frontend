@@ -114,7 +114,17 @@ onMounted(async () => {
     // }
 
     productDetail.value.advantage = '나는 장점';
-    productDetail.value.disadvantage = '나는 단점';
+    if (!productDetail.value.advantage || !productDetail.value.disadvantage) {
+      console.log(
+        'advantage 또는 disadvantage 값이 없어 Gemini API를 호출합니다.'
+      );
+      const geminiResponse = await analyzeProductWithGemini(
+        productDetail.value
+      );
+      // 응답으로 받은 값으로 productDetail 업데이트
+      productDetail.value.advantage = geminiResponse.advantage;
+      productDetail.value.disadvantage = geminiResponse.disadvantage;
+    }
   } catch (err) {
     error.value = '상품 상세 정보를 불러오는데 실패했습니다: ' + err.message;
     console.error(err);
