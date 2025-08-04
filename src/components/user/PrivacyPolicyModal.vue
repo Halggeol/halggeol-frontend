@@ -1,7 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-
-const privacyHtml = ref('');
+import { ref } from 'vue';
 
 const privacyText = `이때 할 걸(이하 "회사")은 「개인정보 보호법」 제30조에 따라 정보주체의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 다음과 같은 개인정보 처리방침을 수립·공개합니다.
 
@@ -51,10 +49,6 @@ function showModal() {
   dialog.value?.showModal();
 }
 
-onMounted(() => {
-  privacyHtml.value = privacyText.replace(/\n/g, '<br>');
-});
-
 defineExpose({
   showModal
 });
@@ -64,7 +58,7 @@ defineExpose({
   <dialog id="policy_modal" class="modal" ref="dialog">
     <div class="modal-box max-w-2xl max-h-[80vh] overflow-y-auto">
       <h3 class="font-bold text-xl mb-4">개인정보 처리방침</h3>
-      <div v-html="privacyHtml" class="text-sm leading-relaxed whitespace-pre-line"></div>
+      <div v-text="privacyText" class="text-sm leading-relaxed whitespace-pre-line"></div>
       <div class="modal-action mt-4">
         <form method="dialog">
           <button class="btn btn-sm btn-primary">닫기</button>
