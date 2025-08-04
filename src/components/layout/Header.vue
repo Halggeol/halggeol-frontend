@@ -1,18 +1,13 @@
 <script setup>
-<<<<<<< HEAD
 import { defineOptions } from 'vue';
 
 defineOptions({
   name: 'AppHeader',
 });
-import { ref } from 'vue'; // ref 추가
 import { RouterLink, useRoute, useRouter } from 'vue-router';
-=======
 import { ref, computed, onUnmounted, watch } from 'vue';
-import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import { extendLogin } from '@/api/user';
->>>>>>> 8070a4c27b62be415623e80365d49db9f329c320
 import SearchModal from '../common/SearchModal.vue';
 import ExtendLoginModal from '../user/ExtendLoginModal.vue';
 
@@ -30,10 +25,7 @@ const remainingSeconds = computed(() =>
 
 const route = useRoute();
 const router = useRouter();
-<<<<<<< HEAD
 
-=======
->>>>>>> 8070a4c27b62be415623e80365d49db9f329c320
 const navItems = [
   { to: '/', label: '홈', exact: true },
   { to: '/insight', label: '회고 인사이트' },
@@ -58,14 +50,14 @@ const handleSearch = query => {
 const handleCancel = () => {
   isExtendLoginModalOpen.value = false;
   hasDeclinedExtendModal.value = true;
-}
+};
 
 async function handleExtendLogin() {
   console.log('===== 로그인 시간 연장 핸들링 =====');
-    isExtendLoginModalOpen.value = false;
+  isExtendLoginModalOpen.value = false;
 
   try {
-    console.log("===== extendLogin API 호출 =====");
+    console.log('===== extendLogin API 호출 =====');
     const response = await extendLogin();
 
     authStore.extendLogin(response.data?.accessToken);
@@ -80,15 +72,14 @@ async function handleExtendLogin() {
 // 남은 로그인 시간 갱신
 watch(
   () => authStore.isLoggedIn,
-  (isLoggedIn) => {
+  isLoggedIn => {
     if (isLoggedIn) {
       authStore.updateTokenRemainingSeconds();
 
       interval = setInterval(() => {
         authStore.updateTokenRemainingSeconds();
       }, 1000);
-    }
-    else {
+    } else {
       clearInterval(interval);
       interval = null;
     }
@@ -99,21 +90,25 @@ watch(
 // 남은 시간 5분 이하일 때 모달 표시
 watch(
   () => authStore.tokenRemainingSeconds,
-  (seconds) => {
-    if (seconds > 0 && seconds <= WARNING_THRESHOLD_SECONDS && !isExtendLoginModalOpen.value && !hasDeclinedExtendModal.value)
+  seconds => {
+    if (
+      seconds > 0 &&
+      seconds <= WARNING_THRESHOLD_SECONDS &&
+      !isExtendLoginModalOpen.value &&
+      !hasDeclinedExtendModal.value
+    )
       isExtendLoginModalOpen.value = true;
     if (seconds < 0) {
       // TODO: 시간 만료 시 로그아웃
       // logout();
       router.push('/login');
     }
-  },
-)
+  }
+);
 
 onUnmounted(() => {
   clearInterval(interval);
-})
-
+});
 </script>
 
 <template>
