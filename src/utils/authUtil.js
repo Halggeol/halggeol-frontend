@@ -10,6 +10,18 @@ export const clearAccessToken = () => {
   sessionStorage.removeItem('accessToken');
 };
 
+export const setUsername = (username) => {
+  sessionStorage.setItem('username', username);
+};
+
+export const getUsername = () => {
+  return sessionStorage.getItem('username');
+};
+
+export const clearUsername = () => {
+  sessionStorage.removeItem('username');
+};
+
 export const parseToken = (token) => {
   const payload = token.split('.')[1];
   const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/')); // base64 디코딩
@@ -19,4 +31,15 @@ export const parseToken = (token) => {
 export const isValidToken = (parsedToken) => {
   const now = Math.floor(Date.now() / 1000);
   return (parsedToken.exp && parsedToken.exp > now);
+}
+
+export const getTokenRemainingSeconds = () => {
+  const token = getAccessToken();
+  if (!token) return 0;
+
+  const parsedToken = parseToken(token);
+  if (!parsedToken.exp) return 0;
+
+  const now = Math.floor(Date.now() / 1000);
+  return parsedToken.exp - now;
 }
