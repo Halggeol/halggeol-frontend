@@ -2,12 +2,13 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { login } from '@/api/user';
-import { setAccessToken } from '@/utils/auth';
+import { useAuthStore } from '@/stores/authStore';
 import BaseButton from '@/components/common/BaseButton.vue';
 import EyeClose from '@/components/icons/EyeClose.vue';
 import EyeOpen from '@/components/icons/EyeOpen.vue';
 
 const router = useRouter();
+const authStore = useAuthStore();
 
 const regex = {
   email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
@@ -63,7 +64,9 @@ async function handleLoginSubmit() {
         message: '로그인 되었습니다.',
         success: true
       };
-      setAccessToken(response.data.authResult.token);
+
+      authStore.login(response.data.authResult.token, response.data.authResult.name);
+
       setTimeout(() => {
         router.push('/');
       }, 1500);
