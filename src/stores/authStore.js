@@ -10,11 +10,19 @@ export const useAuthStore = defineStore('auth',  {
     initialize() {
       const token = authUtil.getAccessToken();
       if (token) {
-        const parsedToken = authUtil.parseToken(token.value);
-        if (authUtil.isValidToken(parsedToken))
-          this.isLoggedIn = true;
-        else {
-          console.error('만료된 토큰입니다.');
+        try {
+          const parsedToken = authUtil.parseToken(token);
+
+          if (authUtil.isValidToken(parsedToken))
+            this.isLoggedIn = true;
+          else {
+            console.error('만료된 토큰');
+            authUtil.clearAccessToken();
+            this.isLoggedIn = false;
+          }
+
+        } catch (e) {
+          console.error('토큰 형식 오류: ', e);
           authUtil.clearAccessToken();
           this.isLoggedIn = false;
         }
