@@ -18,7 +18,7 @@ export const requestJoin = async (body) => {
     const response = await api.post('/signup/request', body);
     return response;
   } catch (error) {
-    console.error('User requestJoin API Error:', error);
+    console.error('Request Join API Error:', error);
     throw error;
   }
 };
@@ -28,7 +28,7 @@ export const join = async (token, body) => {
     const response = await api.post('/signup?token=' + token, body);
     return response;
   } catch (error) {
-    console.error('User Join API Error:', error);
+    console.error('Join API Error:', error);
     throw error;
   }
 };
@@ -38,7 +38,17 @@ export const login = async (body) => {
     const response = await api.post('/login', body);
     return response;
   } catch (error) {
-    console.error('User Login API Error:', error);
+    console.error('Login API Error:', error);
+    throw error;
+  }
+};
+
+export const extendLogin = async () => {
+  try {
+    const response = await api.get('/login/extend');
+    return response;
+  } catch (error) {
+    console.error('Extend Login API Error:', error);
     throw error;
   }
 };
