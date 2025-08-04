@@ -61,10 +61,10 @@
         <div v-if="getTermRangeText()">
           {{ getTermRangeText() }}
         </div>
-        <div v-if="product.viewCnt || product.scrapCnt" class="flex space-x-3">
+        <!-- <div v-if="product.viewCnt || product.scrapCnt" class="flex space-x-3">
           <span v-if="product.viewCnt">조회 {{ product.viewCnt }}</span>
           <span v-if="product.scrapCnt">관심 {{ product.scrapCnt }}</span>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -119,8 +119,15 @@ const props = defineProps({
 
 const emit = defineEmits(['productClick', 'toggleLike']);
 
+// 타입 정규화 헬퍼 함수
+const normalizeType = type => {
+  const actualType = Array.isArray(type) ? type[0] : type;
+  return String(actualType).toLowerCase().trim();
+};
+
 // 상품 유형 라벨 변환
 const getProductTypeLabel = type => {
+  const normalizedType = normalizeType(type);
   const typeMap = {
     deposit: '예금',
     savings: '적금',
@@ -128,7 +135,7 @@ const getProductTypeLabel = type => {
     pension: '연금',
     forex: '외화',
   };
-  return typeMap[type] || type;
+  return typeMap[normalizedType] || normalizedType;
 };
 
 // 금융권 라벨 변환
@@ -142,7 +149,8 @@ const getFSectorLabel = sector => {
 
 // tag1 포맷팅 (상품별로 다름)
 const formatTag1 = (tag1, type) => {
-  switch (type) {
+  const normalizedType = normalizeType(type);
+  switch (normalizedType) {
     case 'deposit':
     case 'savings':
     case 'forex':
@@ -158,7 +166,8 @@ const formatTag1 = (tag1, type) => {
 
 // tag2 포맷팅 (상품별로 다름)
 const formatTag2 = (tag2, type) => {
-  switch (type) {
+  const normalizedType = normalizeType(type);
+  switch (normalizedType) {
     case 'deposit':
     case 'savings':
     case 'forex':
@@ -174,7 +183,8 @@ const formatTag2 = (tag2, type) => {
 
 // tag3 포맷팅
 const formatTag3 = (tag3, type) => {
-  switch (type) {
+  const normalizedType = normalizeType(type);
+  switch (normalizedType) {
     case 'pension':
       return `위험도 ${tag3}`;
     case 'fund':
@@ -188,7 +198,8 @@ const formatTag3 = (tag3, type) => {
 const formatTitle = (title, type) => {
   if (!title) return '-';
 
-  switch (type) {
+  const normalizedType = normalizeType(type);
+  switch (normalizedType) {
     case 'deposit':
     case 'savings':
       return `연 ${parseFloat(title).toFixed(2)}%`;
@@ -210,8 +221,10 @@ const formatTitle = (title, type) => {
 const formatSubTitle = (subTitle, type) => {
   if (!subTitle) return '';
 
-  switch (type) {
+  const normalizedType = normalizeType(type);
+  switch (normalizedType) {
     case 'deposit':
+      return `기본금리 ${parseFloat(subTitle).toFixed(2)}%`;
     case 'savings':
       return `기본금리 ${parseFloat(subTitle).toFixed(2)}%`;
     case 'pension':
@@ -225,7 +238,8 @@ const formatSubTitle = (subTitle, type) => {
 
 // 기준 텍스트
 const getBaseText = type => {
-  switch (type) {
+  const normalizedType = normalizeType(type);
+  switch (normalizedType) {
     case 'deposit':
     case 'savings':
       return '우대금리 포함';

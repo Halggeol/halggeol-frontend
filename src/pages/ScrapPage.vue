@@ -4,7 +4,7 @@
 
     <div class="flex-1 p-5">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl font-bold text-gray-800">스크랩 상품 목록</h2>
+        <h2 class="text-2xl font-bold text-gray-800">관심 상품 목록</h2>
         <ProductSort @update:sort="handleSortChange" />
       </div>
 
@@ -12,7 +12,7 @@
         <div
           class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"
         ></div>
-        <p class="mt-4 text-gray-600">스크랩 상품을 불러오는 중...</p>
+        <p class="mt-4 text-gray-600">관심 상품을 불러오는 중...</p>
       </div>
 
       <div v-else-if="error" class="text-center py-10 text-red-600">
@@ -29,7 +29,7 @@
         v-else-if="products.length === 0"
         class="text-gray-600 text-center py-10"
       >
-        스크랩한 상품이 없습니다.
+        등록된 관심 상품이 없습니다.
       </div>
 
       <ScrapSection
@@ -44,238 +44,159 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import ProductSort from '@/components/products/ProductSort.vue';
 import ScrapFilter from '@/components/scrap/ScrapFilter.vue';
 import ScrapSection from '@/components/scrap/ScrapSection.vue';
+import { useRoute, useRouter } from 'vue-router';
+import { delScrap } from '@/api/product-detail';
+import axios from 'axios';
 
-// 목 데이터는 스크립트 블록 최상단에 정의
-const mockProducts = [
-  {
-    productId: 1,
-    type: 'deposit',
-    name: 'KB Star 정기예금',
-    company: 'KB국민은행',
-    tag1: 12,
-    tag2: 36,
-    tag3: null,
-    fSector: 1,
-    minAmount: 100000,
-    saveTerm: null,
-    min_save_term: 12,
-    max_save_term: 36,
-    viewCnt: 150,
-    scrapCnt: 50,
-    title: '3.55',
-    subTitle: '2.50',
-  },
-  {
-    productId: 2,
-    type: 'savings',
-    name: '신한 쏠편한 적금',
-    company: '신한은행',
-    tag1: 6,
-    tag2: 24,
-    tag3: null,
-    fSector: 1,
-    minAmount: 50000,
-    saveTerm: null,
-    min_save_term: 6,
-    max_save_term: 24,
-    viewCnt: 200,
-    scrapCnt: 70,
-    title: '4.10',
-    subTitle: '3.00',
-  },
-  {
-    productId: 3,
-    type: 'fund',
-    name: '미래에셋 인디펜던스 펀드',
-    company: '미래에셋',
-    tag1: '국내주식형',
-    tag2: '성장주',
-    tag3: 2,
-    fSector: 2,
-    minAmount: 10000,
-    saveTerm: 0,
-    min_save_term: null,
-    max_save_term: null,
-    viewCnt: 300,
-    scrapCnt: 90,
-    title: '15.20',
-    subTitle: '1개월',
-  },
-  {
-    productId: 4,
-    type: 'pension',
-    name: '한화생명 e연금저축',
-    company: '한화생명',
-    tag1: 1,
-    tag2: '연금저축',
-    tag3: 4,
-    fSector: 2,
-    minAmount: null,
-    saveTerm: 120,
-    min_save_term: null,
-    max_save_term: null,
-    viewCnt: 80,
-    scrapCnt: 30,
-    title: '12.80',
-    subTitle: '4.00',
-  },
-  {
-    productId: 5,
-    type: 'forex',
-    name: '우리은행 환율우대',
-    company: '우리은행',
-    tag1: 1,
-    tag2: 12,
-    tag3: null,
-    fSector: 1,
-    minAmount: 100,
-    saveTerm: null,
-    min_save_term: 1,
-    max_save_term: 12,
-    viewCnt: 120,
-    scrapCnt: 40,
-    title: '1.20',
-    subTitle: '주요통화 90%',
-  },
-  {
-    productId: 6,
-    type: 'deposit',
-    name: '하나 정기예금',
-    company: '하나은행',
-    tag1: 6,
-    tag2: 24,
-    tag3: null,
-    fSector: 1,
-    minAmount: 500000,
-    saveTerm: 24,
-    min_save_term: null,
-    max_save_term: null,
-    viewCnt: 180,
-    scrapCnt: 60,
-    title: '3.40',
-    subTitle: '2.40',
-  },
-  {
-    productId: 7,
-    type: 'savings',
-    name: '카카오 자유적금',
-    company: '카카오뱅크',
-    tag1: 1,
-    tag2: 36,
-    tag3: null,
-    fSector: 2,
-    minAmount: 1000,
-    saveTerm: 12,
-    min_save_term: null,
-    max_save_term: null,
-    viewCnt: 500,
-    scrapCnt: 150,
-    title: '4.50',
-    subTitle: '3.20',
-  },
-  {
-    productId: 8,
-    type: 'fund',
-    name: '삼성 글로벌 주식형 펀드',
-    company: '삼성증권',
-    tag1: '해외주식형',
-    tag2: '가치주',
-    tag3: 3,
-    fSector: 1,
-    minAmount: 100000,
-    saveTerm: 0,
-    min_save_term: null,
-    max_save_term: null,
-    viewCnt: 250,
-    scrapCnt: 80,
-    title: '-5.10',
-    subTitle: '1개월',
-  },
-];
+const route = useRoute();
+const router = useRouter();
 
 const products = ref([]);
 const loading = ref(false);
 const error = ref(null);
 
-// 필터 상태를 'productTypes'만 포함하도록 변경
+// 필터 상태를 URL에서 관리
 const currentFilters = ref({
   productTypes: ['all'], // 'all'로 초기화하여 처음에는 전체 목록을 보여줌
 });
 const currentSort = ref('popularDesc');
+const isScrapLoading = ref(false);
 
 const fetchProducts = async () => {
   loading.value = true;
   error.value = null;
 
-  await new Promise(resolve => setTimeout(resolve, 500));
-
-  let filteredProducts = [...mockProducts];
-
-  // 1. 필터링 로직: productTypes 필터만 적용
-  const selectedTypes = currentFilters.value.productTypes;
-  if (
-    selectedTypes &&
-    selectedTypes.length > 0 &&
-    !selectedTypes.includes('all')
-  ) {
-    filteredProducts = filteredProducts.filter(p =>
-      selectedTypes.includes(p.type)
-    );
+  // localStorage에서 토큰을 가져옵니다.
+  const token = localStorage.getItem('accessToken');
+  if (!token) {
+    error.value = '로그인이 필요합니다.';
+    loading.value = false;
+    // 로그인 페이지로 이동
+    router.push('/login');
+    return;
   }
 
-  // 2. 정렬 로직
-  filteredProducts.sort((a, b) => {
-    switch (currentSort.value) {
-      case 'popularDesc':
-        return b.scrapCnt - a.scrapCnt;
-      case 'rateDesc':
-        return parseFloat(b.title) - parseFloat(a.title);
-      default:
-        return 0;
-    }
-  });
+  try {
+    const params = new URLSearchParams();
 
-  products.value = filteredProducts;
-  loading.value = false;
+    // 필터링 파라미터 (ScrapFilter에서 보낸 값)
+    if (
+      currentFilters.value.productTypes &&
+      !currentFilters.value.productTypes.includes('all')
+    ) {
+      params.append(
+        'productTypes',
+        currentFilters.value.productTypes.join(',')
+      );
+    }
+
+    // 정렬 파라미터
+    if (currentSort.value) {
+      params.append('sort', currentSort.value);
+    }
+
+    const apiUrl = `http://localhost:8080/api/scrap?${params.toString()}`; // 스크랩 API 엔드포인트
+    console.log('API 호출:', apiUrl);
+
+    const response = await axios.get(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`, // localStorage에서 가져온 토큰 사용
+      },
+    });
+    //const response = await fetch(apiUrl);
+    products.value = response.data;
+    error.value = null;
+  } catch (err) {
+    if (axios.isAxiosError(err) && err.response) {
+      if (err.response.status === 401) {
+        error.value = '로그인 세션이 만료되었습니다. 다시 로그인해주세요.';
+        // 로그인 페이지로 이동
+        router.push('/login');
+      } else {
+        error.value = `서버 오류: ${err.response.status}`;
+      }
+    } else {
+      error.value = '네트워크 연결 상태를 확인해주세요.';
+      console.error('API 호출 중 오류 발생:', err);
+    }
+  } finally {
+    loading.value = false;
+  }
 };
 
 // 필터 변경 핸들러
 const handleFilterChange = filters => {
   console.log('Filters changed:', filters);
   // ScrapFilter에서 보낸 filters 객체를 그대로 사용
-  currentFilters.value = filters;
-  fetchProducts();
+  router.push({
+    query: {
+      ...route.query,
+      productTypes:
+        filters.productTypes && !filters.productTypes.includes('all')
+          ? filters.productTypes.join(',')
+          : undefined,
+    },
+  });
 };
 
 const handleSortChange = sort => {
   console.log('Sort changed:', sort);
-  currentSort.value = sort;
-  fetchProducts();
+  router.push({
+    query: {
+      ...route.query,
+      sort: sort,
+    },
+  });
 };
 
-const handleToggleLike = ({ productId, isLiked }) => {
-  // `ProductCard`에서 보낸 `isLiked` 상태가 `true`일 때,
-  // 즉, 관심상품 페이지에서 하트를 눌러 찜을 해제하려는 경우
+// 찜 해제 핸들러 (스크랩 페이지이므로 해제만 가능)
+const handleToggleLike = async ({ productId, isLiked }) => {
+  if (isScrapLoading.value) return;
+
+  // isLiked가 true일 때만 (찜 해제) 로직 실행
   if (isLiked) {
-    console.log(`찜 해제 요청: productId ${productId}`);
-    // 목 데이터에서 해당 상품 제거
-    products.value = products.value.filter(p => p.productId !== productId);
-    // 실제 API에서는 여기서 찜 해제 API를 호출하고,
-    // 성공 시 목록을 업데이트하는 로직이 필요합니다.
+    console.log('찜 해제 요청: productId', productId);
+    isScrapLoading.value = true;
+    try {
+      await delScrap(productId);
+      // API 호출 성공 시 목록에서 해당 상품 제거
+      products.value = products.value.filter(p => p.productId !== productId);
+      console.log('찜 해제 완료');
+    } catch (error) {
+      console.error('찜 해제 실패:', error);
+      alert('찜 해제 중 오류가 발생했습니다.');
+    } finally {
+      isScrapLoading.value = false;
+    }
   }
 };
 
 const handleProductClick = product => {
   console.log('Product clicked:', product);
+  router.push({
+    name: 'products-detail',
+    params: { id: product.productId },
+  });
 };
 
-onMounted(() => {
-  fetchProducts();
-});
+// URL 쿼리 변경을 감지하여 상태 업데이트 및 API 재호출
+watch(
+  () => route.query,
+  newQuery => {
+    currentFilters.value = {
+      productTypes: newQuery.productTypes
+        ? newQuery.productTypes.split(',')
+        : ['all'],
+    };
+    currentSort.value = newQuery.sort || 'popularDesc';
+    fetchProducts();
+  },
+  { deep: true, immediate: true }
+);
 
 defineExpose({
   fetchProducts,
