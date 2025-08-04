@@ -3,6 +3,8 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { login } from '@/api/user';
 import BaseButton from '@/components/common/BaseButton.vue';
+import EyeClose from '@/components/icons/EyeClose.vue';
+import EyeOpen from '@/components/icons/EyeOpen.vue';
 
 const router = useRouter();
 
@@ -12,6 +14,7 @@ const regex = {
 
 const email = ref('');
 const password = ref('');
+const showPassword = ref(false);
 
 const errors = ref({
   email: '',
@@ -100,15 +103,28 @@ function inputStyleClass(field) {
         </div>
 
         <!-- 비밀번호 -->
-        <div class="mb-3">
-          <input
-            type="password"
-            v-model="password"
-            @blur="validatePassword"
-            :class="inputStyleClass('password')"
-            placeholder="비밀번호"
-            :disabled="result.success"
-          />
+        <div class="mb-3 relative">
+          <div class="relative">
+            <input
+              :type="showPassword ? 'text' : 'password'"
+              v-model="password"
+              @blur="validatePassword"
+              :class="inputStyleClass('password')"
+              placeholder="비밀번호"
+              :disabled="result.success"
+            />
+
+            <button
+              type="button"
+              tabindex="-1"
+              @click="showPassword = !showPassword"
+              class="absolute top-1/2 right-3 -translate-y-1/2 flex items-center justify-center"
+            >
+              <EyeOpen v-if="showPassword" class="w-4 h-4"></EyeOpen>
+              <EyeClose v-if="!showPassword" class="w-4 h-4"></EyeClose>
+            </button>
+          </div>
+
           <small v-if="errors.password" class="text-red-500 mt-1 block">{{ errors.password }}</small>
         </div>
 
