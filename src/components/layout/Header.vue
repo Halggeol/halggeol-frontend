@@ -1,14 +1,16 @@
 <script setup>
 import { ref, onUnmounted, watch } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import { extendLogin } from '@/api/user';
 import SearchModal from '../common/SearchModal.vue';
+import ExtendLoginModal from '../user/ExtendLoginModal.vue';
 
 const authStore = useAuthStore();
 let interval = null;
 
 const route = useRoute();
+const router = useRouter();
 const navItems = [
   { to: '/', label: '홈', exact: true },
   { to: '/insight', label: '회고 인사이트' },
@@ -19,6 +21,10 @@ const isActive = (to, exact = false) =>
 
 // 검색 모달 관련 상태
 const isSearchModalOpen = ref(false); // 검색 모달 열림/닫힘 상태
+// 로그인 시간 연장 모달 관련 상태
+const isExtendLoginModalOpen = ref(false);
+// 모달 닫기 버튼 클릭 여부
+const hasDeclinedExtendModal = ref(false);
 
 const handleSearch = query => {
   console.log('헤더에서 검색 실행:', query);
@@ -26,10 +32,14 @@ const handleSearch = query => {
   // router.push({ path: '/search-results', query: { q: query } });
 };
 
+const handleCancel = () => {
+  isExtendLoginModalOpen.value = false;
+  hasDeclinedExtendModal.value = true;
+}
+
 async function handleExtendLogin() {
   console.log('===== 로그인 시간 연장 핸들링 =====');
-
-  // TODO: 만료시간 5분 전 시간 연장 모달 띄우기
+    isExtendLoginModalOpen.value = false;
 
   try {
     console.log("===== extendLogin API 호출 =====");
@@ -38,17 +48,18 @@ async function handleExtendLogin() {
     authStore.extendLogin(response.data?.accessToken);
   } catch (error) {
     console.error('토큰 만료: ', error);
-    route.push('/login');
+    // TODO: 로그아웃 함수에서 /login으로 리다이렉트
+    // logout();
+    router.push('/login');
   }
 }
 
+// 남은 로그인 시간 갱신
 watch(
   () => authStore.isLoggedIn,
   (isLoggedIn) => {
-    console.log(isLoggedIn);
     if (isLoggedIn) {
       authStore.updateTokenRemainingSeconds();
-      console.log(authStore.tokenRemainingSeconds);
 
       interval = setInterval(() => {
         authStore.updateTokenRemainingSeconds();
@@ -61,6 +72,20 @@ watch(
   },
   { immediate: true }
 );
+
+// 남은 시간 5분 이하일 때 모달 표시
+watch(
+  () => authStore.tokenRemainingSeconds,
+  (seconds) => {
+    if (seconds > 0 && seconds <= 60 * 5 && !isExtendLoginModalOpen.value && !hasDeclinedExtendModal.value)
+      isExtendLoginModalOpen.value = true;
+    if (seconds < 0) {
+      // TODO: 시간 만료 시 로그아웃
+      // logout();
+      router.push('/login');
+    }
+  },
+)
 
 onUnmounted(() => {
   clearInterval(interval);
@@ -114,9 +139,9 @@ onUnmounted(() => {
       <!-- 헤더 - 유저 영역 -->
       <div class="flex gap-x-6 justify-end">
         <template v-if="authStore.isLoggedIn">
-          <span v-if="authStore.tokenRemainingSeconds >= 0" class="text-sm text-gray-500">
-            남은 시간: {{ Math.floor(authStore.tokenRemainingSeconds / 60) }}분
-            {{ Math.floor(authStore.tokenRemainingSeconds % 60) }}초
+          <span class="text-sm text-gray-500">
+            남은 시간: {{ Math.floor(Math.max(0, authStore.tokenRemainingSeconds / 60)) }}분
+            {{ Math.floor(Math.max(0, authStore.tokenRemainingSeconds % 60)) }}초
           </span>
 
           <button @click="handleExtendLogin">로그인 연장</button>
@@ -138,5 +163,11 @@ onUnmounted(() => {
     :is-open="isSearchModalOpen"
     @update:is-open="isSearchModalOpen = $event"
     @search="handleSearch"
+  />
+
+  <ExtendLoginModal
+    :is-open="isExtendLoginModalOpen"
+    @confirm="handleExtendLogin"
+    @cancel="handleCancel"
   />
 </template>
