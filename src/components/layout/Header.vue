@@ -1,13 +1,12 @@
 <script setup>
-import { ref, computed } from 'vue'; // ref 추가
+import { ref, onUnmounted, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import { extendLogin } from '@/api/user';
 import SearchModal from '../common/SearchModal.vue';
 
 const authStore = useAuthStore();
-const isLoggedIn = computed(() => authStore.isLoggedIn);
-const username = computed(() => authStore.username);
+let interval = null;
 
 const route = useRoute();
 const navItems = [
@@ -30,7 +29,6 @@ const handleSearch = query => {
 async function handleExtendLogin() {
   console.log('===== 로그인 시간 연장 핸들링 =====');
 
-  // TODO: 남은시간 보여주기
   // TODO: 만료시간 5분 전 시간 연장 모달 띄우기
 
   try {
@@ -43,6 +41,30 @@ async function handleExtendLogin() {
     route.push('/login');
   }
 }
+
+watch(
+  () => authStore.isLoggedIn,
+  (isLoggedIn) => {
+    console.log(isLoggedIn);
+    if (isLoggedIn) {
+      authStore.updateTokenRemainingSeconds();
+      console.log(authStore.tokenRemainingSeconds);
+
+      interval = setInterval(() => {
+        authStore.updateTokenRemainingSeconds();
+      }, 1000);
+    }
+    else {
+      clearInterval(interval);
+      interval = null;
+    }
+  },
+  { immediate: true }
+);
+
+onUnmounted(() => {
+  clearInterval(interval);
+})
 
 </script>
 
@@ -91,9 +113,14 @@ async function handleExtendLogin() {
       </div>
       <!-- 헤더 - 유저 영역 -->
       <div class="flex gap-x-6 justify-end">
-        <template v-if="isLoggedIn">
+        <template v-if="authStore.isLoggedIn">
+          <span v-if="authStore.tokenRemainingSeconds >= 0" class="text-sm text-gray-500">
+            남은 시간: {{ Math.floor(authStore.tokenRemainingSeconds / 60) }}분
+            {{ Math.floor(authStore.tokenRemainingSeconds % 60) }}초
+          </span>
+
           <button @click="handleExtendLogin">로그인 연장</button>
-          <button>{{ username }} 님</button>
+          <button>{{ authStore.username }} 님</button>
         </template>
         <template v-else>
           <RouterLink to="/login" class="-m-4 p-4 body02 text-fg-primary"

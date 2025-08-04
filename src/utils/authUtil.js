@@ -32,3 +32,14 @@ export const isValidToken = (parsedToken) => {
   const now = Math.floor(Date.now() / 1000);
   return (parsedToken.exp && parsedToken.exp > now);
 }
+
+export const getTokenRemainingSeconds = () => {
+  const token = getAccessToken();
+  if (!token) return 0;
+
+  const parsedToken = parseToken(token);
+  if (!parsedToken.exp) return 0;
+
+  const now = Math.floor(Date.now() / 1000);
+  return parsedToken.exp - now;
+}

@@ -5,6 +5,7 @@ export const useAuthStore = defineStore('auth',  {
   state: () => ({
     isLoggedIn: false,
     username: null,
+    tokenRemainingSeconds: 0,
   }),
   actions: {
     initialize() {
@@ -46,6 +47,9 @@ export const useAuthStore = defineStore('auth',  {
       this.username = null;
       authUtil.clearAccessToken();
       authUtil.clearUsername();
+    },
+    updateTokenRemainingSeconds() {
+      this.tokenRemainingSeconds = authUtil.getTokenRemainingSeconds();
     }
   }
 })
