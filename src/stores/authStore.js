@@ -38,6 +38,9 @@ export const useAuthStore = defineStore('auth',  {
       authUtil.setAccessToken(token);
       authUtil.setUsername(this.username);
     },
+    extendLogin(token) {
+      authUtil.setAccessToken(token);
+    },
     logout() {
       this.isLoggedIn = false;
       this.username = null;

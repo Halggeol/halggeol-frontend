@@ -1,7 +1,13 @@
 <script setup>
-import { ref } from 'vue'; // ref 추가
+import { ref, computed } from 'vue'; // ref 추가
 import { RouterLink, useRoute } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore';
+import { extendLogin } from '@/api/user';
 import SearchModal from '../common/SearchModal.vue';
+
+const authStore = useAuthStore();
+const isLoggedIn = computed(() => authStore.isLoggedIn);
+const username = computed(() => authStore.username);
 
 const route = useRoute();
 const navItems = [
@@ -20,6 +26,24 @@ const handleSearch = query => {
   // 실제 검색 로직 (예: 검색 결과 페이지로 이동 또는 검색 결과 표시)
   // router.push({ path: '/search-results', query: { q: query } });
 };
+
+async function handleExtendLogin() {
+  console.log('===== 로그인 시간 연장 핸들링 =====');
+
+  // TODO: 남은시간 보여주기
+  // TODO: 만료시간 5분 전 시간 연장 모달 띄우기
+
+  try {
+    console.log("===== extendLogin API 호출 =====");
+    const response = await extendLogin();
+
+    authStore.extendLogin(response.data?.accessToken);
+  } catch (error) {
+    console.error('토큰 만료: ', error);
+    route.push('/login');
+  }
+}
+
 </script>
 
 <template>
@@ -68,7 +92,7 @@ const handleSearch = query => {
       <!-- 헤더 - 유저 영역 -->
       <div class="flex gap-x-6 justify-end">
         <template v-if="isLoggedIn">
-          <button>로그인 연장</button>
+          <button @click="handleExtendLogin">로그인 연장</button>
           <button>{{ username }} 님</button>
         </template>
         <template v-else>
