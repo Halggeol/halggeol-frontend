@@ -39,3 +39,13 @@ export const extendLogin = async () => {
     throw error;
   }
 };
+
+export const findEmail = async (body) => {
+  try {
+    const response = await api.post('/email/find', body);
+    return response;
+  } catch (error) {
+    console.error('Find Email API Error:', error);
+    throw error;
+  }
+};
