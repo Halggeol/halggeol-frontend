@@ -15,8 +15,7 @@ import UserInHeader from '../icons/UserInHeader.vue';
 
 const authStore = useAuthStore();
 let interval = null;
-// const WARNING_THRESHOLD_SECONDS = 60 * 5;
-const WARNING_THRESHOLD_SECONDS = 50;
+const WARNING_THRESHOLD_SECONDS = 60 * 5;
 
 const remainingMinutes = computed(() =>
   Math.floor(Math.max(0, authStore.tokenRemainingSeconds / 60))
