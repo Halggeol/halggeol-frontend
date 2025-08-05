@@ -184,7 +184,12 @@ onUnmounted(() => {
             남은 시간: {{ remainingMinutes }}분 {{ remainingSeconds }}초
           </span>
 
-          <button @click="handleExtendLogin">로그인 연장</button>
+          <button
+            @click="handleExtendLogin"
+            class="btn btn-sm btn-block btn-outline bg-primary border-0 rounded-2xl text-white h-6 w-20"
+          >
+            로그인 연장
+          </button>
           <button @click="toggleUserMenu">{{ authStore.username }} 님</button>
 
           <UserModal
