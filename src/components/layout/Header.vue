@@ -10,6 +10,8 @@ import { useAuthStore } from '@/stores/authStore';
 import { extendLogin } from '@/api/user';
 import SearchModal from '../common/SearchModal.vue';
 import ExtendLoginModal from '../user/ExtendLoginModal.vue';
+import UserModal from '../user/UserModal.vue';
+import UserInHeader from '../icons/UserInHeader.vue';
 
 const authStore = useAuthStore();
 let interval = null;
@@ -36,10 +38,14 @@ const isActive = (to, exact = false) =>
 
 // 검색 모달 관련 상태
 const isSearchModalOpen = ref(false); // 검색 모달 열림/닫힘 상태
+
 // 로그인 시간 연장 모달 관련 상태
 const isExtendLoginModalOpen = ref(false);
-// 모달 닫기 버튼 클릭 여부
-const hasDeclinedExtendModal = ref(false);
+const hasDeclinedExtendModal = ref(false); // 로그인 시간 연장 모달 닫기 버튼 클릭 여부
+
+// 마이페이지 모달 관련 상태
+const isUserModalOpen = ref(false); // 마이페이지 모달 열림/닫힘 상태
+// const menuRef = ref(null);
 
 const handleSearch = query => {
   console.log('헤더에서 검색 실행:', query);
@@ -52,15 +58,33 @@ const handleCancel = () => {
   hasDeclinedExtendModal.value = true;
 };
 
+const toggleUserMenu = () => {
+  isUserModalOpen.value = !isUserModalOpen.value;
+}
+
+const closeUserModal = () => {
+  isUserModalOpen.value = false;
+}
+
+const goTo = (path) => {
+  closeUserModal();
+  router.push(path);
+}
+
+async function logout() {
+  // TODO: 로그아웃 api 호출
+  router.push('/login');
+}
+
 async function handleExtendLogin() {
   console.log('===== 로그인 시간 연장 핸들링 =====');
-  isExtendLoginModalOpen.value = false;
 
   try {
     console.log('===== extendLogin API 호출 =====');
     const response = await extendLogin();
 
     authStore.extendLogin(response.data?.accessToken);
+    isExtendLoginModalOpen.value = false;
   } catch (error) {
     console.error('토큰 만료: ', error);
     // TODO: 로그아웃 함수에서 /login으로 리다이렉트
@@ -161,8 +185,26 @@ onUnmounted(() => {
             남은 시간: {{ remainingMinutes }}분 {{ remainingSeconds }}초
           </span>
 
-          <button @click="handleExtendLogin">로그인 연장</button>
-          <button>{{ authStore.username }} 님</button>
+          <button
+            @click="handleExtendLogin"
+            class="btn btn-sm btn-block btn-outline bg-primary border-0 rounded-2xl text-white h-6 w-20"
+          >
+            로그인 연장
+          </button>
+          <button
+            @click="toggleUserMenu"
+            class="flex items-center gap-x-1"
+          >
+            {{ authStore.username }} 님 <UserInHeader/>
+          </button>
+
+          <UserModal
+           :is-open="isUserModalOpen"
+           @close="closeUserModal"
+           @go-to="goTo"
+           @logout="logout"
+          />
+
         </template>
         <template v-else>
           <RouterLink to="/login" class="-m-4 p-4 body02 text-fg-primary"
