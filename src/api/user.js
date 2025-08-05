@@ -62,3 +62,13 @@ export const findEmail = async (body) => {
     throw error;
   }
 };
+
+export const requestPasswordReset = async (body) => {
+  try {
+    const response = await api.post('/password/reset/request', body);
+    return response;
+  } catch (error) {
+    console.error('Request Password Reset API Error:', error);
+    throw error;
+  }
+};
