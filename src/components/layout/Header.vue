@@ -11,7 +11,10 @@ import { extendLogin } from '@/api/user';
 import SearchModal from '../common/SearchModal.vue';
 import ExtendLoginModal from '../user/ExtendLoginModal.vue';
 import UserModal from '../user/UserModal.vue';
+<<<<<<< HEAD
 import UserInHeader from '../icons/UserInHeader.vue';
+=======
+>>>>>>> d65ddf9 (feat: 마이페이지 모달 구현)
 
 const authStore = useAuthStore();
 let interval = null;
@@ -42,11 +45,11 @@ const isSearchModalOpen = ref(false); // 검색 모달 열림/닫힘 상태
 
 // 로그인 시간 연장 모달 관련 상태
 const isExtendLoginModalOpen = ref(false);
-const hasDeclinedExtendModal = ref(false); // 로그인 시간 연장 모달 닫기 버튼 클릭 여부
 
 // 마이페이지 모달 관련 상태
 const isUserModalOpen = ref(false); // 마이페이지 모달 열림/닫힘 상태
 // const menuRef = ref(null);
+const hasDeclinedExtendModal = ref(false); // 로그인 시간 연장 모달 닫기 버튼 클릭 여부
 
 const handleSearch = query => {
   console.log('헤더에서 검색 실행:', query);
