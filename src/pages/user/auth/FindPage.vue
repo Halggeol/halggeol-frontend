@@ -75,6 +75,24 @@ async function handleFindId() {
 }
 
 async function handleRequestResetPassword() {
+  console.log('===== 이메일 본인인증 핸들링 =====');
+
+  if (canSubmit.value) {
+    try {
+      console.log("===== requestPasswordReset API 호출 =====");
+      await requestPasswordReset({ email: email.value });
+
+      result.value = {
+        message: '입력하신 이메일로 비밀번호 재설정 링크가 전송되었습니다.',
+        success: true
+      };
+    } catch (error) {
+      result.value = {
+        message: '오류가 발생했습니다.',
+        success: false
+      };
+    }
+  }
 }
 </script>
 
