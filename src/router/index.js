@@ -120,13 +120,8 @@ const commonRoutes = [
     component: UserLayout,
     children: [
       {
-        path: 'id',
-        name: 'find/id',
-        component: () => import('@/pages/user/auth/FindPage.vue'),
-      },
-      {
-        path: 'pwd',
-        name: 'find/pwd',
+        path: '',
+        name: 'find',
         component: () => import('@/pages/user/auth/FindPage.vue'),
       },
     ],
