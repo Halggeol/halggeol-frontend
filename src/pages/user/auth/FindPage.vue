@@ -21,7 +21,11 @@ const result = ref({
 });
 
 const canSubmit = computed(() => {
-  return (name.value !== '' && phone.value !== '') || email.value !== '';
+  if (activeTab.value === 'findId')
+    return name.value !== '' && phone.value !== '';
+  else if (activeTab.value === 'resetPassword')
+    return email.value !== '';
+  return false;
 })
 
 function switchTab(tab) {
@@ -63,7 +67,7 @@ async function handleFindId() {
       }
     } catch (error) {
       result.value = {
-        message: '오류가 발생했습니다,',
+        message: '오류가 발생했습니다.',
         success: false
       }
     }
@@ -71,7 +75,6 @@ async function handleFindId() {
 }
 
 async function handleRequestResetPassword() {
-
 }
 </script>
 
@@ -100,7 +103,7 @@ async function handleRequestResetPassword() {
       </div>
 
       <!-- 아이디 찾기 -->
-      <form v-if="activeTab === 'findId' && result.success == false" @submit.prevent novalidate>
+      <form v-if="activeTab === 'findId' && result.success === false" @submit.prevent novalidate>
         <input
           type="text"
           v-model="name"
@@ -134,7 +137,7 @@ async function handleRequestResetPassword() {
       </form>
 
       <!-- 아이디 찾기 결과 -->
-      <div v-if="activeTab === 'findId' && result.success == true">
+      <div v-if="activeTab === 'findId' && result.success === true">
         <p class="text-base text-gray-500 mb-4 text-center">{{ result.message }}</p>
         <div class="rounded-lg border border-gray-300 bg-gray-50 p-4 max-h-[130px] overflow-y-auto">
           <ul class="space-y-2">
