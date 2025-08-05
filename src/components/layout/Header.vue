@@ -15,7 +15,8 @@ import UserInHeader from '../icons/UserInHeader.vue';
 
 const authStore = useAuthStore();
 let interval = null;
-const WARNING_THRESHOLD_SECONDS = 60 * 5;
+// const WARNING_THRESHOLD_SECONDS = 60 * 5;
+const WARNING_THRESHOLD_SECONDS = 50;
 
 const remainingMinutes = computed(() =>
   Math.floor(Math.max(0, authStore.tokenRemainingSeconds / 60))
@@ -78,13 +79,13 @@ async function logout() {
 
 async function handleExtendLogin() {
   console.log('===== 로그인 시간 연장 핸들링 =====');
-  isExtendLoginModalOpen.value = false;
 
   try {
     console.log('===== extendLogin API 호출 =====');
     const response = await extendLogin();
 
     authStore.extendLogin(response.data?.accessToken);
+    isExtendLoginModalOpen.value = false;
   } catch (error) {
     console.error('토큰 만료: ', error);
     // TODO: 로그아웃 함수에서 /login으로 리다이렉트
