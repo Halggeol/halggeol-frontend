@@ -11,6 +11,7 @@ import { extendLogin } from '@/api/user';
 import SearchModal from '../common/SearchModal.vue';
 import ExtendLoginModal from '../user/ExtendLoginModal.vue';
 import UserModal from '../user/UserModal.vue';
+import UserInHeader from '../icons/UserInHeader.vue';
 
 const authStore = useAuthStore();
 let interval = null;
@@ -190,7 +191,12 @@ onUnmounted(() => {
           >
             로그인 연장
           </button>
-          <button @click="toggleUserMenu">{{ authStore.username }} 님</button>
+          <button
+            @click="toggleUserMenu"
+            class="flex items-center gap-x-1"
+          >
+            {{ authStore.username }} 님 <UserInHeader/>
+          </button>
 
           <UserModal
            :is-open="isUserModalOpen"
