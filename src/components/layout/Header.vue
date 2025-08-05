@@ -11,10 +11,7 @@ import { extendLogin } from '@/api/user';
 import SearchModal from '../common/SearchModal.vue';
 import ExtendLoginModal from '../user/ExtendLoginModal.vue';
 import UserModal from '../user/UserModal.vue';
-<<<<<<< HEAD
 import UserInHeader from '../icons/UserInHeader.vue';
-=======
->>>>>>> d65ddf9 (feat: 마이페이지 모달 구현)
 
 const authStore = useAuthStore();
 let interval = null;
