@@ -72,3 +72,13 @@ export const requestPasswordReset = async (body) => {
     throw error;
   }
 };
+
+export const resetPassword = async (token, body) => {
+  try {
+    const response = await api.post('/password/reset?token=' + token, body);
+    return response;
+  } catch (error) {
+    console.error('Reset Password API Error:', error);
+    throw error;
+  }
+};
