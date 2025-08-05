@@ -155,9 +155,7 @@ function inputStyleClass(field) {
 
         <!-- 하단 링크 -->
         <div class="mt-6 text-center text-xs text-gray-500 space-x-3">
-          <a href="/find/id" class="hover:underline">아이디 찾기</a>
-          <span>|</span>
-          <a href="/find/password" class="hover:underline">비밀번호 찾기</a>
+          <a href="/find" class="hover:underline">아이디 / 비밀번호 찾기</a>
           <span>|</span>
           <a href="/signup/request" class="hover:underline">회원가입</a>
         </div>
