@@ -124,6 +124,11 @@ const commonRoutes = [
         name: 'find',
         component: () => import('@/pages/user/auth/FindPage.vue'),
       },
+      {
+        path: 'password/reset',
+        name: 'find/password/reset',
+        component: () => import('@/pages/user/auth/PasswordResetPage.vue'),
+      },
     ],
   },
 
