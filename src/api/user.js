@@ -25,7 +25,7 @@ export const requestJoin = async (body) => {
 
 export const join = async (token, body) => {
   try {
-    const response = await api.post('/signup?token=' + token, body);
+    const response = await api.post(`/signup?token=${token}`, body);
     return response;
   } catch (error) {
     console.error('Join API Error:', error);
@@ -59,6 +59,26 @@ export const findEmail = async (body) => {
     return response;
   } catch (error) {
     console.error('Find Email API Error:', error);
+    throw error;
+  }
+};
+
+export const requestPasswordReset = async (body) => {
+  try {
+    const response = await api.post('/password/reset/request', body);
+    return response;
+  } catch (error) {
+    console.error('Request Password Reset API Error:', error);
+    throw error;
+  }
+};
+
+export const resetPassword = async (token, body) => {
+  try {
+    const response = await api.post(`/password/reset?token=${token}`, body);
+    return response;
+  } catch (error) {
+    console.error('Reset Password API Error:', error);
     throw error;
   }
 };

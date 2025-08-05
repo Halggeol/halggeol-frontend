@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { join } from '@/api/user';
-import { parseToken } from '@/utils/authUtil';
+import { setTokenIfExists, setEmailFromToken } from '@/utils/authUtil';
 import PrivacyPolicyModal from '@/components/user/PrivacyPolicyModal.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
 import EyeClose from '@/components/icons/EyeClose.vue';
@@ -48,30 +48,10 @@ const canSubmit = computed(() => {
 });
 
 onMounted(() => {
-  setTokenIfExists();
-  setEmailFromToken();
+  if ((token.value = setTokenIfExists()) === null ||
+      (form.value.email = setEmailFromToken(token.value)) === null)
+    router.push('/signup/request');
 });
-
-function setTokenIfExists() {
-  token.value = new URLSearchParams(window.location.search).get('token');
-}
-
-function setEmailFromToken() {
-  if (token.value === null) {
-    console.error('토큰 누락');
-    router.push('/signup/request');
-    return;
-  }
-
-  try {
-    const parsedToken = parseToken(token.value);
-    form.value.email = parsedToken.sub;
-
-  } catch (e) {
-    console.error('토큰 형식 오류: ', e);
-    router.push('/signup/request');
-  }
-}
 
 function validateField(field) {
   const value = form.value[field];
@@ -189,8 +169,6 @@ function inputStyleClass(error) {
 
 function openPolicyModal() {
   privacyModalRef.value?.showModal();
-  // const modal = document.getElementById('policy_modal');
-  // modal?.showModal();
 }
 
 </script>
