@@ -22,6 +22,29 @@ export const clearUsername = () => {
   sessionStorage.removeItem('username');
 };
 
+export const setTokenIfExists = () => {
+  const token = new URLSearchParams(window.location.search).get('token');
+
+  if (token === null) {
+    console.error('토큰 누락');
+    return null;
+  }
+
+  return token;
+}
+
+export const setEmailFromToken = (token) => {
+  if (token === null)
+    return null;
+
+  try {
+    return parseToken(token).sub;
+  } catch (e) {
+    console.error('토큰 형식 오류: ', e);
+    return null;
+  }
+}
+
 export const parseToken = (token) => {
   const payload = token.split('.')[1];
   const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/')); // base64 디코딩
