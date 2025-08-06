@@ -48,7 +48,7 @@ export const logout = async () => {
     const response = await api.get('/logout');
     return response;
   } catch (error) {
-    console.error('Login API Error:', error);
+    console.error('Logout API Error:', error);
   }
 };
 
