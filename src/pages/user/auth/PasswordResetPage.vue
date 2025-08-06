@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { resetPassword } from '@/api/user';
-import { setTokenIfExists } from '@/utils/authUtil';
+import { getTokenIfExists } from '@/utils/authUtil';
 import BaseButton from '@/components/common/BaseButton.vue';
 import EyeClose from '@/components/icons/EyeClose.vue';
 import EyeOpen from '@/components/icons/EyeOpen.vue';
@@ -31,7 +31,7 @@ const canSubmit = computed(() => {
 });
 
 onMounted(() => {
-  if ((token.value = setTokenIfExists()) === null)
+  if ((token.value = getTokenIfExists()) === null)
     router.push('/find');
 });
 

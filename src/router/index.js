@@ -150,7 +150,7 @@ const commonRoutes = [
       },
       {
         path: 'survey/:type', // knowledge, tendency
-        name: 'survey',
+        name: 'signup/survey',
         component: () => import('@/pages/user/survey/SurveyPage.vue'),
       },
     ],
@@ -163,7 +163,7 @@ const commonRoutes = [
     children: [
       {
         path: 'survey/:type', // knowledge, tendency
-        name: 'survey',
+        name: 'mypage/survey',
         component: () => import('@/pages/user/survey/SurveyPage.vue'),
       },
     ],
