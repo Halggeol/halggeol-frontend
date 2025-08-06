@@ -33,7 +33,15 @@ async function setUserInfo() {
   try {
     console.log('===== viewProfile API 호출 =====');
     const response = await viewProfile();
-    const profile = response.data?.profile;
+
+    if (!response.data || !response.data.profile) {
+      result.value = {
+        message: '사용자 정보가 없습니다.',
+        success: false
+      };
+    }
+
+    const profile = response.data.profile;
 
     user.name = profile.name;
     user.email = profile.email;
