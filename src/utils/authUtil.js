@@ -22,7 +22,7 @@ export const clearUsername = () => {
   sessionStorage.removeItem('username');
 };
 
-export const setTokenIfExists = () => {
+export const getTokenIfExists = () => {
   const token = new URLSearchParams(window.location.search).get('token');
 
   if (token === null) {
@@ -33,7 +33,7 @@ export const setTokenIfExists = () => {
   return token;
 }
 
-export const setEmailFromToken = (token) => {
+export const getEmailFromToken = (token) => {
   if (token === null)
     return null;
 

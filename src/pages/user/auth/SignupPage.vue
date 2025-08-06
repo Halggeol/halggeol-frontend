@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { join } from '@/api/user';
-import { setTokenIfExists, setEmailFromToken } from '@/utils/authUtil';
+import { getTokenIfExists, getEmailFromToken } from '@/utils/authUtil';
 import PrivacyPolicyModal from '@/components/user/auth/PrivacyPolicyModal.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
 import EyeClose from '@/components/icons/EyeClose.vue';
@@ -48,8 +48,8 @@ const canSubmit = computed(() => {
 });
 
 onMounted(() => {
-  if ((token.value = setTokenIfExists()) === null ||
-      (form.value.email = setEmailFromToken(token.value)) === null)
+  if ((token.value = getTokenIfExists()) === null ||
+      (form.value.email = getEmailFromToken(token.value)) === null)
     router.push('/signup/request');
 });
 
