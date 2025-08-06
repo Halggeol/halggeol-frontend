@@ -1,9 +1,10 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { initKnowledgeSurvey, updateKnowledgeSurvey } from '@/api/survey';
 import BaseButton from '@/components/common/BaseButton.vue';
 
+const route = useRoute();
 const router = useRouter();
 
 const props = defineProps({
@@ -29,6 +30,9 @@ const questionsPerPage = 5;
 
 const start = computed(() => page.value * questionsPerPage);
 const currentQuestions = computed(() => questions.slice(start.value, start.value + questionsPerPage));
+const allCurrentQuestionsAnswered = computed(() =>
+  currentQuestions.value.every(q => answers.value[q.number] !== undefined)
+);
 
 const handleAnswer = (questionNumber, userAnswer) => {
   answers.value = { ...answers.value, [questionNumber]: userAnswer };
@@ -63,12 +67,20 @@ const handleSubmit = async () => {
     }
 
     console.log(response.data.Message);
-    router.push('/signup/survey/tendency');
+    routeNextSurvey();
 
   } catch (error) {
     alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
   }
 
+  function routeNextSurvey() {
+    if (route.path.startsWith('/signup'))
+      router.push('/signup/survey/tendency');
+    else if (route.path.startsWith('/mypage'))
+      router.push('/mypage/survey/tendency');
+    else
+      router.push('/signup/survey/tendency');
+  }
 };
 </script>
 
@@ -101,7 +113,7 @@ const handleSubmit = async () => {
         class="my-8"
         size="lg"
         variant="filled"
-        :disabled="Object.keys(answers).length < questions.length"
+        :disabled="!allCurrentQuestionsAnswered"
         label="완료"
         @click="handleSubmit">
       </BaseButton>
@@ -111,7 +123,7 @@ const handleSubmit = async () => {
         class="my-8"
         size="lg"
         variant="filled"
-        :disabled="Object.keys(answers).length !== (page + 1) * questionsPerPage"
+        :disabled="!currentQuestions.every(q => answers[q.number] !== undefined)"
         label="다음"
         @click="handleNext">
       </BaseButton>
