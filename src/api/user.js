@@ -69,3 +69,13 @@ export const resetPassword = async (token, body) => {
     throw error;
   }
 };
+
+export const viewProfile = async () => {
+  try {
+    const response = await api.get('/me');
+    return response;
+  } catch (error) {
+    console.error('View Profile API Error:', error);
+    throw error;
+  }
+};
