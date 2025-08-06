@@ -10,8 +10,8 @@ import { useAuthStore } from '@/stores/authStore';
 import { extendLogin, logout } from '@/api/user';
 import { clearAccessToken, clearUsername } from '@/utils/authUtil';
 import SearchModal from '../common/SearchModal.vue';
-import ExtendLoginModal from '../user/ExtendLoginModal.vue';
-import UserModal from '../user/UserModal.vue';
+import ExtendLoginModal from '../user/auth/ExtendLoginModal.vue';
+import UserModal from '../user/mypage/UserModal.vue';
 import UserInHeader from '../icons/UserInHeader.vue';
 
 const authStore = useAuthStore();

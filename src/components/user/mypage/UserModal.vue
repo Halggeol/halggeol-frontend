@@ -1,9 +1,9 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
-import UserInModal from '../icons/UserInModal.vue';
-import Heart from '../icons/Heart.vue';
-import Logout from '../icons/Logout.vue';
+import UserInModal from '../../icons/UserInModal.vue';
+import Heart from '../../icons/Heart.vue';
+import Logout from '../../icons/Logout.vue';
 
 const props = defineProps({
   isOpen: Boolean,
