@@ -30,6 +30,15 @@ export const login = async body => {
   }
 };
 
+export const logout = async () => {
+  try {
+    const response = await api.get('/logout');
+    return response;
+  } catch (error) {
+    console.error('Logout API Error:', error);
+  }
+};
+
 export const extendLogin = async () => {
   try {
     const response = await api.get('/login/extend');

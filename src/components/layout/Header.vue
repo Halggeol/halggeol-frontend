@@ -7,7 +7,8 @@ defineOptions({
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { ref, computed, onUnmounted, watch } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
-import { extendLogin } from '@/api/user';
+import { extendLogin, logout } from '@/api/user';
+import { clearAccessToken, clearUsername } from '@/utils/authUtil';
 import SearchModal from '../common/SearchModal.vue';
 import ExtendLoginModal from '../user/ExtendLoginModal.vue';
 import UserModal from '../user/UserModal.vue';
@@ -72,8 +73,12 @@ const goTo = (path) => {
   router.push(path);
 }
 
-async function logout() {
-  // TODO: 로그아웃 api 호출
+async function handleLogout() {
+  console.log('===== 로그아웃 핸들링 =====');
+  await logout();
+
+  clearAccessToken();
+  clearUsername();
   router.push('/login');
 }
 
@@ -88,9 +93,7 @@ async function handleExtendLogin() {
     isExtendLoginModalOpen.value = false;
   } catch (error) {
     console.error('토큰 만료: ', error);
-    // TODO: 로그아웃 함수에서 /login으로 리다이렉트
-    // logout();
-    router.push('/login');
+    handleLogout();
   }
 }
 
@@ -123,11 +126,8 @@ watch(
       !hasDeclinedExtendModal.value
     )
       isExtendLoginModalOpen.value = true;
-    if (seconds < 0) {
-      // TODO: 시간 만료 시 로그아웃
-      // logout();
-      router.push('/login');
-    }
+    if (seconds < 0)
+      handleLogout();
   }
 );
 
@@ -203,7 +203,7 @@ onUnmounted(() => {
            :is-open="isUserModalOpen"
            @close="closeUserModal"
            @go-to="goTo"
-           @logout="logout"
+           @logout="handleLogout"
           />
 
         </template>
