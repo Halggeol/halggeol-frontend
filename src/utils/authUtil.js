@@ -22,6 +22,18 @@ export const clearUsername = () => {
   sessionStorage.removeItem('username');
 };
 
+export const setEmail = (email) => {
+  sessionStorage.setItem('email', email);
+};
+
+export const getEmail = () => {
+  return sessionStorage.getItem('email');
+};
+
+export const clearEmail = () => {
+  sessionStorage.removeItem('email');
+};
+
 export const getTokenIfExists = () => {
   const token = new URLSearchParams(window.location.search).get('token');
 
