@@ -106,7 +106,6 @@ const handleSubmit = async () => {
         @click="handleSubmit">
       </BaseButton>
 
-      <!-- diabled 조건 짜기 -->
       <BaseButton
         v-else
         class="my-8"
