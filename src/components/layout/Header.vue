@@ -10,14 +10,13 @@ import { useAuthStore } from '@/stores/authStore';
 import { extendLogin, logout } from '@/api/user';
 import { clearAccessToken, clearUsername } from '@/utils/authUtil';
 import SearchModal from '../common/SearchModal.vue';
-import ExtendLoginModal from '../user/ExtendLoginModal.vue';
-import UserModal from '../user/UserModal.vue';
+import ExtendLoginModal from '../user/auth/ExtendLoginModal.vue';
+import UserModal from '../user/mypage/UserModal.vue';
 import UserInHeader from '../icons/UserInHeader.vue';
 
 const authStore = useAuthStore();
 let interval = null;
-// const WARNING_THRESHOLD_SECONDS = 60 * 5;
-const WARNING_THRESHOLD_SECONDS = 50;
+const WARNING_THRESHOLD_SECONDS = 60 * 5;
 
 const remainingMinutes = computed(() =>
   Math.floor(Math.max(0, authStore.tokenRemainingSeconds / 60))

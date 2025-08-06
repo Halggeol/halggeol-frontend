@@ -47,8 +47,8 @@ async function setUserInfo() {
     user.email = profile.email;
     user.phone = profile.phone;
     user.birth = profile.birth;
-    user.knowledge = profile.knowledge;
-    user.investmentType = profile.investmentType;
+    user.knowledge = profile.userKlg;
+    user.investmentType = profile.risk;
 
   } catch (error) {
     result.value = {
