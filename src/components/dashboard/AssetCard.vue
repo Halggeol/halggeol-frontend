@@ -1,6 +1,6 @@
 <script setup>
 import BaseCard from '../common/BaseCard.vue';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 // import jsonData from './mydata.json'; // 목업 데이터, 추후 실제 api로 수정
 
 const props = defineProps({
@@ -83,9 +83,17 @@ import {
   LinearScale,
   PointElement,
   Filler,
+  Tooltip,
 } from 'chart.js';
 
-Chart.register(LineElement, CategoryScale, LinearScale, PointElement, Filler);
+Chart.register(
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Filler,
+  Tooltip
+);
 
 const visibleChartData = computed(() => {
   if (!today.value) return [];
@@ -189,6 +197,26 @@ const chartData = computed(() => {
         data: smoothedAssets,
         borderColor: '#3b82f6',
         tension: 0.3,
+        fill: true,
+        backgroundColor: context => {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) {
+            return null;
+          }
+          const gradientFill = ctx.createLinearGradient(
+            0,
+            chartArea.top,
+            0,
+            chartArea.bottom
+          );
+          gradientFill.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
+          gradientFill.addColorStop(1, 'rgba(59, 130, 246, 0)');
+          return gradientFill;
+        },
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 5,
       },
     ],
   };
@@ -199,7 +227,25 @@ const chartOptions = {
   maintainAspectRatio: false,
   plugins: {
     legend: { display: false },
-    tooltip: { enabled: false },
+    tooltip: {
+      enabled: true,
+      mode: 'index',
+      intersect: false,
+      callbacks: {
+        title: tooltipItems => {
+          const date = tooltipItems[0].label;
+          if (!date) return '';
+          const dateOnly = date.split(' ')[0];
+          const [year, month, day] = dateOnly.split('-');
+          return `${year.slice(2)}년 ${month}월 ${day ? day + '일' : ''}`;
+        },
+        label: context => {
+          // 자산 값에 '원' 추가
+          const value = context.parsed.y.toLocaleString();
+          return `자산: ${value}원`;
+        },
+      },
+    },
     title: { display: false },
   },
   scales: {

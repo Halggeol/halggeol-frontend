@@ -34,7 +34,7 @@ const regretChartData = computed(() => ({
   datasets: [
     {
       data: [avgRegretScore.value, 100 - avgRegretScore.value],
-      backgroundColor: ['#f87171', '#e5e7eb'],
+      backgroundColor: ['#f87171', '#f8717133'],
       borderWidth: 0,
       cutout: '70%',
     },
@@ -60,7 +60,7 @@ const regretItemChartData = computed(() => ({
   datasets: [
     {
       data: [regretItemRatio.value, 100 - regretItemRatio.value],
-      backgroundColor: ['#60a5fa', '#e5e7eb'],
+      backgroundColor: ['#60a5fa', '#60a5fa33'],
       borderWidth: 0,
       cutout: '60%',
       rotation: -90,
