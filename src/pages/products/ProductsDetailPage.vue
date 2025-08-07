@@ -83,6 +83,9 @@ const fetchGeminiData = async product => {
     const geminiResponse = await analyzeProductWithGemini(product);
     geminiData.value.advantage = geminiResponse.advantage;
     geminiData.value.disadvantage = geminiResponse.disadvantage;
+    if (geminiResponse.description) {
+      productDetail.value.description = geminiResponse.description;
+    }
   } catch (err) {
     console.error('Gemini API 호출 실패:', err);
     geminiError.value = 'AI 요약 정보를 불러오는데 실패했습니다.';
@@ -108,7 +111,11 @@ onMounted(async () => {
 
     isLoading.value = false;
 
-    if (!productDetail.value.advantage || !productDetail.value.disadvantage) {
+    if (
+      !productDetail.value.description ||
+      !productDetail.value.advantage ||
+      !productDetail.value.disadvantage
+    ) {
       await fetchGeminiData(productDetail.value);
     }
   } catch (err) {

@@ -90,7 +90,11 @@ const regretItemChartOptions = {
   >
     <div class="flip-inner" :class="{ flipped: isFlipped }">
       <!-- 후회지수 -->
-      <div class="card-face">
+
+      <div
+        class="card-face tooltip underline"
+        data-tip="나의 자산 대비 놓친 기회를 반영한 점수입니다."
+      >
         <p class="title03 mb-6">후회지수</p>
         <div class="relative w-24 h-24 mx-auto">
           <Doughnut :data="regretChartData" :options="regretChartOptions" />
@@ -102,7 +106,10 @@ const regretItemChartOptions = {
         </div>
       </div>
       <!-- 후회상품비율 -->
-      <div class="card-face back">
+      <div
+        class="card-face back tooltip underline"
+        data-tip="나의 추천 상품 중 ‘후회해요’라고 응답한 상품의 비율입니다. "
+      >
         <p class="title03 mb-6">후회상품비율</p>
         <div class="relative w-full max-h-24">
           <Doughnut
