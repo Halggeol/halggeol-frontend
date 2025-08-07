@@ -31,7 +31,8 @@ const canSubmit = computed(() => {
 });
 
 onMounted(() => {
-  if ((token.value = getTokenIfExists()) === null)
+  token.value = getTokenIfExists();
+  if (token.value === null)
     router.push('/find');
 });
 

@@ -1,6 +1,6 @@
 <script setup>
 import BaseCard from '../common/BaseCard.vue';
-import { computed } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 
 // 추천 상품 카드 콘텐츠 커스텀
 const props = defineProps({
@@ -36,8 +36,12 @@ import { useNavigationStore } from '@/stores/navigation';
 const router = useRouter();
 const navigationStore = useNavigationStore();
 
-function goToDetail(id) {
+function goToDetail(id, event) {
   // 추천에서 온 상태로 설정
+  if (isScrolling.value) {
+    event.stopPropagation();
+    return;
+  }
   navigationStore.navigateFromRecommend(id);
   router.push(`/products/detail/${id}`);
 }
@@ -46,11 +50,69 @@ function goToDetail(id) {
 const wrapperClass = computed(() => {
   return props.hasPadding ? 'scroller-wrapper pl-[10.8%]' : 'scroller-wrapper';
 });
+
+// 마우스 좌우 끌기 설정 시작
+const scrollerWrapper = ref(null);
+const isDragging = ref(false);
+const isScrolling = ref(false);
+const startX = ref(0);
+const scrollLeft = ref(0);
+const dragThreshold = 5;
+
+function handleMouseDown(e) {
+  isDragging.value = true;
+  isScrolling.value = false;
+  startX.value = e.pageX - scrollerWrapper.value.offsetLeft;
+  scrollLeft.value = scrollerWrapper.value.scrollLeft;
+  scrollerWrapper.value.style.cursor = 'grabbing';
+}
+
+function handleMouseLeave() {
+  isDragging.value = false;
+  scrollerWrapper.value.style.cursor = 'grab';
+}
+
+function handleMouseUp() {
+  isDragging.value = false;
+  scrollerWrapper.value.style.cursor = 'grab';
+}
+
+function handleMouseMove(e) {
+  if (!isDragging.value) return;
+  e.preventDefault();
+  const x = e.pageX - scrollerWrapper.value.offsetLeft;
+  const walk = (x - startX.value) * 1.5;
+
+  if (Math.abs(walk) > dragThreshold) {
+    isScrolling.value = true;
+  }
+
+  scrollerWrapper.value.scrollLeft = scrollLeft.value - walk;
+}
+
+onMounted(() => {
+  if (scrollerWrapper.value) {
+    scrollerWrapper.value.addEventListener('mousedown', handleMouseDown);
+    scrollerWrapper.value.addEventListener('mouseleave', handleMouseLeave);
+    scrollerWrapper.value.addEventListener('mouseup', handleMouseUp);
+    scrollerWrapper.value.addEventListener('mousemove', handleMouseMove);
+  }
+});
+
+onBeforeUnmount(() => {
+  if (scrollerWrapper.value) {
+    scrollerWrapper.value.removeEventListener('mousedown', handleMouseDown);
+    scrollerWrapper.value.removeEventListener('mouseleave', handleMouseLeave);
+    scrollerWrapper.value.removeEventListener('mouseup', handleMouseUp);
+    scrollerWrapper.value.removeEventListener('mousemove', handleMouseMove);
+  }
+});
+// 마우스 좌우 끌기 설정 끝
 </script>
 
 <template>
   <div class="scroller">
-    <div :class="wrapperClass">
+    <div :class="wrapperClass" ref="scrollerWrapper">
       <BaseCard
         v-for="item in props.items"
         :key="item.productId"
@@ -88,6 +150,10 @@ const wrapperClass = computed(() => {
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  cursor: grab;
+}
+.scroller-wrapper:active {
+  cursor: grabbing;
 }
 .scroller-wrapper::-webkit-scrollbar {
   display: none;

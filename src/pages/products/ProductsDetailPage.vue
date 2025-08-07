@@ -6,8 +6,8 @@ import {
   addScrap,
   delScrap,
   checkRecommendProductStatus,
+  analyzeProductWithGemini,
 } from '@/api/product-detail';
-import { analyzeProductWithGemini } from '@/api/dashboard';
 import { useNavigationStore } from '@/stores/navigation';
 
 import ProductHeader from '@/components/products/ProductHeader.vue';
@@ -30,7 +30,10 @@ const navigationStore = useNavigationStore();
 const productStatus = ref(null);
 const isStatusLoading = ref(false);
 
-// 이제 ProductSurveyCard 내부에서 블러 처리를 담당하므로 불필요
+// ✅ 추가: AI 요약 데이터와 로딩 상태를 별도로 관리할 변수
+const geminiData = ref({ advantage: null, disadvantage: null });
+const isGeminiLoading = ref(false);
+const geminiError = ref(null);
 
 const navigateToLink = () => {
   window.open(productDetail.value.regLink, '_blank');
@@ -43,21 +46,17 @@ const handleAddScrap = productId => {
 let isChangingState = false;
 
 const handleScroll = () => {
-  if (isChangingState) return; // 상태 변경 중에는 스크롤 이벤트 무시
+  if (isChangingState) return;
 
   const scrollY = window.scrollY;
 
   if (!isScrolled.value && scrollY > 360) {
     isChangingState = true;
     const currentScrollY = window.scrollY;
-
     isScrolled.value = true;
-
-    // 헤더 높이 변화로 인한 스크롤 위치 보정
     requestAnimationFrame(() => {
-      const heightDifference = HEADER_HEIGHT_DIFFERENCE;
+      const heightDifference = 280;
       window.scrollTo(0, currentScrollY - heightDifference);
-
       setTimeout(() => {
         isChangingState = false;
       }, 100);
@@ -65,14 +64,10 @@ const handleScroll = () => {
   } else if (isScrolled.value && scrollY < 80) {
     isChangingState = true;
     const currentScrollY = window.scrollY;
-
     isScrolled.value = false;
-
-    // 헤더 높이 변화로 인한 스크롤 위치 보정
     requestAnimationFrame(() => {
-      const heightDifference = 280; // 360px - 80px = 280px
+      const heightDifference = 280;
       window.scrollTo(0, currentScrollY + heightDifference);
-
       setTimeout(() => {
         isChangingState = false;
       }, 100);
@@ -80,12 +75,27 @@ const handleScroll = () => {
   }
 };
 
+// ✅ 추가: AI 요약 정보만 불러오는 비동기 함수
+const fetchGeminiData = async product => {
+  isGeminiLoading.value = true;
+  geminiError.value = null;
+  try {
+    const geminiResponse = await analyzeProductWithGemini(product);
+    geminiData.value.advantage = geminiResponse.advantage;
+    geminiData.value.disadvantage = geminiResponse.disadvantage;
+  } catch (err) {
+    console.error('Gemini API 호출 실패:', err);
+    geminiError.value = 'AI 요약 정보를 불러오는데 실패했습니다.';
+  } finally {
+    isGeminiLoading.value = false;
+  }
+};
+
 onMounted(async () => {
   try {
-    // 라우트에서 productId 가져오기
     const productId = route.params.productId;
 
-    // 상품 상세 정보와 상태 정보를 병렬로 요청
+    // 상품 상세 정보와 상태 정보를 병렬로 요청하여 메인 데이터를 빠르게 로드합니다.
     const [productResponse, statusResponse] = await Promise.all([
       getProductDetail(productId),
       navigationStore.shouldShowSurvey
@@ -96,39 +106,14 @@ onMounted(async () => {
     productDetail.value = productResponse.data;
     productStatus.value = statusResponse;
 
-    console.log('API 응답 확인:');
-    console.log('isFromRecommend:', navigationStore.shouldShowSurvey);
-    console.log('statusResponse:', statusResponse);
-    console.log('productStatus.value:', productStatus.value);
-    // Removed debug console.log statements for production
-    // if (!productDetail.value.advantage || !productDetail.value.disadvantage) {
-    //   console.log(
-    //     'advantage 또는 disadvantage 값이 없어 Gemini API를 호출합니다.'
-    //   );
-    //   const geminiResponse = await analyzeProductWithGemini(
-    //     productDetail.value
-    //   );
-    //   // 응답으로 받은 값으로 productDetail 업데이트
-    //   productDetail.value.advantage = geminiResponse.advantage;
-    //   productDetail.value.disadvantage = geminiResponse.disadvantage;
-    // }
+    isLoading.value = false;
 
-    productDetail.value.advantage = '나는 장점';
     if (!productDetail.value.advantage || !productDetail.value.disadvantage) {
-      console.log(
-        'advantage 또는 disadvantage 값이 없어 Gemini API를 호출합니다.'
-      );
-      const geminiResponse = await analyzeProductWithGemini(
-        productDetail.value
-      );
-      // 응답으로 받은 값으로 productDetail 업데이트
-      productDetail.value.advantage = geminiResponse.advantage;
-      productDetail.value.disadvantage = geminiResponse.disadvantage;
+      await fetchGeminiData(productDetail.value);
     }
   } catch (err) {
     error.value = '상품 상세 정보를 불러오는데 실패했습니다: ' + err.message;
     console.error(err);
-  } finally {
     isLoading.value = false;
   }
 
@@ -160,7 +145,6 @@ onUnmounted(() => {
       <p class="text-callout text-fg-secondary text-center">{{ error }}</p>
     </div>
     <div v-else-if="productDetail">
-      <!-- 헤더 섹션 -->
       <ProductHeader
         :productDetail="productDetail"
         :renewDate="renewDate"
@@ -169,27 +153,24 @@ onUnmounted(() => {
         @navigate="navigateToLink"
       />
 
-      <!-- 메인 컨텐츠 섹션 -->
       <div class="px-[10.8%] space-y-6 py-8">
-        <!-- 상품 주요 정보 카드 (AI 요약 포함) -->
         <ProductSummaryCard :productDetail="productDetail">
           <AISummaryCard
             :summary="productDetail.description"
-            :good="productDetail.advantage"
-            :bad="productDetail.disadvantage"
+            :good="geminiData.advantage"
+            :bad="geminiData.disadvantage"
+            :is-loading="isGeminiLoading"
+            :error="geminiError"
           />
         </ProductSummaryCard>
 
-        <!-- 상품 정보 -->
         <ProductInfo :productDetail="productDetail" />
 
-        <!-- 수익 계산기 -->
         <ProfitCalculator
           :productDetail="productDetail"
           :maxAmount="100000000"
         />
 
-        <!-- 설문 컴포넌트 (추천에서 온 경우에만 표시) -->
         <ProductSurveyCard
           v-if="navigationStore.shouldShowSurvey"
           :product-id="route.params.productId"

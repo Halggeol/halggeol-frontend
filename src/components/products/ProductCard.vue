@@ -50,6 +50,11 @@
 
       <!-- 추가 정보 -->
       <div class="mt-2 text-xs text-gray-500 space-y-1">
+        <!-- 사용자 가입금액 (MyProductPage에서만 사용) -->
+        <div v-if="product.amount" class="text-sm font-semibold text-blue-600">
+          가입금액: {{ formatAmount(product.amount) }}
+        </div>
+
         <div v-if="product.minAmount">
           최소 가입금액: {{ formatAmount(product.minAmount) }}
         </div>
@@ -227,7 +232,7 @@ const formatSubTitle = (subTitle, type) => {
     case 'forex':
       return subTitle; // 환율우대방법 그대로
     default:
-      return subTitle;
+      return null;
   }
 };
 
