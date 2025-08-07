@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { resetPassword } from '@/api/user';
+import { resetPasswordWithoutLogin } from '@/api/user';
 import { getTokenIfExists } from '@/utils/authUtil';
 import BaseButton from '@/components/common/BaseButton.vue';
 import EyeClose from '@/components/icons/EyeClose.vue';
@@ -53,14 +53,14 @@ function validatePasswords() {
 }
 
 async function handleResetPassword() {
-  console.log('===== 비밀번호 재설정 핸들링 =====');
+  console.log('===== 비로그인 상태 비밀번호 재설정 핸들링 =====');
 
   validatePasswords();
 
   if (canSubmit.value) {
     try {
-      console.log("===== resetPassword API 호출 =====");
-      await resetPassword(token.value, { newPassword: password.value, confirmPassword: confirmPassword.value })
+      console.log("===== resetPasswordWithoutLogin API 호출 =====");
+      await resetPasswordWithoutLogin(token.value, { newPassword: password.value, confirmPassword: confirmPassword.value })
 
       result.value = {
         message: '비밀번호 재설정이 완료되었습니다. 로그인 페이지로 이동합니다.',

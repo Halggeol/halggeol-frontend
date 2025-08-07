@@ -8,7 +8,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { ref, computed, onUnmounted, watch } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
 import { extendLogin, logout } from '@/api/user';
-import { clearAccessToken, clearUsername } from '@/utils/authUtil';
+import { clearAccessToken, clearUsername, isReverifiedToken, getAccessToken } from '@/utils/authUtil';
 import SearchModal from '../common/SearchModal.vue';
 import ExtendLoginModal from '../user/auth/ExtendLoginModal.vue';
 import UserModal from '../user/mypage/UserModal.vue';
@@ -122,7 +122,8 @@ watch(
       seconds > 0 &&
       seconds <= WARNING_THRESHOLD_SECONDS &&
       !isExtendLoginModalOpen.value &&
-      !hasDeclinedExtendModal.value
+      !hasDeclinedExtendModal.value &&
+      !isReverifiedToken(getAccessToken())
     )
       isExtendLoginModalOpen.value = true;
     if (seconds < 0) handleLogout();
@@ -180,7 +181,9 @@ onUnmounted(() => {
       <!-- 헤더 - 유저 영역 -->
       <div class="flex gap-x-6 justify-end">
         <template v-if="authStore.isLoggedIn">
-          <span class="text-sm text-gray-500">
+          <span
+            class="text-sm text-gray-500"
+          >
             남은 시간: {{ remainingMinutes }}분 {{ remainingSeconds }}초
           </span>
 
