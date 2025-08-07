@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { viewProfile } from '@/api/user';
 import RetakeSurveyModal from '@/components/user/mypage/RetakeSurveyModal.vue';
@@ -19,6 +19,14 @@ const user = reactive({
   investmentType: '',
   investmentTypeRenewDate: '',
 });
+
+const renewDate = computed(() => {
+  if (surveyType.value === 'knowledge')
+    return user.knowledgeRenewDate;
+  else if (surveyType.value === 'tendency')
+    return user.investmentTypeRenewDate;
+  return '';
+})
 
 const result = ref({
   message: '',
@@ -170,7 +178,7 @@ async function setUserInfo() {
 
   <RetakeSurveyModal
     :type="surveyType"
-    :renewDate="surveyType === 'knowledge' ? user.knowledgeRenewDate : user.investmentTypeRenewDate"
+    :renewDate="renewDate"
     :isOpen="isRetakeSurveyModalOpen"
     :onClose="() => (isRetakeSurveyModalOpen = false)"
     @confirm="handleRetakeConfirm"
