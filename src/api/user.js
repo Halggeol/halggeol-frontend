@@ -99,13 +99,22 @@ export const reverifyPassword = async (body) => {
   }
 };
 
-
 export const viewProfile = async () => {
   try {
     const response = await api.get('/me');
     return response;
   } catch (error) {
     console.error('View Profile API Error:', error);
+    throw error;
+  }
+};
+
+export const syncMydata = async () => {
+  try {
+    const response = await api.get('/mydata');
+    window.location.href = response.data.authUrl;
+  } catch (error) {
+    console.error('Sync Mydata API Error:', error);
     throw error;
   }
 };
