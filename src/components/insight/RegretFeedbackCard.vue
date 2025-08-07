@@ -1,18 +1,25 @@
 <script setup>
 import BaseCard from '@/components/common/BaseCard.vue';
 import BaseButton from '../common/BaseButton.vue';
-import axios from 'axios';
+import { submitRegretSurvey } from '@/api/insight-detail';
 import { ref, computed } from 'vue';
 
 const props = defineProps({
   userName: String,
   productId: String,
+  isSurveyed: Boolean,
+  isRegretted: Boolean,
+  regrettedReason: Number,
 });
 
-const situation = ref(null);
-const selectedReason = ref(null);
+const situation = ref(
+  props.isSurveyed ? (props.isRegretted ? '후회해요' : '후회 안 해요') : null
+);
+const selectedReason = ref(
+  props.isSurveyed && props.isRegretted ? props.regrettedReason : null
+);
 
-const regertReasons = [
+const regretReasons = [
   {
     id: 1,
     text: '관심이 없어서',
@@ -32,22 +39,24 @@ const regertReasons = [
 ];
 
 const payload = computed(() => ({
-  isSurveyed: true,
+  productId: props.productId,
   isRegretted: situation.value === '후회해요',
   regrettedReason: situation.value === '후회해요' ? selectedReason.value : null,
 }));
 
 const submitFeedback = async () => {
   try {
-    await axios.post(
-      `/api/insight/details?productId=${props.productId}`,
-      payload.value
-    );
+    await submitRegretSurvey(payload.value);
     console.log(payload.value);
   } catch (err) {
     console.error('전송 실패:', err);
   }
 };
+
+const readOnly = computed(() => props.isSurveyed);
+const regrettedReasonText = computed(() => {
+  return regretReasons.find(r => r.id === props.regrettedReason)?.text || '';
+});
 </script>
 
 <template>
@@ -62,6 +71,7 @@ const submitFeedback = async () => {
           value="후회해요"
           v-model="situation"
           class="w-4 h-4"
+          :disabled="readOnly"
         />
         <span class="text-body02">후회해요</span>
       </label>
@@ -71,6 +81,7 @@ const submitFeedback = async () => {
           value="후회 안 해요"
           v-model="situation"
           class="w-4 h-4"
+          :disabled="readOnly"
         />
         <span class="text-body02">후회 안 해요</span>
       </label>
@@ -81,22 +92,30 @@ const submitFeedback = async () => {
       <div class="flex items-start gap-2">
         <span class="pt-1 whitespace-nowrap">그때는</span>
         <div class="flex flex-col min-w-max">
-          <label
-            v-for="(item, index) in regertReasons"
-            :key="item.id"
-            class="flex items-center gap-2"
-          >
-            <input
-              type="radio"
-              :value="item.id"
-              v-model="selectedReason"
-              class="w-4 h-4"
-            />
-            <span>
-              {{ item.text }}
-              <span v-if="index === 0">가입하지 않았어요</span>
+          <div v-if="!readOnly">
+            <label
+              v-for="(item, index) in regretReasons"
+              :key="item.id"
+              class="flex items-center gap-2"
+            >
+              <input
+                type="radio"
+                :value="item.id"
+                v-model="selectedReason"
+                class="w-4 h-4"
+              />
+              <span>
+                {{ item.text }}
+                <span v-if="index === 0">가입하지 않았어요</span>
+              </span>
+            </label>
+          </div>
+          <div v-else>
+            <span class>
+              {{ regrettedReasonText }}
+              가입하지 않았어요
             </span>
-          </label>
+          </div>
         </div>
       </div>
     </div>
@@ -107,6 +126,7 @@ const submitFeedback = async () => {
       size="sm"
       label="제출"
       :disabled="situation === '후회해요' && !selectedReason"
+      v-if="!readOnly"
     >
     </BaseButton>
   </BaseCard>

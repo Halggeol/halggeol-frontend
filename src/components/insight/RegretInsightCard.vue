@@ -1,34 +1,68 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import BaseCard from '../common/BaseCard.vue';
 
 const props = defineProps({
-  productId: { type: String, required: true },
-  regretScore: { type: Number, required: true },
+  prefix: { type: String, required: true },
+  asset: Number,
+  isCompound: Boolean,
   interestRate: Number,
-  rateType: String,
-  profits: Array,
-  priceOptions: Array,
+  saveTerm: Number,
+  minLimit: Number,
+  maxLimit: Number,
 });
 
-// 놓친 금액 계산
-const selectedPrincipal = ref(props.priceOptions[1]?.value ?? 100000);
+// 투자금 설정
+const priceOptions = computed(() => {
+  const min = props.minLimit;
+  const max = Math.min(props.maxLimit, props.asset);
 
+  const options = [];
+  const step = Math.max(10000, Math.floor((max - min) / 4));
+  for (let i = 0; i <= 4; i++) {
+    const value = min + step * i;
+    const roundedValue = Math.round(value / 10000) * 10000;
+    options.push(roundedValue);
+  }
+  return options.map(value => ({
+    value,
+    label: `${(value / 10000).toLocaleString()}만원`,
+  }));
+});
+
+const selectedPrincipal = ref(0);
+
+watch(
+  priceOptions,
+  newOptions => {
+    if (newOptions.length > 1) {
+      selectedPrincipal.value = newOptions[1].value;
+    } else if (newOptions.length === 1) {
+      selectedPrincipal.value = newOptions[0].value;
+    } else {
+      selectedPrincipal.value = props.minLimit;
+    }
+  },
+  { immediate: true }
+);
+
+// 놓친 금액 계산
 const missAmount = computed(() => {
   const principal = selectedPrincipal.value;
-  const prefix = props.productId[0];
+  const prefix = props.prefix;
 
   if (['D', 'S', 'C', 'X'].includes(prefix)) {
-    if (!props.interestRate) return 0;
-    const rate = props.interestRate;
+    const rate = props.interestRate / 100;
     return props.rateType === '복리'
       ? Math.round(principal * Math.pow(1 + rate, 1) - principal)
       : Math.round(principal * rate);
   }
 
+  // 외환의 경우 추후 다시 계산
+
   if (['A', 'F'].includes(prefix)) {
-    const profit = props.profits.at(-1)?.profit ?? 0;
-    return Math.round(principal * profit);
+    const rate = props.interestRate / 100;
+    return Math.round(principal * rate);
   }
 
   return 0;
