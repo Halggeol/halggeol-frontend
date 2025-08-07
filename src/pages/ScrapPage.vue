@@ -107,7 +107,6 @@ const fetchProducts = async () => {
         Authorization: `Bearer ${token}`, // localStorage에서 가져온 토큰 사용
       },
     });
-    //const response = await fetch(apiUrl);
     products.value = response.data;
     error.value = null;
   } catch (err) {
@@ -177,9 +176,10 @@ const handleToggleLike = async ({ productId, isLiked }) => {
 
 const handleProductClick = product => {
   console.log('Product clicked:', product);
+  // 라우터의 파라미터 이름인 'productId'와 일치하도록 수정
   router.push({
     name: 'products-detail',
-    params: { id: product.productId },
+    params: { productId: product.productId },
   });
 };
 

@@ -61,16 +61,16 @@ const handleCancel = () => {
 
 const toggleUserMenu = () => {
   isUserModalOpen.value = !isUserModalOpen.value;
-}
+};
 
 const closeUserModal = () => {
   isUserModalOpen.value = false;
-}
+};
 
-const goTo = (path) => {
+const goTo = path => {
   closeUserModal();
   router.push(path);
-}
+};
 
 async function handleLogout() {
   console.log('===== 로그아웃 핸들링 =====');
@@ -125,8 +125,7 @@ watch(
       !hasDeclinedExtendModal.value
     )
       isExtendLoginModalOpen.value = true;
-    if (seconds < 0)
-      handleLogout();
+    if (seconds < 0) handleLogout();
   }
 );
 
@@ -191,20 +190,16 @@ onUnmounted(() => {
           >
             로그인 연장
           </button>
-          <button
-            @click="toggleUserMenu"
-            class="flex items-center gap-x-1"
-          >
-            {{ authStore.username }} 님 <UserInHeader/>
+          <button @click="toggleUserMenu" class="flex items-center gap-x-1">
+            {{ authStore.username }} 님 <UserInHeader />
           </button>
 
           <UserModal
-           :is-open="isUserModalOpen"
-           @close="closeUserModal"
-           @go-to="goTo"
-           @logout="handleLogout"
+            :is-open="isUserModalOpen"
+            @close="closeUserModal"
+            @go-to="goTo"
+            @logout="handleLogout"
           />
-
         </template>
         <template v-else>
           <RouterLink to="/login" class="-m-4 p-4 body02 text-fg-primary"
