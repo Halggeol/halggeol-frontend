@@ -19,9 +19,6 @@ const props = defineProps({
   },
 });
 
-const userName = computed(() => props.userName);
-const items = computed(() => props.items || []);
-
 // 카테고리 매핑
 const categoryMap = {
   D: '예금',

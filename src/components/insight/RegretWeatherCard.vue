@@ -40,7 +40,7 @@ function getWeatherLevel(score) {
       <!-- 후회 날씨 아이콘 크기 조절로 수정 -->
       <Sunny v-if="getWeatherLevel(props.regretScore) === 'Sunny'" />
       <MostlySunny
-        v-if="getWeatherLevel(props.regretScore) === 'MostlySunny'"
+        v-else-if="getWeatherLevel(props.regretScore) === 'MostlySunny'"
       />
       <SunWithCloud
         v-else-if="getWeatherLevel(props.regretScore) === 'SunWithCloud'"
@@ -53,7 +53,7 @@ function getWeatherLevel(score) {
     <p class="text-body02 mb-2">후회지수 {{ props.regretScore }}</p>
     <!-- RegretMomentCards와 같은 데이터 사용 -->
     <p class="text-body02">
-      놓친 금액 {{ (props.missAmount / 10000).toLocaleString() }}만원
+      놓친 금액 {{ Math.floor(props.missAmount / 10000).toLocaleString() }}만원
     </p>
   </BaseCard>
 </template>

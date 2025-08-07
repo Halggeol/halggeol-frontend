@@ -14,7 +14,7 @@ import SignupPage from '@/pages/user/auth/SignupPage.vue';
 const insightNavItems = [
   { to: '/insight', label: '회고 인사이트' },
   { to: '/insight/fund', label: '펀드 모아보기' },
-  { to: '/insight/forex', label: '공격형 연금 모아보기' },
+  { to: '/insight/aggressive', label: '공격형 연금 모아보기' },
 ];
 
 const mypageNavItems = [
@@ -49,7 +49,7 @@ const commonRoutes = [
     children: [
       {
         path: '',
-        name: 'insight-monthly',
+        name: 'insight',
         component: () => import('@/pages/insight/InsightPage.vue'),
       },
       {
@@ -58,8 +58,8 @@ const commonRoutes = [
         component: () => import('@/pages/insight/InsightCollectionPage.vue'),
       },
       {
-        path: 'forex',
-        name: 'collection-forex',
+        path: 'aggressive',
+        name: 'collection-aggressive',
         component: () => import('@/pages/insight/InsightCollectionPage.vue'),
       },
     ],
