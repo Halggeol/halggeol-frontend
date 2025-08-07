@@ -196,10 +196,8 @@ const normalizeProductData = rawData => {
     normalized[normalizedKey] = rawData[sourceKey];
   }
 
-  // 공통 추가 필드들 - 명확한 이름으로
   normalized.productType = prefix; // 상품 타입
 
-  // 각 상품별 추가 계산 필드들
   switch (prefix) {
     case 'D': // 예금
     case 'S': // 적금
@@ -295,11 +293,21 @@ export const updateProductStatus = async (productId, status) => {
   try {
     const response = await api.patch('/products/detail', {
       id: productId,
-      status: status
+      status: status,
     });
     return response.data;
   } catch (error) {
     console.error('상품 상태 업데이트 실패:', error);
+    throw error;
+  }
+};
+
+export const analyzeProductWithGemini = async productDetail => {
+  try {
+    const response = await api.post('/gemini/analyze', productDetail);
+    return response.data;
+  } catch (error) {
+    console.error('Gemini Product Analysis API Error:', error);
     throw error;
   }
 };

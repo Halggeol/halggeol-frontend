@@ -6,8 +6,8 @@ import {
   addScrap,
   delScrap,
   checkRecommendProductStatus,
+  analyzeProductWithGemini,
 } from '@/api/product-detail';
-import { analyzeProductWithGemini } from '@/api/dashboard';
 import { useNavigationStore } from '@/stores/navigation';
 
 import ProductHeader from '@/components/products/ProductHeader.vue';
