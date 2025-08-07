@@ -31,7 +31,7 @@ const categoryMap = {
 };
 
 function isHighRisk(risk) {
-  return risk <= 3;
+  return risk <= 2;
 } // 고위험상품 추출
 
 // 상세페이지 이동
@@ -41,7 +41,7 @@ const router = useRouter();
 
 function goToDetail(productId) {
   // router.push(`/product/${productId}`);
-  router.push('/product/detail');
+  router.push(`/products/detail/${productId}`);
 } // 상세페이지 구현 이후 라우터 수정
 </script>
 
