@@ -54,7 +54,7 @@
         <div v-if="product.amount" class="text-sm font-semibold text-blue-600">
           가입금액: {{ formatAmount(product.amount) }}
         </div>
-        
+
         <div v-if="product.minAmount">
           최소 가입금액: {{ formatAmount(product.minAmount) }}
         </div>
@@ -232,7 +232,7 @@ const formatSubTitle = (subTitle, type) => {
     case 'forex':
       return subTitle; // 환율우대방법 그대로
     default:
-      return subTitle;
+      return null;
   }
 };
 

@@ -60,6 +60,7 @@ const productTypes = [
   { value: 'savings', label: '정기적금' },
   { value: 'pension', label: '연금' },
   { value: 'fund', label: '펀드' },
+  { value: 'forex', label: '외화' },
 ];
 
 const productTypeValues = productTypes.map(type => type.value);

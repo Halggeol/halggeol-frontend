@@ -75,7 +75,11 @@ const fetchMyProducts = async () => {
       tag2: product.tag2,
       tag3: product.tag3,
       title: product.title,
-      subTitle: product.subTitle,
+      subTitle:
+        product.productId[0].toUpperCase() === 'pension' ||
+        product.productId[0].toUpperCase() === 'fund'
+          ? null
+          : product.subTitle, // TODO: 추후 백엔드에서 DTO, 쿼리문 값 수정해야함. 임시로 수동 처리
       amount: product.amount,
       type: getProductType(product), // 상품 유형 추출 함수 필요
       product_type: getProductType(product),
@@ -93,27 +97,26 @@ const fetchMyProducts = async () => {
 };
 
 const getProductType = product => {
-  if (product.tag1 && product.tag1.includes('개월')) {
-    return product.tag2 && product.tag2.includes('개월')
-      ? 'deposit'
-      : 'savings';
-  }
+  // productId가 없거나 유효하지 않으면 기본값 반환
   if (
-    product.tag1 &&
-    (product.tag1.includes('형') || product.tag1.includes('테마'))
+    !product.productId ||
+    typeof product.productId !== 'string' ||
+    product.productId.length === 0
   ) {
-    return 'fund';
+    return 'deposit';
   }
-  if (product.tag1 && product.tag1.includes('연금')) {
-    return 'pension';
-  }
-  if (
-    product.tag1 &&
-    (product.tag1.includes('USD') || product.tag1.includes('통화'))
-  ) {
-    return 'forex';
-  }
-  return 'deposit'; // 기본값
+
+  const prefix = product.productId[0].toUpperCase();
+  const typeMap = {
+    D: 'deposit',
+    S: 'savings',
+    A: 'pension',
+    C: 'pension',
+    F: 'fund',
+    X: 'forex',
+  };
+
+  return typeMap[prefix];
 };
 
 const handleFilterChange = filters => {
@@ -121,7 +124,6 @@ const handleFilterChange = filters => {
   console.log('MyProduct filters:', filters);
 };
 
-// 스크랩/스크랩 해제 핸들러
 const handleToggleScrap = ({ productId, isScrapped }) => {
   if (isScrapped) {
     console.log(`스크랩 해제 요청: productId ${productId}`);
