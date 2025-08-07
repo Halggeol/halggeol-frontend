@@ -1,6 +1,12 @@
 <script setup>
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { viewProfile } from '@/api/user';
+import RetakeSurveyModal from '@/components/user/mypage/RetakeSurveyModal.vue';
+
+const router = useRouter();
+const isRetakeSurveyModalOpen = ref(false);
+const surveyType = ref('');
 
 // 사용자 정보
 const user = reactive({
@@ -9,8 +15,18 @@ const user = reactive({
   phone: '',
   birth: '',
   knowledge: '',
+  knowledgeRenewDate: '',
   investmentType: '',
+  investmentTypeRenewDate: '',
 });
+
+const renewDate = computed(() => {
+  if (surveyType.value === 'knowledge')
+    return user.knowledgeRenewDate;
+  else if (surveyType.value === 'tendency')
+    return user.investmentTypeRenewDate;
+  return '';
+})
 
 const result = ref({
   message: '',
@@ -19,13 +35,24 @@ const result = ref({
 
 // 버튼 핸들러
 const changePassword = () => console.log('비밀번호 변경');
-const retakeFinancialTest = () => console.log('금융이해도 재검사');
-const retakeInvestmentTest = () => console.log('투자성향 재검사');
+const retakeKnowledgeTest = () => {
+  surveyType.value = 'knowledge';
+  isRetakeSurveyModalOpen.value = true;
+};
+const retakeTendencyTest = () => {
+  surveyType.value = 'tendency';
+  isRetakeSurveyModalOpen.value = true;
+};
 const withdrawAccount = () => console.log('탈퇴하기');
 
 onMounted(() => {
  setUserInfo();
 })
+
+function handleRetakeConfirm() {
+  isRetakeSurveyModalOpen.value = false;
+  router.push(`/mypage/survey/${surveyType.value}`);
+}
 
 async function setUserInfo() {
   console.log('===== 사용자 정보 조회 핸들링 =====');
@@ -48,7 +75,9 @@ async function setUserInfo() {
     user.phone = profile.phone;
     user.birth = profile.birth;
     user.knowledge = profile.userKlg;
+    user.knowledgeRenewDate = profile.klgRenewDate;
     user.investmentType = profile.risk;
+    user.investmentTypeRenewDate = profile.riskRenewDate;
 
   } catch (error) {
     result.value = {
@@ -117,7 +146,7 @@ async function setUserInfo() {
         <div class="w-1/3 text-right">
           <button
             class="text-gray-400 text-sm hover:text-gray-600 hover:underline"
-            @click="retakeFinancialTest"
+            @click="retakeKnowledgeTest"
           >
             재검사하기
           </button>
@@ -131,7 +160,7 @@ async function setUserInfo() {
         <div class="w-1/3 text-right">
           <button
             class="text-gray-400 text-sm hover:text-gray-600 hover:underline"
-            @click="retakeInvestmentTest"
+            @click="retakeTendencyTest"
           >
             재검사하기
           </button>
@@ -146,4 +175,12 @@ async function setUserInfo() {
       </button>
     </div>
   </div>
+
+  <RetakeSurveyModal
+    :type="surveyType"
+    :renewDate="renewDate"
+    :isOpen="isRetakeSurveyModalOpen"
+    :onClose="() => (isRetakeSurveyModalOpen = false)"
+    @confirm="handleRetakeConfirm"
+  />
 </template>
