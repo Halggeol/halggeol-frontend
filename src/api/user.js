@@ -69,15 +69,36 @@ export const requestPasswordReset = async (body) => {
   }
 };
 
-export const resetPassword = async (token, body) => {
+export const resetPasswordWithoutLogin = async (token, body) => {
   try {
     const response = await api.post(`/password/reset?token=${token}`, body);
     return response;
   } catch (error) {
-    console.error('Reset Password API Error:', error);
+    console.error('Reset Password Without Login API Error:', error);
     throw error;
   }
 };
+
+export const resetPasswordWithLogin = async (body) => {
+  try {
+    const response = await api.patch('/password/reset', body);
+    return response;
+  } catch (error) {
+    console.error('Reset Password With Login API Error:', error);
+    throw error;
+  }
+};
+
+export const reverifyPassword = async (body) => {
+  try {
+    const response = await api.post('/password/reverify', body);
+    return response;
+  } catch (error) {
+    console.error('Reverify Password API Error:', error);
+    throw error;
+  }
+};
+
 
 export const viewProfile = async () => {
   try {
