@@ -130,7 +130,7 @@ function inputStyleClass(error) {
               :type="showOldPassword ? 'text' : 'password'"
               v-model="oldPassword"
               @blur="validatePasswords()"
-              :class="inputStyleClass(errors.password)"
+              :class="inputStyleClass(errors.oldPassword)"
               placeholder="기존 비밀번호"
               :disabled="result.success"
             />
@@ -146,7 +146,7 @@ function inputStyleClass(error) {
             </button>
           </div>
 
-          <small v-if="errors.password" class="text-red-500 mt-1 block">{{ errors.password }}</small>
+          <small v-if="errors.oldPassword" class="text-red-500 mt-1 block">{{ errors.oldPassword }}</small>
         </div>
 
         <!-- 새 비밀번호 -->
@@ -156,7 +156,7 @@ function inputStyleClass(error) {
               :type="showNewPassword ? 'text' : 'password'"
               v-model="newPassword"
               @blur="validatePasswords()"
-              :class="inputStyleClass(errors.password)"
+              :class="inputStyleClass(errors.newPassword)"
               placeholder="새 비밀번호 (8자 이상, 영문/숫자/특수문자)"
               :disabled="result.success"
             />
@@ -172,7 +172,7 @@ function inputStyleClass(error) {
             </button>
           </div>
 
-          <small v-if="errors.password" class="text-red-500 mt-1 block">{{ errors.password }}</small>
+          <small v-if="errors.newPassword" class="text-red-500 mt-1 block">{{ errors.newPassword }}</small>
         </div>
 
         <!-- 비밀번호 재입력 -->
