@@ -3,8 +3,14 @@ import { reactive, ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { viewProfile } from '@/api/user';
 import RetakeSurveyModal from '@/components/user/mypage/RetakeSurveyModal.vue';
+import ResetPasswordModal from '@/components/user/mypage/ResetPasswordModal.vue';
 
 const router = useRouter();
+
+// 비밀번호 재설정 모달 관련 상태
+const isResetPasswordModalOpen = ref(false);
+
+// 재설문 여부 모달 관련 상태
 const isRetakeSurveyModalOpen = ref(false);
 const surveyType = ref('');
 
@@ -34,22 +40,27 @@ const result = ref({
 });
 
 // 버튼 핸들러
-const changePassword = () => console.log('비밀번호 변경');
+const changePassword = () => {
+  isResetPasswordModalOpen.value = true;
+}
+
 const retakeKnowledgeTest = () => {
   surveyType.value = 'knowledge';
   isRetakeSurveyModalOpen.value = true;
 };
+
 const retakeTendencyTest = () => {
   surveyType.value = 'tendency';
   isRetakeSurveyModalOpen.value = true;
 };
+
 const withdrawAccount = () => console.log('탈퇴하기');
 
 onMounted(() => {
  setUserInfo();
 })
 
-function handleRetakeConfirm() {
+function handleRetakeSurveyConfirm() {
   isRetakeSurveyModalOpen.value = false;
   router.push(`/mypage/survey/${surveyType.value}`);
 }
@@ -176,11 +187,16 @@ async function setUserInfo() {
     </div>
   </div>
 
+  <ResetPasswordModal
+    :isOpen="isResetPasswordModalOpen"
+    :onClose="() => (isResetPasswordModalOpen = false)"
+  />
+
   <RetakeSurveyModal
     :type="surveyType"
     :renewDate="renewDate"
     :isOpen="isRetakeSurveyModalOpen"
     :onClose="() => (isRetakeSurveyModalOpen = false)"
-    @confirm="handleRetakeConfirm"
+    @confirm="handleRetakeSurveyConfirm"
   />
 </template>
