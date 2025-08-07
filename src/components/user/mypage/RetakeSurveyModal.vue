@@ -9,6 +9,10 @@ const props = defineProps({
 
 const emit = defineEmits(['confirm']);
 
+function confirmRetake() {
+  emit('confirm');
+}
+
 </script>
 
 <template>
@@ -19,7 +23,7 @@ const emit = defineEmits(['confirm']);
       <p class="pt-8">마지막 검사일은 {{ renewDate }}입니다.</p>
       <p class="pt-2 pb-4">설문을 다시 시작하시겠습니까?</p>
       <div class="modal-action">
-        <button class="btn bg-primary" @click="$emit('confirm')">예</button>
+        <button class="btn bg-primary" @click="confirmRetake">예</button>
         <button class="btn" @click="onClose">아니오</button>
       </div>
     </div>
