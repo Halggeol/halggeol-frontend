@@ -66,20 +66,20 @@ const handleSubmit = async () => {
       response = await updateKnowledgeSurvey(body);
     }
 
-    console.log(response.data.Message);
-    routeNextSurvey();
+    console.log(response.data.message);
+    routeToNextStep();
 
   } catch (error) {
-    alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    alert("서버 오류가 발생했습니다.");
   }
 
-  function routeNextSurvey() {
+  function routeToNextStep() {
     if (route.path.startsWith('/signup'))
       router.push('/signup/survey/tendency');
     else if (route.path.startsWith('/mypage'))
-      router.push('/mypage/survey/tendency');
+      router.push('/mypage');
     else
-      router.push('/signup/survey/tendency');
+      router.push('/');
   }
 };
 </script>
