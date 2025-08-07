@@ -9,13 +9,3 @@ export const getDashboardMain = async () => {
     throw error;
   }
 };
-
-export const analyzeProductWithGemini = async productDetail => {
-  try {
-    const response = await api.post('/gemini/analyze', productDetail);
-    return response.data;
-  } catch (error) {
-    console.error('Gemini Product Analysis API Error:', error);
-    throw error;
-  }
-};
