@@ -109,27 +109,27 @@ const experiencesQuestion = {
       text: '주식신용거래, 선물/옵션, ELW, 원금비보장형 ELS/DLS/ELF',
       score: 6,
       period: [
-        { text: '1년미만', score: 1, },
-        { text: '1년이상~3년미만', score: 3, },
-        { text: '3년이상', score: 5, },
+        { text: '1년미만', score: 1 },
+        { text: '1년이상~3년미만', score: 3 },
+        { text: '3년이상', score: 5 },
       ]
     },
     {
       text: '주식, 주식형펀드, 해외펀드, 원금보장형 ELS/DLS/ELF, 투자자문/일임(Wrap), 외화증권',
       score: 3,
       period: [
-        { text: '1년미만', score: 1, },
-        { text: '1년이상~3년미만', score: 3, },
-        { text: '3년이상', score: 5, },
+        { text: '1년미만', score: 1 },
+        { text: '1년이상~3년미만', score: 3 },
+        { text: '3년이상', score: 5 },
       ]
     },
     {
       text: '채권/혼합형 펀드, 신탁, 채권',
       score: 1,
       period: [
-        { text: '1년미만', score: 1, },
-        { text: '1년이상~3년미만', score: 3, },
-        { text: '3년이상', score: 5, },
+        { text: '1년미만', score: 1 },
+        { text: '1년이상~3년미만', score: 3 },
+        { text: '3년이상', score: 5 },
       ]
     },
   ],
@@ -182,7 +182,7 @@ const handleSubmit = async () => {
     const periodIdx = experiencePeriods.value[option - 1];
     const period = periodIdx + 1;
 
-    if (!period)
+    if (periodIdx === undefined)
       return {
         option,
         optionScore: experienceOption.score,
@@ -229,7 +229,7 @@ function changeClickedExperience(idx, value) {
 }
 
 function checkedCheckbox(idx) {
-  if (!experiences.value || experiences.value.lengh === 0)
+  if (!experiences.value || experiences.value.length === 0)
     return false;
   return experiences.value.includes(idx);
 }
