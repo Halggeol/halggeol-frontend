@@ -44,6 +44,7 @@
           :product="product"
           :isLiked="scrapedProductIds.has(product.productId)"
           @toggle-like="handleToggleLike"
+          @product-click="handleProductClick"
         />
       </div>
     </div>
@@ -55,11 +56,12 @@ import { ref, watch } from 'vue';
 import ProductCard from '@/components/products/ProductCard.vue';
 import ProductFilter from '@/components/products/ProductFilter.vue';
 import ProductSort from '@/components/products/ProductSort.vue';
-import { useRoute, useRouter } from 'vue-router'; // useRouter 추가
+import { useRoute, useRouter } from 'vue-router';
 import { addScrap, delScrap } from '@/api/product-detail';
+import axios from 'axios';
 
 const route = useRoute();
-const router = useRouter(); // useRouter 사용
+const router = useRouter();
 
 // 상태 관리
 const products = ref([]);
@@ -84,11 +86,9 @@ const fetchProducts = async () => {
 
   try {
     const params = new URLSearchParams();
-
     if (searchQuery.value) {
       params.append('keyword', searchQuery.value);
     }
-
     if (
       currentFilters.value.types &&
       !currentFilters.value.types.includes('all')
@@ -107,40 +107,34 @@ const fetchProducts = async () => {
     if (currentFilters.value.minAmount !== null) {
       params.append('minAmount', currentFilters.value.minAmount);
     }
-
     if (currentSort.value) {
       params.append('sort', currentSort.value);
     }
 
     const apiUrl = `http://localhost:8080/api/products?${params.toString()}`;
-
     console.log('API 호출:', apiUrl);
 
-    const response = await fetch(apiUrl);
+    const response = await axios.get(apiUrl);
 
-    if (!response.ok) {
-      throw new Error(
-        `네트워크 오류가 발생했습니다. 상태 코드: ${response.status}`
-      );
-    }
-
-    const data = await response.json();
-    products.value = data;
+    products.value = response.data;
+    error.value = null;
   } catch (err) {
-    error.value = '상품 목록을 불러오는 데 실패했습니다.';
-    console.error('API 호출 중 오류 발생:', err);
+    if (axios.isAxiosError(err) && err.response) {
+      error.value = `서버 오류: ${err.response.status}`;
+    } else {
+      error.value = '상품 목록을 불러오는 데 실패했습니다.';
+      console.error('API 호출 중 오류 발생:', err);
+    }
   } finally {
     loading.value = false;
   }
 };
 
-// 필터 변경 핸들러
 const handleFilterChange = filters => {
   console.log('Filters changed:', filters);
-  // URL 쿼리 파라미터를 변경하여 상태를 업데이트
   router.push({
     query: {
-      ...route.query, // 기존 쿼리 유지
+      ...route.query,
       types:
         filters.types && !filters.types.includes('all')
           ? filters.types.join(',')
@@ -155,58 +149,32 @@ const handleFilterChange = filters => {
   });
 };
 
-// 정렬 변경 핸들러
 const handleSortChange = sort => {
   console.log('Sort changed:', sort);
-  // URL 쿼리 파라미터를 변경하여 상태를 업데이트
   router.push({
     query: {
-      ...route.query, // 기존 쿼리 유지
+      ...route.query,
       sort: sort,
     },
   });
 };
 
-// 라우터 쿼리 변경을 감지하고, searchQuery, currentFilters, currentSort 상태 업데이트 및 API 재호출
-watch(
-  () => route.query,
-  newQuery => {
-    // URL 쿼리 파라미터에서 필터와 정렬 상태를 추출하여 상태 변수에 반영
-    searchQuery.value = newQuery.keyword || '';
-    currentFilters.value = {
-      types: newQuery.types ? newQuery.types.split(',') : ['all'],
-      fSectors: newQuery.fSectors ? newQuery.fSectors.split(',') : null,
-      saveTerm: newQuery.saveTerm ? newQuery.saveTerm : null,
-      minAmount: newQuery.minAmount ? newQuery.minAmount : null,
-    };
-    currentSort.value = newQuery.sort || 'popularDesc';
-
-    // 상태 변경 후 API 재호출
-    fetchProducts();
-  },
-  { deep: true, immediate: true }
-);
-
-// 찜하기/찜 해제 핸들러
 const handleToggleLike = async ({ productId, isLiked }) => {
-  if (isScrapLoading.value) return; // 로딩 중이면 함수 실행 중단
-
+  if (isScrapLoading.value) return;
   console.log('버튼 클릭 - 현재 isLiked:', isLiked);
   isScrapLoading.value = true;
   try {
     if (isLiked) {
-      // 이미 찜한 상태 -> 찜 해제 API 호출
       console.log('delScrap 호출');
-      await delScrap(productId); // API 호출
+      await delScrap(productId);
       scrapedProductIds.value.delete(productId);
       console.log(
         '관심상품 해제 완료, scrapedProductIds:',
         scrapedProductIds.value
       );
     } else {
-      // 찜하지 않은 상태 -> 찜하기 API 호출
       console.log('addScrap 호출');
-      await addScrap(productId); // API 호출
+      await addScrap(productId);
       scrapedProductIds.value.add(productId);
       console.log(
         '관심상품 등록 완료, scrapedProductIds:',
@@ -220,6 +188,36 @@ const handleToggleLike = async ({ productId, isLiked }) => {
     isScrapLoading.value = false;
   }
 };
+
+const handleProductClick = product => {
+  console.log('Product clicked:', product);
+  if (product && product.productId) {
+    // 라우터의 파라미터 이름인 'productId'와 일치하도록 수정
+    router.push({
+      name: 'products-detail',
+      params: { productId: product.productId },
+    });
+  } else {
+    console.error('상품 ID가 누락되었습니다.');
+  }
+};
+
+watch(
+  () => route.query,
+  newQuery => {
+    searchQuery.value = newQuery.keyword || '';
+    currentFilters.value = {
+      types: newQuery.types ? newQuery.types.split(',') : ['all'],
+      fSectors: newQuery.fSectors ? newQuery.fSectors.split(',') : null,
+      saveTerm: newQuery.saveTerm ? newQuery.saveTerm : null,
+      minAmount: newQuery.minAmount ? newQuery.minAmount : null,
+    };
+    currentSort.value = newQuery.sort || 'popularDesc';
+
+    fetchProducts();
+  },
+  { deep: true, immediate: true }
+);
 
 defineExpose({
   fetchProducts,

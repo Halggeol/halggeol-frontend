@@ -22,6 +22,41 @@ export const clearUsername = () => {
   sessionStorage.removeItem('username');
 };
 
+export const setEmail = (email) => {
+  sessionStorage.setItem('email', email);
+};
+
+export const getEmail = () => {
+  return sessionStorage.getItem('email');
+};
+
+export const clearEmail = () => {
+  sessionStorage.removeItem('email');
+};
+
+export const getTokenIfExists = () => {
+  const token = new URLSearchParams(window.location.search).get('token');
+
+  if (token === null) {
+    console.error('토큰 누락');
+    return null;
+  }
+
+  return token;
+}
+
+export const getEmailFromToken = (token) => {
+  if (token === null)
+    return null;
+
+  try {
+    return parseToken(token).sub;
+  } catch (e) {
+    console.error('토큰 형식 오류: ', e);
+    return null;
+  }
+}
+
 export const parseToken = (token) => {
   const payload = token.split('.')[1];
   const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/')); // base64 디코딩

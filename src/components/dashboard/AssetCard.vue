@@ -25,7 +25,7 @@ const assetData = computed(() => {
 });
 
 const today = computed(() => {
-  if (assetData.value.length === 0) return new Date();
+  if (assetData.value.length === 0) return null;
   return new Date(assetData.value.at(-1).date);
 });
 
@@ -35,20 +35,27 @@ const asset = computed(() => {
 });
 
 // // 목업 데이터 사용 (기존 코드)
-// import jsonData from './mydata.json'; 
+// import jsonData from './mydata.json';
 // const assetData = jsonData.mydata;
 // const today = new Date(assetData.at(-1).date);
 // const asset = ref(assetData.at(-1).asset);
 
 // 필터칩 기준 과거 자산
 const pastAsset = computed(() => {
+  if (!today.value) return asset.value;
+
   const offsetDays = periodMap[selectedPeriodKey.value];
   const pastDate = new Date(today.value);
   pastDate.setDate(today.value.getDate() - offsetDays);
   const pastDateStr = pastDate.toISOString().slice(0, 10);
-  return (
-    assetData.value.findLast(entry => entry.date <= pastDateStr)?.asset ?? asset.value
+  // return (
+  //   assetData.value.findLast(entry => entry.date <= pastDateStr)?.asset ??
+  //   asset.value
+  // );
+  const foundEntry = assetData.value.findLast(
+    entry => entry.date <= pastDateStr
   );
+  return foundEntry ? parseInt(foundEntry.asset) : asset.value;
 });
 
 // 자산 추이 워딩
@@ -81,6 +88,8 @@ import {
 Chart.register(LineElement, CategoryScale, LinearScale, PointElement, Filler);
 
 const visibleChartData = computed(() => {
+  if (!today.value) return [];
+
   const range = periodMap[selectedPeriodKey.value];
   const fromDate = new Date(today.value);
   fromDate.setDate(today.value.getDate() - range);
@@ -94,12 +103,25 @@ function groupByWeek(data) {
   const weekMap = {};
   data.forEach(({ date, asset }) => {
     const d = new Date(date);
+    const day = d.getDay();
     const weekStart = new Date(d);
-    weekStart.setDate(d.getDate() - d.getDay());
+    weekStart.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
     const weekKey = weekStart.toISOString().slice(0, 10);
-    (weekMap[weekKey] ||= []).push(asset);
+    (weekMap[weekKey] ||= []).push(parseInt(asset));
   });
-  return Object.keys(weekMap).map(week => ({
+
+  const weeks = Object.keys(weekMap);
+  if (weeks.length <= 2) {
+    return weeks.map(week => ({
+      date: week,
+      asset: Math.round(
+        weekMap[week].reduce((sum, v) => sum + v, 0) / weekMap[week].length
+      ),
+    }));
+  }
+
+  const validWeeks = weeks.slice(1, -1);
+  return validWeeks.map(week => ({
     date: week,
     asset: Math.round(
       weekMap[week].reduce((sum, v) => sum + v, 0) / weekMap[week].length
@@ -111,7 +133,7 @@ function groupByMonth(data) {
   const monthlyMap = {};
   data.forEach(({ date, asset }) => {
     const monthKey = date.slice(0, 7);
-    (monthlyMap[monthKey] ||= []).push(asset);
+    (monthlyMap[monthKey] ||= []).push(parseInt(asset));
   });
   return Object.keys(monthlyMap).map(month => ({
     date: month,
@@ -125,10 +147,15 @@ function groupByMonth(data) {
 function movingAverage(data, windowSize = 5) {
   const result = [];
   let sum = 0;
+
   for (let i = 0; i < data.length; i++) {
     sum += data[i];
-    if (i >= windowSize) sum -= data[i - windowSize];
-    const len = i < windowSize - 1 ? i + 1 : windowSize;
+
+    const len = Math.min(i + 1, windowSize);
+
+    if (i >= windowSize) {
+      sum -= data[i - windowSize];
+    }
     result.push(Math.round(sum / len));
   }
   return result;
@@ -147,7 +174,11 @@ const chartData = computed(() => {
     grouped = visibleChartData.value;
   }
 
-  const rawAssets = grouped.map(entry => entry.asset);
+  if (!Array.isArray(grouped) || grouped.length === 0) {
+    return { labels: [], datasets: [{ data: [] }] };
+  }
+
+  const rawAssets = grouped.map(entry => parseInt(entry.asset));
   const smoothedAssets =
     selectedPeriodKey.value === '1M' ? movingAverage(rawAssets) : rawAssets;
 

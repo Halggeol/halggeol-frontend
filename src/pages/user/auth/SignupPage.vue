@@ -2,8 +2,8 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { join } from '@/api/user';
-import { parseToken } from '@/utils/authUtil';
-import PrivacyPolicyModal from '@/components/user/PrivacyPolicyModal.vue';
+import { getTokenIfExists, getEmailFromToken, setEmail } from '@/utils/authUtil';
+import PrivacyPolicyModal from '@/components/user/auth/PrivacyPolicyModal.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
 import EyeClose from '@/components/icons/EyeClose.vue';
 import EyeOpen from '@/components/icons/EyeOpen.vue';
@@ -48,30 +48,11 @@ const canSubmit = computed(() => {
 });
 
 onMounted(() => {
-  setTokenIfExists();
-  setEmailFromToken();
+  if ((token.value = getTokenIfExists()) === null ||
+      (form.value.email = getEmailFromToken(token.value)) === null)
+    router.push('/signup/request');
+  setEmail(form.value.email);
 });
-
-function setTokenIfExists() {
-  token.value = new URLSearchParams(window.location.search).get('token');
-}
-
-function setEmailFromToken() {
-  if (token.value === null) {
-    console.error('토큰 누락');
-    router.push('/signup/request');
-    return;
-  }
-
-  try {
-    const parsedToken = parseToken(token.value);
-    form.value.email = parsedToken.sub;
-
-  } catch (e) {
-    console.error('토큰 형식 오류: ', e);
-    router.push('/signup/request');
-  }
-}
 
 function validateField(field) {
   const value = form.value[field];
@@ -162,7 +143,7 @@ async function handleJoinSubmit() {
         message: '회원가입이 완료되었습니다.',
         success: true
       };
-      router.push({ name: 'survey', params: { type: 'knowledge' } });
+      router.push({ name: 'signup/survey', params: { type: 'knowledge' } });
     } catch (error) {
       if (error.response?.status === 409) {
         result.value = {
@@ -189,8 +170,6 @@ function inputStyleClass(error) {
 
 function openPolicyModal() {
   privacyModalRef.value?.showModal();
-  // const modal = document.getElementById('policy_modal');
-  // modal?.showModal();
 }
 
 </script>

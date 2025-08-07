@@ -14,7 +14,7 @@ import SignupPage from '@/pages/user/auth/SignupPage.vue';
 const insightNavItems = [
   { to: '/insight', label: '회고 인사이트' },
   { to: '/insight/fund', label: '펀드 모아보기' },
-  { to: '/insight/forex', label: '공격형 연금 모아보기' },
+  { to: '/insight/aggressive', label: '공격형 연금 모아보기' },
 ];
 
 const mypageNavItems = [
@@ -49,7 +49,7 @@ const commonRoutes = [
     children: [
       {
         path: '',
-        name: 'insight-monthly',
+        name: 'insight',
         component: () => import('@/pages/insight/InsightPage.vue'),
       },
       {
@@ -58,8 +58,8 @@ const commonRoutes = [
         component: () => import('@/pages/insight/InsightCollectionPage.vue'),
       },
       {
-        path: 'forex',
-        name: 'collection-forex',
+        path: 'aggressive',
+        name: 'collection-aggressive',
         component: () => import('@/pages/insight/InsightCollectionPage.vue'),
       },
     ],
@@ -120,14 +120,14 @@ const commonRoutes = [
     component: UserLayout,
     children: [
       {
-        path: 'id',
-        name: 'find/id',
+        path: '',
+        name: 'find',
         component: () => import('@/pages/user/auth/FindPage.vue'),
       },
       {
-        path: 'pwd',
-        name: 'find/pwd',
-        component: () => import('@/pages/user/auth/FindPage.vue'),
+        path: 'password/reset',
+        name: 'find/password/reset',
+        component: () => import('@/pages/user/auth/PasswordResetPage.vue'),
       },
     ],
   },
@@ -150,7 +150,7 @@ const commonRoutes = [
       },
       {
         path: 'survey/:type', // knowledge, tendency
-        name: 'survey',
+        name: 'signup/survey',
         component: () => import('@/pages/user/survey/SurveyPage.vue'),
       },
     ],
@@ -163,7 +163,7 @@ const commonRoutes = [
     children: [
       {
         path: 'survey/:type', // knowledge, tendency
-        name: 'survey',
+        name: 'mypage/survey',
         component: () => import('@/pages/user/survey/SurveyPage.vue'),
       },
     ],
