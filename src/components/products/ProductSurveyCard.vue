@@ -136,7 +136,7 @@ const props = defineProps({
 
 // 이미 완료된 설문인지 확인
 const isCompleted = computed(() => {
-  return props.productStatus !== null;
+  return props.productStatus !== null && props.productStatus !== '';
   // return false; // 개발용
 });
 
