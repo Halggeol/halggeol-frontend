@@ -1,5 +1,7 @@
 <template>
-  <div class="w-64 p-5 border-r border-gray-200 bg-gray-50 flex-shrink-0">
+  <div
+    class="w-64 p-5 border-r border-gray-200 bg-gray-50 flex-shrink-0 sticky top-0 h-screen"
+  >
     <!-- 상품 유형 필터 -->
     <div class="mb-6 relative">
       <h3 class="text-lg font-semibold mb-3 text-gray-800">상품 유형</h3>
@@ -15,8 +17,7 @@
             type="checkbox"
             id="typeAll"
             value="all"
-            :checked="isAllSelected"
-            @change="toggleAllProductTypes"
+            v-model="isAllSelected"
             class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
           />
           <label for="typeAll" class="ml-2 text-sm text-gray-700 cursor-pointer"
@@ -53,11 +54,7 @@
             type="checkbox"
             id="bankAll"
             value="all"
-            :checked="
-              selectedBanks.length === bankValues.length &&
-              bankValues.length > 0
-            "
-            @change="toggleAllBanks"
+            v-model="isAllBanksSelected"
             class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
           />
           <label for="bankAll" class="ml-2 text-sm text-gray-700 cursor-pointer"
@@ -212,7 +209,19 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits, computed } from 'vue';
+import { ref, watch, defineEmits, computed, defineProps } from 'vue';
+
+const props = defineProps({
+  initialFilters: {
+    type: Object,
+    default: () => ({
+      types: [],
+      fSectors: [],
+      saveTerm: null,
+      minAmount: null,
+    }),
+  },
+});
 
 const MIN_AMOUNT = 100000;
 const errorMessage = ref('');
@@ -225,12 +234,8 @@ const productTypes = [
   { label: '외화', value: 'forex' },
 ];
 const productTypeValues = productTypes.map(t => t.value);
+
 const selectedProductTypes = ref([]);
-
-const isAllSelected = computed(() => {
-  return selectedProductTypes.value.length === productTypeValues.length;
-});
-
 const banks = [
   { label: '1금융권', value: 1 },
   { label: '2금융권', value: 2 },
@@ -238,28 +243,39 @@ const banks = [
 const bankValues = banks.map(b => b.value);
 const selectedBanks = ref([]);
 
-const selectedSubscriptionPeriod = ref(null); // 빈 문자열 대신 null 사용
-
+const selectedSubscriptionPeriod = ref(null);
 const inputAmount = ref(null);
-const selectedAmount = ref(null); // 0 대신 null 사용
+const selectedAmount = ref(null);
 
 const emit = defineEmits(['filtersChanged']);
 
-function toggleAllProductTypes(event) {
-  if (event.target.checked) {
-    selectedProductTypes.value = [...productTypeValues];
-  } else {
-    selectedProductTypes.value = [];
-  }
-}
+const isAllSelected = computed({
+  get() {
+    return selectedProductTypes.value.length === productTypeValues.length;
+  },
+  set(newValue) {
+    if (newValue) {
+      selectedProductTypes.value = [...productTypeValues];
+    } else {
+      selectedProductTypes.value = [];
+    }
+  },
+});
 
-function toggleAllBanks(event) {
-  if (event.target.checked) {
-    selectedBanks.value = [...bankValues];
-  } else {
-    selectedBanks.value = [];
-  }
-}
+const isAllBanksSelected = computed({
+  get() {
+    return (
+      selectedBanks.value.length === bankValues.length && bankValues.length > 0
+    );
+  },
+  set(newValue) {
+    if (newValue) {
+      selectedBanks.value = [...bankValues];
+    } else {
+      selectedBanks.value = [];
+    }
+  },
+});
 
 const handleAmountInput = () => {
   if (
@@ -293,21 +309,18 @@ const resetFilters = () => {
   errorMessage.value = '';
 };
 
-// 백엔드 API 파라미터에 맞춰서 필터 데이터를 구성하여 emit
 const emitFilters = () => {
   const filters = {
-    // 백엔드 파라미터명에 맞춤
     types:
       selectedProductTypes.value.length > 0 ? selectedProductTypes.value : null,
     fSectors: selectedBanks.value.length > 0 ? selectedBanks.value : null,
     saveTerm: selectedSubscriptionPeriod.value,
     minAmount: selectedAmount.value ? selectedAmount.value : null,
   };
-
   emit('filtersChanged', filters);
 };
 
-// 필터 변경 시 즉시 부모 컴포넌트에 알림
+// 로컬 상태 변화를 감지하여 emit 이벤트를 발생시킵니다.
 watch(
   [
     selectedProductTypes,
@@ -317,6 +330,23 @@ watch(
   ],
   () => {
     emitFilters();
+  },
+  { deep: true }
+);
+
+// 부모 Prop의 변화를 감지하여 로컬 상태를 업데이트합니다.
+watch(
+  () => props.initialFilters,
+  newFilters => {
+    selectedProductTypes.value = Array.isArray(newFilters.types)
+      ? newFilters.types
+      : [];
+    selectedBanks.value = Array.isArray(newFilters.fSectors)
+      ? newFilters.fSectors
+      : [];
+    selectedSubscriptionPeriod.value = newFilters.saveTerm;
+    inputAmount.value = newFilters.minAmount;
+    selectedAmount.value = newFilters.minAmount;
   },
   { deep: true, immediate: true }
 );

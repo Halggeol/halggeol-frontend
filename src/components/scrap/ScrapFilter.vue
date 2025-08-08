@@ -1,5 +1,8 @@
 <template>
-  <div class="w-64 p-5 border-r border-gray-200 bg-gray-50 flex-shrink-0">
+  <div
+    class="w-64 p-5 border-r border-gray-200 bg-gray-50 flex-shrink-0 sticky top-0 h-screen"
+  >
+    <!-- 상품 유형 필터 -->
     <div class="mb-6 relative">
       <h3 class="text-lg font-semibold mb-3 text-gray-800">상품 유형</h3>
       <button
@@ -14,8 +17,7 @@
             type="checkbox"
             id="typeAll"
             value="all"
-            :checked="isAllSelected"
-            @change="toggleAllProductTypes"
+            v-model="isAllSelected"
             class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
           />
           <label for="typeAll" class="ml-2 text-sm text-gray-700 cursor-pointer"
@@ -46,7 +48,17 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits, computed, onMounted } from 'vue';
+import { ref, watch, defineEmits, computed, defineProps } from 'vue';
+
+// 부모 컴포넌트로부터 초기 필터 값을 받음
+const props = defineProps({
+  initialFilters: {
+    type: Object,
+    default: () => ({
+      types: [],
+    }),
+  },
+});
 
 const productTypes = [
   { label: '예금', value: 'deposit' },
@@ -56,39 +68,37 @@ const productTypes = [
   { label: '외화', value: 'forex' },
 ];
 const productTypeValues = productTypes.map(t => t.value);
-const selectedProductTypes = ref([]);
 
-const isAllSelected = computed(() => {
-  return selectedProductTypes.value.length === productTypeValues.length;
-});
+const selectedProductTypes = ref([]);
 
 const emit = defineEmits(['filtersChanged']);
 
-function toggleAllProductTypes(event) {
-  if (event.target.checked) {
-    selectedProductTypes.value = [...productTypeValues];
-  } else {
-    selectedProductTypes.value = [];
-  }
-}
+const isAllSelected = computed({
+  get() {
+    return selectedProductTypes.value.length === productTypeValues.length;
+  },
+  set(newValue) {
+    if (newValue) {
+      selectedProductTypes.value = [...productTypeValues];
+    } else {
+      selectedProductTypes.value = [];
+    }
+  },
+});
 
 const resetFilters = () => {
   selectedProductTypes.value = [];
 };
 
-// 백엔드 API 파라미터에 맞춰서 필터 데이터를 구성하여 emit
+// 필터 상태 변경 시 부모 컴포넌트로 이벤트를 보냄
 const emitFilters = () => {
   const filters = {
-    // 백엔드 파라미터명에 맞춤
-    productTypes:
-      selectedProductTypes.value.length > 0
-        ? selectedProductTypes.value
-        : ['all'],
+    types: selectedProductTypes.value,
   };
   emit('filtersChanged', filters);
 };
 
-// 필터 변경 시 즉시 부모 컴포넌트에 알림
+// 로컬 상태 변화를 감지하여 emit 이벤트를 발생
 watch(
   selectedProductTypes,
   () => {
@@ -97,12 +107,18 @@ watch(
   { deep: true }
 );
 
-// 컴포넌트 마운트 시 초기 필터 상태 전달
-onMounted(() => {
-  emitFilters();
-});
+// 부모로부터 받은 initialFilters prop이 변경될 때마다 로컬 상태를 업데이트
+watch(
+  () => props.initialFilters,
+  newFilters => {
+    selectedProductTypes.value = Array.isArray(newFilters.productTypes)
+      ? newFilters.productTypes
+      : [];
+  },
+  { deep: true, immediate: true }
+);
 </script>
 
 <style scoped>
-/* (스타일은 그대로) */
+/* Tailwind CSS 위주라 별도 스타일 거의 필요 없음 */
 </style>

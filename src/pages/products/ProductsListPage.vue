@@ -1,8 +1,12 @@
 <template>
-  <div class="flex">
-    <ProductFilter @filtersChanged="handleFilterChange" />
+  <div class="flex items-start">
+    <!-- ProductFilter 컴포넌트에 currentFilters 상태를 Prop으로 전달 -->
+    <ProductFilter
+      :initialFilters="currentFilters"
+      @filtersChanged="handleFilterChange"
+    />
 
-    <div class="flex-1 p-5">
+    <div class="flex-1 p-5 h-screen overflow-y-auto">
       <div class="flex justify-end mb-4">
         <ProductSort @update:sort="handleSortChange" />
       </div>
@@ -58,6 +62,7 @@ import ProductFilter from '@/components/products/ProductFilter.vue';
 import ProductSort from '@/components/products/ProductSort.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { addScrap, delScrap } from '@/api/product-detail';
+import { getScrapedProductIds } from '@/api/scrap';
 import axios from 'axios';
 
 const route = useRoute();
@@ -73,8 +78,8 @@ const isScrapLoading = ref(false);
 
 // 현재 필터와 정렬 상태
 const currentFilters = ref({
-  types: ['all'],
-  fSectors: null,
+  types: [],
+  fSectors: [],
   saveTerm: null,
   minAmount: null,
 });
@@ -89,10 +94,8 @@ const fetchProducts = async () => {
     if (searchQuery.value) {
       params.append('keyword', searchQuery.value);
     }
-    if (
-      currentFilters.value.types &&
-      !currentFilters.value.types.includes('all')
-    ) {
+    // `types`가 빈 배열이 아닐 때만 파라미터에 추가합니다.
+    if (currentFilters.value.types && currentFilters.value.types.length > 0) {
       params.append('types', currentFilters.value.types.join(','));
     }
     if (
@@ -114,9 +117,13 @@ const fetchProducts = async () => {
     const apiUrl = `http://localhost:8080/api/products?${params.toString()}`;
     console.log('API 호출:', apiUrl);
 
-    const response = await axios.get(apiUrl);
+    const [productsResponse, scrapedIdsResponse] = await Promise.all([
+      axios.get(apiUrl),
+      getScrapedProductIds(), // 관심상품 ID 목록 요청
+    ]);
 
-    products.value = response.data;
+    products.value = productsResponse.data;
+    scrapedProductIds.value = new Set(scrapedIdsResponse);
     error.value = null;
   } catch (err) {
     if (axios.isAxiosError(err) && err.response) {
@@ -136,7 +143,7 @@ const handleFilterChange = filters => {
     query: {
       ...route.query,
       types:
-        filters.types && !filters.types.includes('all')
+        filters.types && filters.types.length > 0
           ? filters.types.join(',')
           : undefined,
       fSectors:
@@ -207,10 +214,12 @@ watch(
   newQuery => {
     searchQuery.value = newQuery.keyword || '';
     currentFilters.value = {
-      types: newQuery.types ? newQuery.types.split(',') : ['all'],
-      fSectors: newQuery.fSectors ? newQuery.fSectors.split(',') : null,
-      saveTerm: newQuery.saveTerm ? newQuery.saveTerm : null,
-      minAmount: newQuery.minAmount ? newQuery.minAmount : null,
+      types: newQuery.types ? newQuery.types.split(',') : [],
+      fSectors: newQuery.fSectors
+        ? newQuery.fSectors.split(',').map(Number)
+        : [],
+      saveTerm: newQuery.saveTerm ? Number(newQuery.saveTerm) : null,
+      minAmount: newQuery.minAmount ? Number(newQuery.minAmount) : null,
     };
     currentSort.value = newQuery.sort || 'popularDesc';
 
