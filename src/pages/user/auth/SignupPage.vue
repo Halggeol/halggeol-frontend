@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { join } from '@/api/user';
-import { getTokenIfExists, getEmailFromToken, setEmail, clearEmail } from '@/utils/authUtil';
+import { getTokenIfExists, getEmailFromToken, setEmail } from '@/utils/authUtil';
 import PrivacyPolicyModal from '@/components/user/auth/PrivacyPolicyModal.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
 import EyeClose from '@/components/icons/EyeClose.vue';
@@ -144,7 +144,6 @@ async function handleJoinSubmit() {
         success: true
       };
 
-      clearEmail();
       router.push({ name: 'signup/survey', params: { type: 'knowledge' } });
 
     } catch (error) {
