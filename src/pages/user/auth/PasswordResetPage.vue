@@ -3,15 +3,12 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { resetPasswordWithoutLogin } from '@/api/user';
 import { getTokenIfExists } from '@/utils/authUtil';
+import { regex } from '@/utils/validationUtil';
 import BaseButton from '@/components/common/BaseButton.vue';
 import EyeClose from '@/components/icons/EyeClose.vue';
 import EyeOpen from '@/components/icons/EyeOpen.vue';
 
 const router = useRouter();
-
-const regex = {
-  password: /^[a-zA-Z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/,
-};
 
 const errors = ref({});
 const token = ref(null);
