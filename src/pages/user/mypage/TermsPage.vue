@@ -1,15 +1,12 @@
 <script setup>
 import { termsText, privacyText } from '@/constants/terms';
 
-const formattedTermsText = termsText.replace(
-  /제\d+조\s*\([^)]+\)/g,
-  (match) => `<div class="title03">${match}</div>`
-);
-
-const formattedPrivacyText = privacyText.replace(
-  /제\d+조\s*\([^)]+\)/g,
-  (match) => `<div class="title03">${match}</div>`
-);
+function formatSectionTitles(text) {
+  return text.replace(
+    /제\d+조\s*\([^)]+\)/g,
+    (match) => `<span class="font-bold">${match}</span>`
+  );
+}
 
 </script>
 
@@ -23,7 +20,7 @@ const formattedPrivacyText = privacyText.replace(
       <!-- 이용약관 -->
       <div class="flex-1">
         <div class="mb-10 border rounded p-4 h-[250px] overflow-y-auto text-sm leading-relaxed whitespace-pre-line">
-          <div v-html="formattedTermsText"></div>
+          <div v-html="formatSectionTitles(termsText)"></div>
         </div>
       </div>
 
@@ -32,7 +29,7 @@ const formattedPrivacyText = privacyText.replace(
     <!-- 개인정보 처리방침 -->
       <div class="flex-1">
         <div class="border rounded p-4 h-[250px] overflow-y-auto text-sm leading-relaxed whitespace-pre-line">
-          <div v-html="formattedPrivacyText"></div>
+          <div v-html="formatSectionTitles(privacyText)"></div>
         </div>
       </div>
     </div>
