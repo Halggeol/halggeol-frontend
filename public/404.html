@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Page Not Found</title>
+    <script>
+      // 리디렉션 로직
+      var repoName = '/halggeol-frontend/';
+      var path = window.location.pathname;
+
+      // GitHub Pages의 서브 경로를 고려하여 path 처리
+      if (path.startsWith(repoName)) {
+        path = path.substring(repoName.length);
+      } else {
+        path = path.startsWith('/') ? path.substring(1) : path;
+      }
+
+      var newUrl =
+        window.location.protocol +
+        '//' +
+        window.location.host +
+        repoName +
+        '#' +
+        path;
+      window.location.replace(newUrl);
+    </script>
+  </head>
+  <body>
+    <p>Redirecting...</p>
+  </body>
+</html>
