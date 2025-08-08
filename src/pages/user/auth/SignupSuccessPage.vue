@@ -15,7 +15,7 @@ async function routeToLoginPage() {
 
 onMounted(() => {
   clearEmail();
-})
+});
 
 </script>
 
