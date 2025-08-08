@@ -1,5 +1,7 @@
 <script setup>
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { clearEmail } from '@/utils/authUtil';
 import BaseButton from '@/components/common/BaseButton.vue';
 import ProcessDots from '@/components/icons/survey/ProcessDots.vue';
 import Check from '@/components/icons/survey/Check.vue';
@@ -10,6 +12,10 @@ const router = useRouter();
 async function routeToLoginPage() {
   router.push('/login');
 }
+
+onMounted(() => {
+  clearEmail();
+})
 
 </script>
 
