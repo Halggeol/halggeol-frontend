@@ -34,7 +34,7 @@ const regretChartData = computed(() => ({
   datasets: [
     {
       data: [avgRegretScore.value, 100 - avgRegretScore.value],
-      backgroundColor: ['#f87171', '#e5e7eb'],
+      backgroundColor: ['#f87171', '#f8717133'],
       borderWidth: 0,
       cutout: '70%',
     },
@@ -60,7 +60,7 @@ const regretItemChartData = computed(() => ({
   datasets: [
     {
       data: [regretItemRatio.value, 100 - regretItemRatio.value],
-      backgroundColor: ['#60a5fa', '#e5e7eb'],
+      backgroundColor: ['#60a5fa', '#60a5fa33'],
       borderWidth: 0,
       cutout: '60%',
       rotation: -90,
@@ -90,7 +90,11 @@ const regretItemChartOptions = {
   >
     <div class="flip-inner" :class="{ flipped: isFlipped }">
       <!-- 후회지수 -->
-      <div class="card-face">
+
+      <div
+        class="card-face tooltip underline"
+        data-tip="나의 자산 대비 놓친 기회를 반영한 점수입니다."
+      >
         <p class="title03 mb-6">후회지수</p>
         <div class="relative w-24 h-24 mx-auto">
           <Doughnut :data="regretChartData" :options="regretChartOptions" />
@@ -102,7 +106,10 @@ const regretItemChartOptions = {
         </div>
       </div>
       <!-- 후회상품비율 -->
-      <div class="card-face back">
+      <div
+        class="card-face back tooltip underline"
+        data-tip="나의 추천 상품 중 ‘후회해요’라고 응답한 상품의 비율입니다. "
+      >
         <p class="title03 mb-6">후회상품비율</p>
         <div class="relative w-full max-h-24">
           <Doughnut
