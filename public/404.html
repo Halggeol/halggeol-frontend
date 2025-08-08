@@ -7,8 +7,9 @@
       // 리디렉션 로직
       var repoName = '/halggeol-frontend/';
       var path = window.location.pathname;
+      var search = window.location.search;
+      var hash = window.location.hash;
 
-      // GitHub Pages의 서브 경로를 고려하여 path 처리
       if (path.startsWith(repoName)) {
         path = path.substring(repoName.length);
       } else {
@@ -21,7 +22,9 @@
         window.location.host +
         repoName +
         '#' +
-        path;
+        path +
+        search +
+        hash;
       window.location.replace(newUrl);
     </script>
   </head>
