@@ -35,14 +35,16 @@ export const clearEmail = () => {
 };
 
 export const getTokenIfExists = () => {
-  const token = new URLSearchParams(window.location.search).get('token');
+  const searchToken = new URLSearchParams(window.location.search).get('token');
+  if (searchToken)
+    return searchToken;
 
-  if (token === null) {
-    console.error('토큰 누락');
-    return null;
-  }
+  const hashToken = new URLSearchParams(window.location.hash.split('?')[1] || '').get('token');
+  if (hashToken)
+    return hashToken;
 
-  return token;
+  console.error('토큰 누락');
+  return null;
 }
 
 export const getEmailFromToken = (token) => {
