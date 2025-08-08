@@ -118,3 +118,13 @@ export const syncMydata = async () => {
     throw error;
   }
 };
+
+export const leaveService = async () => {
+  try {
+    const response = await api.delete('/me');
+    return response;
+  } catch (error) {
+    console.error('Delete Account API Error:', error);
+    throw error;
+  }
+};
