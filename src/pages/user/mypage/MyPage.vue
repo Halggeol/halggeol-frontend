@@ -131,7 +131,7 @@ async function setUserInfo() {
       <!-- 비밀번호 -->
       <div class="flex items-center justify-between w-full">
         <div class="w-1/3 font-medium text-gray-800">비밀번호</div>
-        <div class="w-1/2 text-gray-900">비밀번호</div>
+        <div class="w-1/2 text-gray-900">********</div>
         <div class="w-1/3 text-right">
           <button
             class="text-gray-400 text-sm hover:text-gray-600 hover:underline"
