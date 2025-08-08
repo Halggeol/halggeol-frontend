@@ -1,8 +1,11 @@
 <template>
-  <div class="flex">
-    <ScrapFilter @filtersChanged="handleFilterChange" />
+  <div class="flex items-start">
+    <ScrapFilter
+      @filtersChanged="handleFilterChange"
+      :initialFilters="currentFilters"
+    />
 
-    <div class="flex-1 p-5">
+    <div class="flex-1 p-5 h-screen overflow-y-auto">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-2xl font-bold text-gray-800">관심 상품 목록</h2>
         <ProductSort @update:sort="handleSortChange" />
@@ -61,7 +64,7 @@ const error = ref(null);
 
 // 필터 상태를 URL에서 관리
 const currentFilters = ref({
-  productTypes: ['all'], // 'all'로 초기화하여 처음에는 전체 목록을 보여줌
+  productTypes: [], // 빈 배열로 초기화
 });
 const currentSort = ref('popularDesc');
 const isScrapLoading = ref(false);
@@ -83,10 +86,10 @@ const fetchProducts = async () => {
   try {
     const params = new URLSearchParams();
 
-    // 필터링 파라미터 (ScrapFilter에서 보낸 값)
+    // 필터링 파라미터 (currentFilters의 productTypes 배열이 비어있지 않을 때만 추가)
     if (
       currentFilters.value.productTypes &&
-      !currentFilters.value.productTypes.includes('all')
+      currentFilters.value.productTypes.length > 0
     ) {
       params.append(
         'productTypes',
@@ -130,14 +133,12 @@ const fetchProducts = async () => {
 // 필터 변경 핸들러
 const handleFilterChange = filters => {
   console.log('Filters changed:', filters);
-  // ScrapFilter에서 보낸 filters 객체를 그대로 사용
+  // ScrapFilter에서 보낸 filters 객체의 types 배열이 비어있으면 undefined로 설정하여 URL에서 제거
   router.push({
     query: {
       ...route.query,
       productTypes:
-        filters.productTypes && !filters.productTypes.includes('all')
-          ? filters.productTypes.join(',')
-          : undefined,
+        filters.types.length > 0 ? filters.types.join(',') : undefined,
     },
   });
 };
@@ -190,7 +191,7 @@ watch(
     currentFilters.value = {
       productTypes: newQuery.productTypes
         ? newQuery.productTypes.split(',')
-        : ['all'],
+        : [],
     };
     currentSort.value = newQuery.sort || 'popularDesc';
     fetchProducts();
