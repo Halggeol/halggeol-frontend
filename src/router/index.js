@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router';
+// import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router'; // 배포용
 // Layout
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
 import SideBarLayout from '@/layouts/SideBarLayout.vue';
@@ -184,7 +185,8 @@ const commonRoutes = [
 const routes = [...commonRoutes];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  // history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(), // 배포용
   routes,
 });
 
