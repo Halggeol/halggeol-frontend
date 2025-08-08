@@ -57,6 +57,18 @@ export const getEmailFromToken = (token) => {
   }
 }
 
+export const isReverifiedToken = (token) => {
+  if (token === null)
+    return false;
+
+  try {
+    return parseToken(token).passwordReverified === true;
+  } catch (e) {
+    console.error('토큰 형식 오류: ', e);
+    return false;
+  }
+}
+
 export const parseToken = (token) => {
   const payload = token.split('.')[1];
   const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/')); // base64 디코딩

@@ -46,7 +46,15 @@ function goToDetail(productId) {
 </script>
 
 <template>
-  <h2 class="title01 pb-12 pt-40">이때 살 걸 금융상품 랭킹</h2>
+  <h2 class="title01 pb-12 pt-40">
+    <div
+      class="tooltip underline"
+      data-tip="이번 달동안 많은 사용자가 가입하지 않아 후회한 금융상품입니다."
+    >
+      이때 살 걸 금융상품 랭킹
+    </div>
+  </h2>
+
   <!-- <span><i></i>고위험상품 숨기기</span> -->
   <div class="ranking pb-40 grid grid-rows-2 grid-cols-3 gap-6">
     <BaseCard

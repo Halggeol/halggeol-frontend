@@ -88,7 +88,7 @@ const type = computed(() =>
       <Doughnut :data="chartData" :options="chartOptions" />
     </div> -->
     <div class="mt-6 w-full">
-      <div class="h-8 w-full bg-gray-200 rounded-full overflow-hidden">
+      <div class="h-8 w-full bg-status-red/20 rounded-full overflow-hidden">
         <div
           class="h-full bg-status-red"
           :style="{ width: `${(aggressiveRatio * 100).toFixed(1)}%` }"
