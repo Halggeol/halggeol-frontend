@@ -1,10 +1,13 @@
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { syncMydata } from '@/api/user';
 import BaseButton from '@/components/common/BaseButton.vue';
 import ProcessDots from '@/components/icons/survey/ProcessDots.vue';
 import Check from '@/components/icons/survey/Check.vue';
 import ThreeFilled from '@/components/icons/survey/ThreeFilled.vue';
+
+const router = useRouter();
 
 const isLoading = ref(false);
 
@@ -13,8 +16,9 @@ async function handleSyncMydata() {
 
   try {
     isLoading.value = true;
-    const authUrl = await syncMydata();
-    window.location.href = authUrl;
+    // const authUrl = await syncMydata();
+    // window.location.href = authUrl;
+    router.push('/signup/success');
 
   } catch (error) {
     alert('오류가 발생했습니다.');
