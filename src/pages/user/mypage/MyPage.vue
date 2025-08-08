@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { viewProfile } from '@/api/user';
 import RetakeSurveyModal from '@/components/user/mypage/RetakeSurveyModal.vue';
 import ResetPasswordModal from '@/components/user/mypage/ResetPasswordModal.vue';
+import LeaveServiceModal from '@/components/user/mypage/LeaveServiceModal.vue';
 
 const router = useRouter();
 
@@ -13,6 +14,9 @@ const isResetPasswordModalOpen = ref(false);
 // 재설문 여부 모달 관련 상태
 const isRetakeSurveyModalOpen = ref(false);
 const surveyType = ref('');
+
+// 회원탈퇴 관련 상태
+const isLeaveServiceModalOpen = ref(false);
 
 // 사용자 정보
 const user = reactive({
@@ -54,7 +58,9 @@ const retakeTendencyTest = () => {
   isRetakeSurveyModalOpen.value = true;
 };
 
-const withdrawAccount = () => console.log('탈퇴하기');
+const leaveService = () => {
+  isLeaveServiceModalOpen.value = true;
+};
 
 onMounted(() => {
  setUserInfo();
@@ -181,7 +187,7 @@ async function setUserInfo() {
 
     <!-- 탈퇴하기 버튼 -->
     <div class="my-28">
-      <button class="text-sm text-gray-400 hover:underline" @click="withdrawAccount">
+      <button class="text-sm text-gray-400 hover:underline" @click="leaveService">
         탈퇴하기
       </button>
     </div>
@@ -198,5 +204,10 @@ async function setUserInfo() {
     :isOpen="isRetakeSurveyModalOpen"
     :onClose="() => (isRetakeSurveyModalOpen = false)"
     @confirm="handleRetakeSurveyConfirm"
+  />
+
+  <LeaveServiceModal
+    :isOpen="isLeaveServiceModalOpen"
+    :onClose="() => (isLeaveServiceModalOpen = false)"
   />
 </template>
