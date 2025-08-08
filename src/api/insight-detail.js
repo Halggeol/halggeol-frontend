@@ -14,6 +14,13 @@ export const submitRegretSurvey = async surveyData => {
 
 // 후회 인사이트
 // 후회 시뮬레이션 그래프
+export const mapRegretInsightResponse = data => {
+  return (data.profits || []).map(item => ({
+    date: item.date ?? null,
+    asset: item.asset ?? null,
+    lostAsset: item.lostAsset ?? null,
+  }));
+};
 
 // 후회 시뮬레이션 카드
 export const mapRegretSimulationResponse = data => {
