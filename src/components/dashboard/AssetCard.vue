@@ -1,6 +1,6 @@
 <script setup>
 import BaseCard from '../common/BaseCard.vue';
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 // import jsonData from './mydata.json'; // 목업 데이터, 추후 실제 api로 수정
 
 const props = defineProps({
