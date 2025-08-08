@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { join } from '@/api/user';
 import { getTokenIfExists, getEmailFromToken, setEmail } from '@/utils/authUtil';
+import { regex } from '@/utils/validationUtil';
 import PrivacyPolicyModal from '@/components/user/auth/PrivacyPolicyModal.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
 import EyeClose from '@/components/icons/EyeClose.vue';
@@ -10,13 +11,6 @@ import EyeOpen from '@/components/icons/EyeOpen.vue';
 
 const router = useRouter();
 const privacyModalRef = ref();
-
-const regex = {
-  name: /^[가-힣]{2,}$/,
-  password: /^[a-zA-Z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/,
-  phone: /^01[016789]\d{7,8}$/,
-  birth: /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
-};
 
 const errors = ref({});
 const token = ref(null);
