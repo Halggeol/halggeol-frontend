@@ -145,13 +145,18 @@ const commonRoutes = [
       },
       {
         path: 'mydata',
-        name: 'mydata',
+        name: 'signup/mydata',
         component: () => import('@/pages/user/auth/SyncMydataPage.vue'),
       },
       {
         path: 'survey/:type', // knowledge, tendency
         name: 'signup/survey',
         component: () => import('@/pages/user/survey/SurveyPage.vue'),
+      },
+      {
+        path: 'success',
+        name: 'signup/success',
+        component: () => import('@/pages/user/auth/SignupSuccessPage.vue'),
       },
     ],
   },

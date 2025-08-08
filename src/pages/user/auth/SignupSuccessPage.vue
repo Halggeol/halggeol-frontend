@@ -1,25 +1,14 @@
 <script setup>
-import { ref } from 'vue';
-import { syncMydata } from '@/api/user';
+import { useRouter } from 'vue-router';
 import BaseButton from '@/components/common/BaseButton.vue';
 import ProcessDots from '@/components/icons/survey/ProcessDots.vue';
 import Check from '@/components/icons/survey/Check.vue';
 import ThreeFilled from '@/components/icons/survey/ThreeFilled.vue';
 
-const isLoading = ref(false);
+const router = useRouter();
 
-async function handleSyncMydata() {
-  console.log('===== 마이데이터 연결 핸들링 =====');
-
-  try {
-    isLoading.value = true;
-    const authUrl = await syncMydata();
-    window.location.href = authUrl;
-
-  } catch (error) {
-    alert('오류가 발생했습니다.');
-    isLoading.value = false;
-  }
+async function routeToLoginPage() {
+  router.push('/login');
 }
 
 </script>
@@ -39,23 +28,22 @@ async function handleSyncMydata() {
       <!-- 상단 설명 영역 -->
       <div>
         <h1 class="text-title-lg mb-10">
-          그때 할 걸에서 <span class="font-bold">마이데이터</span>를 <br />연동하세요
+          <span class="font-bold">회원가입</span>을 축하합니다
         </h1>
 
         <p class="text-gray-600 mb-6">
-          연동한 마이데이터로 나의 자산을<br />
-          쉽고 빠르게 분석할 수 있어요
+          회원가입과 마이데이터 연동이 완료되었어요<br />
+          연동된 자산 정보를 기반으로 적합한 금융상품을 추천해드릴게요
         </p>
       </div>
 
-      <!-- 연동하기 버튼 -->
+      <!-- 로그인하기 버튼 -->
       <BaseButton
         class="mt-auto mb-32"
         size="lg"
         variant="filled"
-        :disabled="isLoading"
-        :label="isLoading ? '잠시만 기다려주세요' : '연동하기'"
-        @click="handleSyncMydata">
+        label="로그인하기"
+        @click="routeToLoginPage">
       </BaseButton>
     </div>
   </div>
