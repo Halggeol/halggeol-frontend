@@ -5,28 +5,21 @@ import BaseButton from '@/components/common/BaseButton.vue';
 import ProcessDots from '@/components/icons/survey/ProcessDots.vue';
 import Check from '@/components/icons/survey/Check.vue';
 import ThreeFilled from '@/components/icons/survey/ThreeFilled.vue';
-import SyncSuccessModal from '@/components/user/auth/SyncSuccessModal.vue';
-import router from '@/router';
 
 const isLoading = ref(false);
-const isMydataSynced = ref(false);
 
 async function handleSyncMydata() {
   console.log('===== 마이데이터 연결 핸들링 =====');
 
   try {
     isLoading.value = true;
-    await syncMydata();
-    isMydataSynced.value = true;
+    const authUrl = await syncMydata();
+    window.location.href = authUrl;
 
   } catch (error) {
     alert('오류가 발생했습니다.');
     isLoading.value = false;
   }
-}
-
-function routeToLoginPage() {
-  router.push('/login')
 }
 
 </script>
@@ -46,7 +39,7 @@ function routeToLoginPage() {
       <!-- 상단 설명 영역 -->
       <div>
         <h1 class="text-title-lg mb-10">
-          그때 할 걸에서 <span class="font-bold">마이데이터</span>를 <br />를 연동하세요
+          그때 할 걸에서 <span class="font-bold">마이데이터</span>를 <br />연동하세요
         </h1>
 
         <p class="text-gray-600 mb-6">
@@ -66,9 +59,4 @@ function routeToLoginPage() {
       </BaseButton>
     </div>
   </div>
-
-  <SyncSuccessModal
-    :isOpen="isMydataSynced"
-    @confirm="routeToLoginPage"
-  />
 </template>
