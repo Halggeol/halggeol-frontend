@@ -11,10 +11,6 @@ import EyeOpen from '@/components/icons/EyeOpen.vue';
 const router = useRouter();
 const authStore = useAuthStore();
 
-const regex = {
-  password: /^[a-zA-Z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/,
-};
-
 const props = defineProps({
   isOpen: Boolean,
   onClose: Function
@@ -50,7 +46,7 @@ function handleClose() {
 }
 
 async function handleLeaveService() {
-  console.log('===== 로그인 상태 비밀번호 재설정 핸들링 =====');
+  console.log('===== 회원탈퇴 핸들링 =====');
 
   validatePasswords();
 
