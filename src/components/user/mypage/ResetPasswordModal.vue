@@ -74,12 +74,10 @@ async function handleResetPassword() {
 
   validatePasswords();
 
-  let response;
-
   if (canSubmit.value) {
     try {
       console.log("===== reverifyPassword API 호출 =====");
-      response = await reverifyPassword({ confirmPassword: oldPassword.value });
+      const response = await reverifyPassword({ confirmPassword: oldPassword.value });
 
       setAccessToken(response.data.reverifyToken);
 
