@@ -115,6 +115,15 @@ export const syncMydata = async () => {
     return response.data.authUrl;
   } catch (error) {
     console.error('Sync Mydata API Error:', error);
+     }
+};
+
+export const leaveService = async () => {
+  try {
+    const response = await api.delete('/me');
+    return response;
+  } catch (error) {
+    console.error('Delete Account API Error:', error);
     throw error;
   }
 };
