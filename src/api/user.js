@@ -112,7 +112,7 @@ export const viewProfile = async () => {
 export const syncMydata = async () => {
   try {
     const response = await api.get('/mydata');
-    window.location.href = response.data.authUrl;
+    return response.data.authUrl;
   } catch (error) {
     console.error('Sync Mydata API Error:', error);
     throw error;
