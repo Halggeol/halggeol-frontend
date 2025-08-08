@@ -3,16 +3,13 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { login } from '@/api/user';
 import { useAuthStore } from '@/stores/authStore';
+import { regex } from '@/utils/validationUtil';
 import BaseButton from '@/components/common/BaseButton.vue';
 import EyeClose from '@/components/icons/EyeClose.vue';
 import EyeOpen from '@/components/icons/EyeOpen.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
-
-const regex = {
-  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-};
 
 const email = ref('');
 const password = ref('');
@@ -155,9 +152,9 @@ function inputStyleClass(field) {
 
         <!-- 하단 링크 -->
         <div class="mt-6 text-center text-xs text-gray-500 space-x-3">
-          <a href="/find" class="hover:underline">아이디 / 비밀번호 찾기</a>
+          <RouterLink to="/find" class="hover:underline">아이디 / 비밀번호 찾기</RouterLink>
           <span>|</span>
-          <a href="/signup/request" class="hover:underline">회원가입</a>
+          <RouterLink to="/signup/request" class="hover:underline">회원가입</RouterLink>
         </div>
       </form>
     </div>
