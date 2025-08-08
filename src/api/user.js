@@ -115,7 +115,8 @@ export const syncMydata = async () => {
     return response.data.authUrl;
   } catch (error) {
     console.error('Sync Mydata API Error:', error);
-     }
+    throw error;
+  }
 };
 
 export const leaveService = async () => {
