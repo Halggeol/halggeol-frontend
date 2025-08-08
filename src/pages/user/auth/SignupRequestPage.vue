@@ -1,11 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { requestJoin } from '@/api/user';
+import { regex } from '@/utils/validationUtil';
 import BaseButton from '@/components/common/BaseButton.vue';
-
-const regex = {
-  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-};
 
 const error = ref('');
 const email = ref('');
