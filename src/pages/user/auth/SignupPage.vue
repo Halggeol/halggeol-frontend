@@ -122,6 +122,12 @@ function validatePasswords() {
 
 async function handleJoinSubmit() {
   console.log('===== 회원가입 요청 핸들링 =====');
+
+  const originalBirth = form.value.birth;
+  form.value.birth = `${form.value.birth.slice(0,4)}-${form.value.birth.slice(4,6)}-${form.value.birth.slice(6,8)}`;
+
+  console.log(form.value.birth);
+
   Object.keys(form.value).forEach((field) => {
     if (field === 'password' || field === 'confirmPassword')
       validatePasswords(field);
@@ -142,6 +148,8 @@ async function handleJoinSubmit() {
       router.push({ name: 'signup/survey', params: { type: 'knowledge' } });
 
     } catch (error) {
+      form.value.birth = originalBirth;
+
       if (error.response?.status === 409) {
         result.value = {
           message: '이미 가입된 이메일입니다.',
@@ -160,6 +168,9 @@ async function handleJoinSubmit() {
 
 const displayBirth = computed(() => {
   const digits = form.value.birth;
+
+  if (digits.includes('-'))
+    return digits;
 
   if (digits.length >= 4 && digits.length < 6)
     return `${digits.slice(0, 4)}-${digits.slice(4)}`;
@@ -217,7 +228,7 @@ function openPolicyModal() {
             @input="inputBirth"
             @blur="validateBirth()"
             :class="inputStyleClass(errors.birth)"
-            placeholder="생년월일 (YYYY-MM-DD)"
+            placeholder="생년월일"
             :disabled="result.success"
           />
           <small v-if="errors.birth" class="text-red-500 mt-1 block">{{ errors.birth }}</small>
