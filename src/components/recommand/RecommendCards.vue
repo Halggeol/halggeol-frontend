@@ -1,13 +1,9 @@
 <script setup>
 import BaseCard from '../common/BaseCard.vue';
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
 
 // 추천 상품 카드 콘텐츠 커스텀
 const props = defineProps({
-  userName: {
-    type: String,
-    default: '사용자',
-  },
   items: {
     type: Array,
     required: true,
@@ -16,6 +12,10 @@ const props = defineProps({
   hasPadding: {
     type: Boolean,
     default: true,
+  },
+  isSimilar: {
+    type: String,
+    default: '적합도',
   },
 });
 
@@ -59,6 +59,25 @@ const startX = ref(0);
 const scrollLeft = ref(0);
 const dragThreshold = 5;
 
+// 스크롤러 네비게이션
+const showPrevButton = ref(false);
+const showNextButton = ref(true);
+const SCROLL_AMOUNT = 384;
+
+function scrollHorizontally(amount) {
+  if (!scrollerWrapper.value) return;
+  scrollerWrapper.value.scrollBy({ left: amount, behavior: 'smooth' });
+}
+
+function updateButtonVisibility() {
+  if (!scrollerWrapper.value) return;
+  const el = scrollerWrapper.value;
+  // 스크롤 맨 왼쪽일 때 숨김
+  showPrevButton.value = el.scrollLeft > 0;
+  // 스크롤이 맨 오른쪽일 때 숨김
+  showNextButton.value = el.scrollLeft < el.scrollWidth - el.clientWidth - 1;
+}
+
 function handleMouseDown(e) {
   isDragging.value = true;
   isScrolling.value = false;
@@ -96,6 +115,10 @@ onMounted(() => {
     scrollerWrapper.value.addEventListener('mouseleave', handleMouseLeave);
     scrollerWrapper.value.addEventListener('mouseup', handleMouseUp);
     scrollerWrapper.value.addEventListener('mousemove', handleMouseMove);
+
+    scrollerWrapper.value.addEventListener('scroll', updateButtonVisibility);
+    window.addEventListener('resize', updateButtonVisibility);
+    nextTick(updateButtonVisibility);
   }
 });
 
@@ -105,6 +128,9 @@ onBeforeUnmount(() => {
     scrollerWrapper.value.removeEventListener('mouseleave', handleMouseLeave);
     scrollerWrapper.value.removeEventListener('mouseup', handleMouseUp);
     scrollerWrapper.value.removeEventListener('mousemove', handleMouseMove);
+
+    scrollerWrapper.value.removeEventListener('scroll', updateButtonVisibility);
+    window.removeEventListener('resize', updateButtonVisibility);
   }
 });
 // 마우스 좌우 끌기 설정 끝
@@ -112,6 +138,27 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="scroller">
+    <button
+      v-show="showPrevButton"
+      @click="scrollHorizontally(-SCROLL_AMOUNT)"
+      class="scroll-btn left-4"
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 48 48"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M38 24H10M10 24L24 38M10 24L24 10"
+          stroke="currentColor"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
     <div :class="wrapperClass" ref="scrollerWrapper">
       <BaseCard
         v-for="item in props.items"
@@ -128,12 +175,33 @@ onBeforeUnmount(() => {
           }}</span>
           <p class="title02 mb-2">{{ item.name }}</p>
           <div class="mt-20 absolute top-28 right-0 text-right">
-            <span class="text-body02">적합도</span>
+            <span class="text-body02">{{ props.isSimilar }}</span>
             <p class="title-lg">{{ item.matchScore }}%</p>
           </div>
         </div>
       </BaseCard>
     </div>
+    <button
+      v-show="showNextButton"
+      @click="scrollHorizontally(SCROLL_AMOUNT)"
+      class="scroll-btn right-6 text-fg-primary"
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 48 48"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10 24H38M38 24L24 10M38 24L24 38"
+          stroke="currentColor"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
   </div>
 </template>
 
@@ -161,5 +229,24 @@ onBeforeUnmount(() => {
 .scroller-item {
   min-width: 360px;
   margin-right: 1.5rem;
+}
+
+.scroll-btn {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-40%);
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 9999px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.scroll-btn:hover {
+  background-color: white;
 }
 </style>

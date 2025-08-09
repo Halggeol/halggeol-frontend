@@ -44,25 +44,38 @@ const payload = computed(() => ({
   regrettedReason: situation.value === '후회해요' ? selectedReason.value : null,
 }));
 
+const isSubmitting = ref(false);
+const submitSuccess = ref(false);
+
 const submitFeedback = async () => {
+  isSubmitting.value = true;
   try {
     await submitRegretSurvey(payload.value);
-    console.log(payload.value);
+    submitSuccess.value = true;
   } catch (err) {
     console.error('전송 실패:', err);
+    submitSuccess.value = false;
+  } finally {
+    isSubmitting.value = false;
   }
 };
 
-const readOnly = computed(() => props.isSurveyed);
+const readOnly = computed(() => props.isSurveyed || submitSuccess.value);
 const regrettedReasonText = computed(() => {
-  return regretReasons.find(r => r.id === props.regrettedReason)?.text || '';
+  const reasonId = submitSuccess.value
+    ? selectedReason.value
+    : props.regrettedReason;
+  if (!reasonId) return '';
+  return regretReasons.find(r => r.id === reasonId)?.text || '';
 });
 </script>
 
 <template>
   <BaseCard size="lg" variant="tinted" class="mt-40 p-12">
-    <h2 class="title01">{{ props.userName }} 님의 의견을 알려주세요</h2>
-    <!-- 후회 여부 선택 -> ui 디테일 수정 -->
+    <h2 class="title01" v-if="!readOnly">
+      {{ props.userName }} 님의 의견을 알려주세요
+    </h2>
+    <h2 class="title01" v-else>{{ props.userName }} 님의 소중한 의견이에요</h2>
     <div class="flex items-center gap-8 my-6 text-body02 text-fg-primary">
       <span>지금 금융상품명을 가입하지 않은 걸</span>
       <label class="flex items-center gap-2 cursor-pointer">
@@ -87,45 +100,39 @@ const regrettedReasonText = computed(() => {
       </label>
     </div>
 
-    <!-- 후회 사유 선택 -> ui 디테일 수정 -->
     <div v-if="situation === '후회해요'" class="py-6 text-body02">
-      <div class="flex items-start gap-2">
-        <span class="pt-1 whitespace-nowrap">그때는</span>
-        <div class="flex flex-col min-w-max">
-          <div v-if="!readOnly">
-            <label
-              v-for="(item, index) in regretReasons"
-              :key="item.id"
-              class="flex items-center gap-2"
-            >
-              <input
-                type="radio"
-                :value="item.id"
-                v-model="selectedReason"
-                class="w-4 h-4"
-              />
-              <span>
-                {{ item.text }}
-                <span v-if="index === 0">가입하지 않았어요</span>
-              </span>
-            </label>
-          </div>
-          <div v-else>
-            <span class>
-              {{ regrettedReasonText }}
-              가입하지 않았어요
+      <div class="flex gap-4">
+        <span class="whitespace-nowrap">그때는</span>
+        <div v-if="!readOnly" class="flex flex-col min-w-max">
+          <label
+            v-for="item in regretReasons"
+            :key="item.id"
+            class="flex items-center gap-2"
+          >
+            <input
+              type="radio"
+              :value="item.id"
+              v-model="selectedReason"
+              class="w-4 h-4"
+            />
+            <span>
+              {{ item.text }}
             </span>
-          </div>
+          </label>
         </div>
+        <span v-else>
+          {{ regrettedReasonText }}
+        </span>
+        <span>가입하지 않았어요</span>
       </div>
     </div>
 
-    <!-- 제출 버튼 -->
     <BaseButton
       @click="submitFeedback"
       size="sm"
-      label="제출"
-      :disabled="situation === '후회해요' && !selectedReason"
+      label="제출하기"
+      :disabled="isSubmitting || (situation === '후회해요' && !selectedReason)"
+      :loading="isSubmitting"
       v-if="!readOnly"
     >
     </BaseButton>
