@@ -18,7 +18,11 @@ async function handleSyncMydata() {
     isLoading.value = true;
     // const authUrl = await syncMydata();
     // window.location.href = authUrl;
-    router.push('/signup/success');
+
+    // TODO: 네이버 인증서 이동 or 로딩 화면 구현
+    setTimeout(() => {
+      router.push('/signup/success');
+    }, 3000);
 
   } catch (error) {
     alert('오류가 발생했습니다.');
