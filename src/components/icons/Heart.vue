@@ -12,3 +12,15 @@
     />
   </svg>
 </template>
+
+<script setup>
+import { defineProps } from 'vue';
+
+// color prop을 정의합니다. 기본값은 기존의 회색입니다.
+defineProps({
+  color: {
+    type: String,
+    default: '#A2A8AF', // 기본 회색
+  },
+});
+</script>

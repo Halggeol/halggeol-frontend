@@ -84,7 +84,7 @@
 
     <!-- 가입 기간 필터 -->
     <div class="mb-6">
-      <h3 class="text-lg font-semibold mb-3 text-gray-800">가입 기간</h3>
+      <h3 class="text-lg font-semibold mb-3 text-gray-800">최소 가입 기간</h3>
       <ul>
         <li class="mb-2 flex items-center">
           <input
@@ -111,7 +111,7 @@
           <label
             for="period6M"
             class="ml-2 text-sm text-gray-700 cursor-pointer"
-            >6개월</label
+            >6개월 이상</label
           >
         </li>
         <li class="mb-2 flex items-center">
@@ -125,7 +125,7 @@
           <label
             for="period12M"
             class="ml-2 text-sm text-gray-700 cursor-pointer"
-            >12개월</label
+            >12개월 이상</label
           >
         </li>
         <li class="mb-2 flex items-center">
@@ -139,7 +139,7 @@
           <label
             for="period24M"
             class="ml-2 text-sm text-gray-700 cursor-pointer"
-            >24개월</label
+            >24개월 이상</label
           >
         </li>
         <li class="mb-2 flex items-center">
@@ -153,7 +153,7 @@
           <label
             for="period36M"
             class="ml-2 text-sm text-gray-700 cursor-pointer"
-            >36개월</label
+            >36개월 이상</label
           >
         </li>
       </ul>
