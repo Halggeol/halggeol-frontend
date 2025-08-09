@@ -71,15 +71,6 @@ onMounted(() => {
     <p class="text-callout text-fg-primary">자산을 확인하고 있어요</p>
   </div>
 
-  <!-- 에러 상태 -->
-  <div
-    v-else-if="isError"
-    class="flex flex-col items-center justify-center min-h-screen space-y-6"
-  >
-    <p class="text-callout text-fg-primary">데이터를 불러오는 데 실패했습니다.</p>
-    <BaseButton @click="fetchDashboard">다시 시도</BaseButton>
-  </div>
-
   <!-- {{ dashboardData }} -->
   <!-- 대시보드 영역 -->
   <div v-else>
