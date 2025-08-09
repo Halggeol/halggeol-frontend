@@ -73,7 +73,7 @@ const fetchProducts = async () => {
   loading.value = true;
   error.value = null;
 
-  // localStorage에서 토큰을 가져옵니다.
+  // sessionStorage에서 토큰을 가져옵니다.
   const token = sessionStorage.getItem('accessToken');
   if (!token) {
     error.value = '로그인이 필요합니다.';
