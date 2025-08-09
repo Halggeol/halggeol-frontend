@@ -5,6 +5,7 @@ import { viewProfile } from '@/api/user';
 import RetakeSurveyModal from '@/components/user/mypage/RetakeSurveyModal.vue';
 import ResetPasswordModal from '@/components/user/mypage/ResetPasswordModal.vue';
 import LeaveServiceModal from '@/components/user/mypage/LeaveServiceModal.vue';
+import ChangeInsightCycleModal from '@/components/user/mypage/ChangeInsightCycleModal.vue';
 
 const router = useRouter();
 
@@ -15,8 +16,11 @@ const isResetPasswordModalOpen = ref(false);
 const isRetakeSurveyModalOpen = ref(false);
 const surveyType = ref('');
 
-// 회원탈퇴 관련 상태
+// 회원탈퇴 모달 관련 상태
 const isLeaveServiceModalOpen = ref(false);
+
+// 인사이트 주기 변경 모달 관련 상태
+const isChangeInsightCycleModalOpen = ref(false);
 
 // 사용자 정보
 const user = reactive({
@@ -28,6 +32,7 @@ const user = reactive({
   knowledgeRenewDate: '',
   investmentType: '',
   investmentTypeRenewDate: '',
+  insightCycle: '',
 });
 
 const renewDate = computed(() => {
@@ -62,9 +67,20 @@ const leaveService = () => {
   isLeaveServiceModalOpen.value = true;
 };
 
+const changeInsightCycle = () => {
+  isChangeInsightCycleModalOpen.value = true;
+};
+
 onMounted(() => {
  setUserInfo();
 })
+
+function convertCycleString(cycle) {
+  if (cycle === 'WEEKLY_1') return '1주';
+  if (cycle === 'WEEKLY_2') return '2주';
+  if (cycle === 'MONTHLY_1') return '1달';
+  return '';
+}
 
 function handleRetakeSurveyConfirm() {
   isRetakeSurveyModalOpen.value = false;
@@ -95,6 +111,7 @@ async function setUserInfo() {
     user.knowledgeRenewDate = profile.klgRenewDate;
     user.investmentType = profile.risk;
     user.investmentTypeRenewDate = profile.riskRenewDate;
+    user.insightCycle = profile.insightCycle;
 
   } catch (error) {
     result.value = {
@@ -102,6 +119,10 @@ async function setUserInfo() {
       success: false
     };
   }
+}
+
+function handleCycleChanged(newCycle) {
+  user.insightCycle = newCycle;
 }
 
 </script>
@@ -131,7 +152,7 @@ async function setUserInfo() {
       <!-- 비밀번호 -->
       <div class="flex items-center justify-between w-full">
         <div class="w-1/3 font-medium text-gray-800">비밀번호</div>
-        <div class="w-1/2 text-gray-900">비밀번호</div>
+        <div class="w-1/2 text-gray-900">********</div>
         <div class="w-1/3 text-right">
           <button
             class="text-gray-400 text-sm hover:text-gray-600 hover:underline"
@@ -183,6 +204,20 @@ async function setUserInfo() {
           </button>
         </div>
       </div>
+
+      <!-- 인사이트 주기 -->
+      <div class="flex items-center justify-between w-full">
+        <div class="w-1/3 font-medium text-gray-800">인사이트 제공 주기</div>
+        <div class="w-1/2 text-gray-900">{{ convertCycleString(user.insightCycle) }}</div>
+        <div class="w-1/3 text-right">
+          <button
+            class="text-gray-400 text-sm hover:text-gray-600 hover:underline"
+            @click="changeInsightCycle"
+          >
+            변경하기
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- 탈퇴하기 버튼 -->
@@ -209,5 +244,12 @@ async function setUserInfo() {
   <LeaveServiceModal
     :isOpen="isLeaveServiceModalOpen"
     :onClose="() => (isLeaveServiceModalOpen = false)"
+  />
+
+  <ChangeInsightCycleModal
+    :currentCycle="user.insightCycle"
+    :isOpen="isChangeInsightCycleModalOpen"
+    :onClose="() => (isChangeInsightCycleModalOpen = false)"
+    @updated="handleCycleChanged"
   />
 </template>
