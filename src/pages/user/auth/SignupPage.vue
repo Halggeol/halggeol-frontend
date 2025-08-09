@@ -170,11 +170,10 @@ const displayBirth = computed(() => {
 });
 
 function inputBirth(birth) {
-  if (birth.data !== null)
+  if (birth.data != null)
     form.value.birth = form.value.birth + birth.data;
   else
     form.value.birth = form.value.birth.slice(0, -1);
-  console.log(form.value.birth);
 }
 
 function inputStyleClass(error) {
