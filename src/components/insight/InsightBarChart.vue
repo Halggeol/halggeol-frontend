@@ -3,8 +3,8 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-import { Bar } from 'vue-chartjs'
+import { ref, watch } from 'vue';
+import { Bar } from 'vue-chartjs';
 import {
   Chart as ChartJS,
   Title,
@@ -12,9 +12,8 @@ import {
   Legend,
   BarElement,
   CategoryScale,
-  LinearScale
-} from 'chart.js'
-import ChartDataLabels from 'chartjs-plugin-datalabels'
+  LinearScale,
+} from 'chart.js';
 
 // Chart.js 플러그인 등록
 ChartJS.register(
@@ -23,23 +22,22 @@ ChartJS.register(
   Legend,
   BarElement,
   CategoryScale,
-  LinearScale,
-  ChartDataLabels
-)
+  LinearScale
+);
 
 // props 정의
 const props = defineProps({
   forexInfo: {
     type: Array,
-    required: true
+    required: true,
   },
   selectedCurrency: {
     type: String,
-    required: true
-  }
-})
+    required: true,
+  },
+});
 
-const chartData = ref(null)
+const chartData = ref(null);
 
 const chartOptions = {
   responsive: true,
@@ -48,54 +46,54 @@ const chartOptions = {
     datalabels: {
       anchor: 'end',
       align: 'top',
-      formatter: (value) => `${value.toLocaleString()}`,
+      formatter: value => `${value.toLocaleString()}`,
       color: '#333',
       font: {
         weight: 'bold',
-        size: 12
-      }
+        size: 12,
+      },
     },
     legend: {
-      display: false
+      display: false,
     },
     title: {
       display: true,
-      text: '환율 변화 (과거 vs 현재)'
+      text: '환율 변화 (과거 vs 현재)',
     },
     tooltip: {
       callbacks: {
-        label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString()}`
-      }
-    }
+        label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString()}`,
+      },
+    },
   },
   scales: {
     y: {
       beginAtZero: true,
       title: {
         display: true,
-        text: '환율'
-      }
+        text: '환율',
+      },
     },
     x: {
       title: {
         display: true,
-        text: '구분'
-      }
-    }
-  }
-}
+        text: '구분',
+      },
+    },
+  },
+};
 
 // 선택된 통화가 바뀔 때마다 차트 데이터 업데이트
 watch(
   () => [props.forexInfo, props.selectedCurrency],
   () => {
     const selected = props.forexInfo.find(
-      (item) => item.curUnit === props.selectedCurrency
-    )
+      item => item.curUnit === props.selectedCurrency
+    );
 
     if (!selected) {
-      chartData.value = null
-      return
+      chartData.value = null;
+      return;
     }
 
     chartData.value = {
@@ -105,16 +103,12 @@ watch(
           label: `${selected.curUnit} 환율`,
           backgroundColor: ['#ff6b35', '#4a90e2'],
           data: [selected.pastRate, selected.currentRate],
-          barThickness: 100,   // ✅ 슬림한 막대폭
-          borderRadius: 5     // ✅ 둥근 막대 (선택)
-        }
-      ]
-    }
+          barThickness: 100, // ✅ 슬림한 막대폭
+          borderRadius: 5, // ✅ 둥근 막대 (선택)
+        },
+      ],
+    };
   },
   { immediate: true }
-)
+);
 </script>
-
-
-
-
