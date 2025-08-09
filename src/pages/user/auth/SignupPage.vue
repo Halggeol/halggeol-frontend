@@ -126,6 +126,8 @@ async function handleJoinSubmit() {
   const originalBirth = form.value.birth;
   form.value.birth = `${form.value.birth.slice(0,4)}-${form.value.birth.slice(4,6)}-${form.value.birth.slice(6,8)}`;
 
+  console.log(form.value.birth);
+
   Object.keys(form.value).forEach((field) => {
     if (field === 'password' || field === 'confirmPassword')
       validatePasswords(field);
@@ -166,6 +168,9 @@ async function handleJoinSubmit() {
 
 const displayBirth = computed(() => {
   const digits = form.value.birth;
+
+  if (digits.includes('-'))
+    return digits;
 
   if (digits.length >= 4 && digits.length < 6)
     return `${digits.slice(0, 4)}-${digits.slice(4)}`;
