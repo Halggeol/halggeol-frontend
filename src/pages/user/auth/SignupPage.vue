@@ -206,8 +206,6 @@ function inputPhone(phone) {
     form.value.phone = form.value.phone + phone.data;
   else
     form.value.phone = form.value.phone.slice(0, -1);
-
-  console.log(form.value.phone);
 }
 
 function inputStyleClass(error) {
