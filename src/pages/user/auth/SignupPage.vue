@@ -82,7 +82,8 @@ function validateBirth() {
     return;
   }
 
-  const birthDate = new Date(`${form.value.birth}T00:00:00`);
+  const formattedDate = `${form.value.birth.slice(0,4)}-${form.value.birth.slice(4,6)}-${form.value.birth.slice(6,8)}`;
+  const birthDate = new Date(`${formattedDate}T00:00:00`);
   if (isNaN(birthDate)) {
     errors.value.birth = '존재하지 않는 날짜입니다';
     return;
@@ -157,6 +158,25 @@ async function handleJoinSubmit() {
   }
 }
 
+const displayBirth = computed(() => {
+  const digits = form.value.birth;
+
+  if (digits.length >= 4 && digits.length < 6)
+    return `${digits.slice(0, 4)}-${digits.slice(4)}`;
+  else if (digits.length >= 6)
+    return `${digits.slice(0, 4)}-${digits.slice(4, 6)}${digits.length >= 6 ? '-' + digits.slice(6) : ''}`;
+  else
+    return digits;
+});
+
+function inputBirth(birth) {
+  if (birth.data !== null)
+    form.value.birth = form.value.birth + birth.data;
+  else
+    form.value.birth = form.value.birth.slice(0, -1);
+  console.log(form.value.birth);
+}
+
 function inputStyleClass(error) {
   return [
     'w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors',
@@ -194,7 +214,8 @@ function openPolicyModal() {
         <div class="mb-3">
           <input
             type="text"
-            v-model="form.birth"
+            v-model="displayBirth"
+            @input="inputBirth"
             @blur="validateBirth()"
             :class="inputStyleClass(errors.birth)"
             placeholder="생년월일 (YYYY-MM-DD)"
