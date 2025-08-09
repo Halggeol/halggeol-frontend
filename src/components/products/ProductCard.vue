@@ -50,18 +50,17 @@
 
       <!-- 추가 정보 -->
       <div class="mt-2 text-xs text-gray-500 space-y-1">
-        <!-- 사용자 가입금액 (MyProductPage에서만 사용) -->
         <div v-if="product.amount" class="text-sm font-semibold text-blue-600">
           가입금액: {{ formatAmount(product.amount) }}
         </div>
 
-        <div v-if="product.minAmount">
+        <!-- <div v-if="product.minAmount">
           최소 가입금액: {{ formatAmount(product.minAmount) }}
         </div>
         <div v-if="getTermRangeText()">
           {{ getTermRangeText() }}
         </div>
-        <!-- <div v-if="product.viewCnt || product.scrapCnt" class="flex space-x-3">
+        <div v-if="product.viewCnt || product.scrapCnt" class="flex space-x-3">
           <span v-if="product.viewCnt">조회 {{ product.viewCnt }}</span>
           <span v-if="product.scrapCnt">관심 {{ product.scrapCnt }}</span>
         </div> -->
@@ -154,7 +153,7 @@ const formatTag1 = (tag1, type) => {
     case 'deposit':
     case 'savings':
     case 'forex':
-      return `최소 ${tag1}개월`;
+      return tag1;
     case 'pension':
       return tag1 === 1 ? '확정급여형' : '확정기여형';
     case 'fund':
