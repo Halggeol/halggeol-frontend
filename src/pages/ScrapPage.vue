@@ -74,7 +74,7 @@ const fetchProducts = async () => {
   error.value = null;
 
   // localStorage에서 토큰을 가져옵니다.
-  const token = localStorage.getItem('accessToken');
+  const token = sessionStorage.getItem('accessToken');
   if (!token) {
     error.value = '로그인이 필요합니다.';
     loading.value = false;
@@ -155,23 +155,38 @@ const handleSortChange = sort => {
 
 // 찜 해제 핸들러 (스크랩 페이지이므로 해제만 가능)
 const handleToggleLike = async ({ productId, isLiked }) => {
-  if (isScrapLoading.value) return;
+  if (isScrapLoading.value || !isLiked) return;
+  console.log('찜 해제 요청: productId', productId);
+  isScrapLoading.value = true;
 
-  // isLiked가 true일 때만 (찜 해제) 로직 실행
-  if (isLiked) {
-    console.log('찜 해제 요청: productId', productId);
-    isScrapLoading.value = true;
-    try {
-      await delScrap(productId);
-      // API 호출 성공 시 목록에서 해당 상품 제거
-      products.value = products.value.filter(p => p.productId !== productId);
-      console.log('찜 해제 완료');
-    } catch (error) {
-      console.error('찜 해제 실패:', error);
-      alert('찜 해제 중 오류가 발생했습니다.');
-    } finally {
-      isScrapLoading.value = false;
-    }
+  // 1. (롤백 대비) 롤백에 사용할 원래 상품과 그 위치(인덱스)를 미리 저장
+  const originalProducts = [...products.value];
+  const productIndex = originalProducts.findIndex(
+    p => p.productId === productId
+  );
+
+  // 해당 상품이 목록에 없으면 아무것도 하지 않습니다.
+  if (productIndex === -1) {
+    isScrapLoading.value = false;
+    return;
+  }
+  const productToRestore = originalProducts[productIndex];
+
+  // 2. (낙관적 업데이트) UI에서 해당 상품을 즉시 제거
+  products.value = products.value.filter(p => p.productId !== productId);
+
+  try {
+    // 3. 백그라운드에서 실제 '찜 해제' API를 호출
+    await delScrap(productId);
+    console.log('찜 해제 완료');
+  } catch (error) {
+    console.error('찜 해제 실패:', error);
+    alert('찜 해제 중 오류가 발생했습니다.');
+
+    // 4. (롤백) API 요청이 실패하면, 제거했던 상품을 원래 위치에 다시 삽입
+    products.value.splice(productIndex, 0, productToRestore);
+  } finally {
+    isScrapLoading.value = false;
   }
 };
 

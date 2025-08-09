@@ -94,8 +94,7 @@
           class="text-xl hover:scale-110 transition-transform"
           :title="isLiked ? '찜 해제' : '찜하기'"
         >
-          <span v-if="isLiked">❤️</span>
-          <span v-else>🤍</span>
+          <Heart :color="isLiked ? '#FF4D4F' : '#A2A8AF'" />
         </button>
       </div>
     </div>
@@ -104,6 +103,7 @@
 
 <script setup>
 import { defineProps, defineEmits } from 'vue';
+import Heart from '../icons/Heart.vue';
 
 const props = defineProps({
   product: {

@@ -8,7 +8,10 @@
 
     <div class="flex-1 p-5 h-screen overflow-y-auto">
       <div class="flex justify-end mb-4">
-        <ProductSort @update:sort="handleSortChange" />
+        <ProductSort
+          :modelValue="currentSort"
+          @update:sort="handleSortChange"
+        />
       </div>
       <h2 class="text-2xl font-bold mb-6 text-gray-800">상품 목록</h2>
 
@@ -169,20 +172,31 @@ const handleSortChange = sort => {
 const handleToggleLike = async ({ productId, isLiked }) => {
   if (isScrapLoading.value) return;
   console.log('버튼 클릭 - 현재 isLiked:', isLiked);
+
+  // 1. (낙관적 업데이트) UI 상태를 즉시 변경
+  if (isLiked) {
+    // UI에서 먼저 하트를 비움
+    scrapedProductIds.value.delete(productId);
+  } else {
+    // UI에서 먼저 하트를 채움
+    scrapedProductIds.value.add(productId);
+  }
+
   isScrapLoading.value = true;
   try {
+    // 2. 백엔드에 실제 작업을 요청
     if (isLiked) {
       console.log('delScrap 호출');
-      await delScrap(productId);
-      scrapedProductIds.value.delete(productId);
+      await delScrap(productId); // 실제 찜 해제 요청
+      // scrapedProductIds.value.delete(productId);
       console.log(
         '관심상품 해제 완료, scrapedProductIds:',
         scrapedProductIds.value
       );
     } else {
       console.log('addScrap 호출');
-      await addScrap(productId);
-      scrapedProductIds.value.add(productId);
+      await addScrap(productId); // 실제 찜하기 요청
+      // scrapedProductIds.value.add(productId);
       console.log(
         '관심상품 등록 완료, scrapedProductIds:',
         scrapedProductIds.value
@@ -191,6 +205,15 @@ const handleToggleLike = async ({ productId, isLiked }) => {
   } catch (error) {
     console.error('관심상품 처리 실패:', error);
     alert('관심상품 처리 중 오류가 발생했습니다.');
+
+    // 3. (롤백) 요청 실패 시, 변경했던 UI 상태를 다시 원래대로 되돌립니다.
+    if (isLiked) {
+      // 비웠던 하트를 다시 채움
+      scrapedProductIds.value.add(productId);
+    } else {
+      // 채웠던 하트를 다시 비움
+      scrapedProductIds.value.delete(productId);
+    }
   } finally {
     isScrapLoading.value = false;
   }
