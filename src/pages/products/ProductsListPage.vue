@@ -170,6 +170,13 @@ const handleSortChange = sort => {
 };
 
 const handleToggleLike = async ({ productId, isLiked }) => {
+  const token = sessionStorage.getItem('accessToken');
+  if (!token) {
+    alert('로그인이 필요합니다.');
+    router.push('/login'); // 로그인 페이지로 이동
+    return; // 함수 실행을 여기서 중단합니다.
+  }
+
   if (isScrapLoading.value) return;
   console.log('버튼 클릭 - 현재 isLiked:', isLiked);
 
