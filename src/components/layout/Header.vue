@@ -8,12 +8,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { ref, computed, onUnmounted, watch } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
 import { extendLogin, logout } from '@/api/user';
-import {
-  clearAccessToken,
-  clearUsername,
-  isReverifiedToken,
-  getAccessToken,
-} from '@/utils/authUtil';
+import { isReverifiedToken, getAccessToken } from '@/utils/authUtil';
 import SearchModal from '../common/SearchModal.vue';
 import ExtendLoginModal from '../user/auth/ExtendLoginModal.vue';
 import UserModal from '../user/mypage/UserModal.vue';
@@ -80,8 +75,7 @@ const goTo = path => {
 async function handleLogout() {
   await logout();
 
-  clearAccessToken();
-  clearUsername();
+  authStore.logout();
   router.push('/login');
 }
 
