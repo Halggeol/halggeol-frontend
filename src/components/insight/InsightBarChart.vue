@@ -22,7 +22,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue';
+import { ref, watch } from 'vue';
+import { Bar } from 'vue-chartjs';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -31,26 +32,23 @@ import {
   Title,
   Tooltip,
   Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
 } from 'chart.js';
 
 // Chart.js 등록
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale);
 
+// props 정의
 const props = defineProps({
   forexInfo: {
     type: Array,
-    default: () => [],
+    required: true,
   },
   selectedCurrency: {
     type: String,
-    default: '',
+    required: true,
   },
 });
 
@@ -224,27 +222,37 @@ const createChart = () => {
         padding: 0,
       },
     },
-  });
+  },
 };
 
-// 데이터 변경 감지
+// 선택된 통화가 바뀔 때마다 차트 데이터 업데이트
 watch(
   () => [props.forexInfo, props.selectedCurrency],
   () => {
-    createChart();
+    const selected = props.forexInfo.find(
+      item => item.curUnit === props.selectedCurrency
+    );
+
+    if (!selected) {
+      chartData.value = null;
+      return;
+    }
+
+    chartData.value = {
+      labels: ['과거 환율', '현재 환율'],
+      datasets: [
+        {
+          label: `${selected.curUnit} 환율`,
+          backgroundColor: ['#ff6b35', '#4a90e2'],
+          data: [selected.pastRate, selected.currentRate],
+          barThickness: 100, // ✅ 슬림한 막대폭
+          borderRadius: 5, // ✅ 둥근 막대 (선택)
+        },
+      ],
+    };
   },
-  { deep: true }
+  { immediate: true }
 );
-
-onMounted(() => {
-  createChart();
-});
-
-onBeforeUnmount(() => {
-  if (chartInstance) {
-    chartInstance.destroy();
-  }
-});
 </script>
 
 <style scoped>
