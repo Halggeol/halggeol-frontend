@@ -187,6 +187,29 @@ function inputBirth(birth) {
     form.value.birth = form.value.birth.slice(0, -1);
 }
 
+const displayPhone = computed(() => {
+  const digits = form.value.phone;
+
+  if (digits.includes('-'))
+    return digits;
+
+  if (digits.length < 3)
+    return digits;
+  if (digits.length <= 6)
+    return `${digits.slice(0, 3)}-${digits.slice(3)}${digits.length >= 6 ? '-' + digits.slice(6) : ''}`;
+  if (digits.length === 11)
+    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+  else
+    return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+});
+
+function inputPhone(phone) {
+  if (phone.data != null)
+    form.value.phone = form.value.phone + phone.data;
+  else
+    form.value.phone = form.value.phone.slice(0, -1);
+}
+
 function inputStyleClass(error) {
   return [
     'w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors',
@@ -224,7 +247,7 @@ function openPolicyModal() {
         <div class="mb-3">
           <input
             type="text"
-            v-model="displayBirth"
+            :value="displayBirth"
             @input="inputBirth"
             @blur="validateBirth()"
             :class="inputStyleClass(errors.birth)"
@@ -238,10 +261,11 @@ function openPolicyModal() {
         <div class="mb-3">
           <input
             type="text"
-            v-model="form.phone"
+            :value="displayPhone"
+            @input="inputPhone"
             @blur="validateField('phone')"
             :class="inputStyleClass(errors.phone)"
-            placeholder="전화번호 ('-' 제외)"
+            placeholder="전화번호"
             :disabled="result.success"
           />
           <small v-if="errors.phone" class="text-red-500 mt-1 block">{{ errors.phone }}</small>

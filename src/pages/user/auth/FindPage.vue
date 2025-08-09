@@ -28,6 +28,29 @@ const canSubmit = computed(() => {
   return false;
 })
 
+const displayPhone = computed(() => {
+  const digits = phone.value;
+
+  if (digits.includes('-'))
+    return digits;
+
+  if (digits.length < 3)
+    return digits;
+  if (digits.length <= 6)
+    return `${digits.slice(0, 3)}-${digits.slice(3)}${digits.length >= 6 ? '-' + digits.slice(6) : ''}`;
+  if (digits.length === 11)
+    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+  else
+    return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+});
+
+function inputPhone(inputPhone) {
+  if (inputPhone.data != null)
+    phone.value = phone.value + inputPhone.data;
+  else
+    phone.value = phone.value.slice(0, -1);
+}
+
 function switchTab(tab) {
   activeTab.value = tab;
   // 상태 초기화
@@ -130,8 +153,9 @@ async function handleRequestResetPassword() {
         />
         <input
           type="text"
-          v-model="phone"
-          placeholder="전화번호 ('-' 제외)"
+          :value="displayPhone"
+          @input="inputPhone"
+          placeholder="전화번호"
           class="w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors border-gray-300 focus:border-blue-500"
         />
 
