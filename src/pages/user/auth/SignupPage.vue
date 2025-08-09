@@ -193,12 +193,14 @@ const displayPhone = computed(() => {
   if (digits.includes('-'))
     return digits;
 
-  if (digits.length < 3) return digits;
-  if (digits.length <= 6) return `${digits.slice(0, 3)}-${digits.slice(3)}${digits.length >= 6 ? '-' + digits.slice(6) : ''}`;
-  if (digits.length === 11) return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
-  if (digits.length >= 7) return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
-
-  return digits;
+  if (digits.length < 3)
+    return digits;
+  if (digits.length <= 6)
+    return `${digits.slice(0, 3)}-${digits.slice(3)}${digits.length >= 6 ? '-' + digits.slice(6) : ''}`;
+  if (digits.length === 11)
+    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+  else
+    return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
 });
 
 function inputPhone(phone) {
@@ -245,7 +247,7 @@ function openPolicyModal() {
         <div class="mb-3">
           <input
             type="text"
-            v-model="displayBirth"
+            :value="displayBirth"
             @input="inputBirth"
             @blur="validateBirth()"
             :class="inputStyleClass(errors.birth)"
@@ -259,7 +261,7 @@ function openPolicyModal() {
         <div class="mb-3">
           <input
             type="text"
-            v-model="displayPhone"
+            :value="displayPhone"
             @input="inputPhone"
             @blur="validateField('phone')"
             :class="inputStyleClass(errors.phone)"
