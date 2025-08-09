@@ -1,11 +1,11 @@
 <script setup>
 import BaseCard from '@/components/common/BaseCard.vue';
-import RainHeavy from '../icons/RainHeavy.vue';
-import Rain from '../icons/Rain.vue';
-import Cloudy from '../icons/Cloudy.vue';
-import SunWithCloud from '../icons/SunWithCloud.vue';
-import MostlySunny from '../icons/MostlySunny.vue';
-import Sunny from '../icons/Sunny.vue';
+import Sunny from '../icons/regretWeather/Sunny.vue';
+import MostlySunny from '../icons/regretWeather/MostlySunny.vue';
+import SunWithCloud from '../icons/regretWeather/SunWithCloud.vue';
+import Cloudy from '../icons/regretWeather/Cloudy.vue';
+import Rain from '../icons/regretWeather/Rain.vue';
+import RainHeavy from '../icons/regretWeather/RainHeavy.vue';
 
 const props = defineProps({
   regretScore: Number,

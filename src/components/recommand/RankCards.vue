@@ -1,6 +1,13 @@
 <script setup>
 import BaseCard from '../common/BaseCard.vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+function goToDetail(productId) {
+  router.push(`/products/detail/${productId}`);
+}
 
 const props = defineProps({
   ranking: {
@@ -9,16 +16,23 @@ const props = defineProps({
   },
 });
 
+function isHighRisk(risk) {
+  return risk <= 2;
+} // 고위험상품 추출
+const showHighRisk = ref(true);
+
 const regretRanking = computed(() => {
   // API 데이터가 없으면 빈 배열 반환
-  if (!props.ranking || props.ranking.length === 0) {
-    return [];
-  }
+  if (!props.ranking || props.ranking.length === 0) return [];
   return props.ranking;
 });
 
 const topItem = computed(() => regretRanking.value[0]);
 const restItems = computed(() => regretRanking.value.slice(1));
+
+function hideHighRisk() {
+  showHighRisk.value = !showHighRisk.value;
+}
 
 // 카테고리 매핑
 const categoryMap = {
@@ -29,40 +43,39 @@ const categoryMap = {
   F: '펀드',
   X: '외환',
 };
-
-function isHighRisk(risk) {
-  return risk <= 2;
-} // 고위험상품 추출
-
-// 상세페이지 이동
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
-
-function goToDetail(productId) {
-  // router.push(`/product/${productId}`);
-  router.push(`/products/detail/${productId}`);
-} // 상세페이지 구현 이후 라우터 수정
 </script>
 
 <template>
-  <h2 class="title01 pb-12 pt-40">
-    <div
-      class="tooltip underline"
-      data-tip="이번 달동안 많은 사용자가 가입하지 않아 후회한 금융상품입니다."
-    >
+  <div class="pb-12 pt-40 flex justify-between align-center">
+    <h2 class="title01">
       이때 살 걸 금융상품 랭킹
-    </div>
-  </h2>
-
-  <!-- <span><i></i>고위험상품 숨기기</span> -->
+      <span
+        class="inline-block relative group ml-1 tooltip"
+        data-tip="많은 사용자가 가입하지 않아 후회한 금융상품"
+      >
+        <i class="text-caption text-gray-400 cursor-pointer">ⓘ</i>
+        <!-- 툴팁 박스 수정 -->
+      </span>
+    </h2>
+    <!-- 아이콘 추후 수정 -->
+    <p class="cursor-pointer" @click="hideHighRisk">
+      <i>{{ showHighRisk ? ' ⃝' : '⦿' }}</i
+      >고위험상품 숨기기
+    </p>
+  </div>
   <div class="ranking pb-40 grid grid-rows-2 grid-cols-3 gap-6">
     <BaseCard
       v-if="topItem"
       @click="goToDetail(topItem.productId)"
       variant="tinted"
       size="lg"
-      class="row-span-2 cursor-pointer"
+      class="row-span-2"
+      :class="[
+        'cursor-pointer',
+        !showHighRisk && isHighRisk(topItem.risk)
+          ? 'opacity-50 pointer-events-none'
+          : '',
+      ]"
     >
       <div class="relative">
         <div class="rank">
@@ -96,7 +109,12 @@ function goToDetail(productId) {
       variant="tinted"
       size="lg"
       ratio="sm"
-      class="cursor-pointer"
+      :class="[
+        'cursor-pointer',
+        !showHighRisk && isHighRisk(item.risk)
+          ? 'opacity-50 pointer-events-none'
+          : '',
+      ]"
     >
       <div class="rank">
         <span class="title02 mt-6">{{ item.rank }}</span>

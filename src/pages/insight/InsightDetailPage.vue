@@ -23,61 +23,31 @@ const isLoading = ref(true);
 const error = ref(null);
 const detailData = ref(null);
 
-// 후회 시뮬레이션 그래프: 추후 추가
-
-// 후회 시뮬레이션 카드
-const regretSimulation = ref({
-  prefix: null,
-  asset: 0,
-  isCompound: false,
-  rate: null,
-  saveTerm: 12,
-  minLimit: 10000,
-  maxLimit: 50000000,
-});
-
-// 후회 날씨
-const regretWeather = ref({
-  regretScore: 0,
-  missAmount: 0,
-});
-
-// AI 요약
-const aiSummary = ref({
-  summary: '',
-  good: '',
-  bad: '',
-});
-
-// 후회 피드백 설문
-const regretFeedback = ref({
-  userName: '사용자',
-  isSurveyed: false,
-  isRegretted: false,
-  regrettedReason: null,
-});
-
-// 유사상품
-const similarProducts = ref([]);
+const regretSimulation = computed(() =>
+  mapRegretSimulationResponse(detailData.value)
+);
+const regretWeather = computed(() =>
+  mapRegretWeatherResponse(detailData.value)
+);
+const aiSummary = computed(() => mapAISummaryResponse(detailData.value));
+const regretFeedback = computed(() =>
+  mapRegretFeedbackResponse(detailData.value)
+);
+const similarProducts = computed(() =>
+  mapSimilarProductsResponse(detailData.value)
+);
 
 const loadDetailData = async () => {
   isLoading.value = true;
   error.value = null;
+  detailData.value = null; // 이전 데이터 초기화
 
   try {
     const response = await getInsightDetail(round.value, productId.value);
-
     if (!response) {
       throw new Error('API 응답이 없습니다.');
     }
-
     detailData.value = response;
-
-    regretSimulation.value = mapRegretSimulationResponse(response);
-    regretWeather.value = mapRegretWeatherResponse(response);
-    aiSummary.value = mapAISummaryResponse(response);
-    regretFeedback.value = mapRegretFeedbackResponse(response);
-    similarProducts.value = mapSimilarProductsResponse(response);
   } catch (e) {
     console.error('getInsightDetail 실패:', e);
     error.value = e.message;
@@ -88,8 +58,9 @@ const loadDetailData = async () => {
 
 watch(
   [round, productId],
-  () => {
-    if (round.value && productId.value) {
+  newVal => {
+    const [newRound, newProductId] = newVal;
+    if (newRound && newProductId) {
       loadDetailData();
     }
   },
@@ -98,49 +69,31 @@ watch(
 </script>
 
 <template>
-  <!-- 로딩/에러 처리 -->
-  <div v-if="isLoading" class="mt-40">
+  <div v-if="isLoading" class="mt-40 text-center">
     <span class="loading loading-spinner loading-sm"></span>
     <p class="text-callout">회고를 분석하고 있어요</p>
   </div>
 
-  <div v-else-if="error" class="title03 -scroll-mt-40">
+  <div v-else-if="error" class="title03 mt-40 text-center">
     회고 분석을 실패했어요
   </div>
 
-  <div v-else>
+  <div v-else-if="detailData">
     <div class="mt-40 flex gap-6">
-      <RegretInsightCard
-        :prefix="regretSimulation.prefix"
-        :asset="regretSimulation.asset"
-        :is-compound="regretSimulation.isCompound"
-        :interest-rate="regretSimulation.rate"
-        :save-term="regretSimulation.saveTerm"
-        :min-limit="regretSimulation.minLimit"
-        :max-limit="regretSimulation.maxLimit"
-      />
-      <RegretWeatherCard
-        :regret-score="regretWeather.regretScore"
-        :miss-amount="regretWeather.missAmount"
-      />
+      <RegretInsightCard v-bind="regretSimulation" />
+      <RegretWeatherCard v-bind="regretWeather" />
     </div>
-    <!-- AI 요약 -->
-    <h2 class="mt-40 pb-12 title02">AI 요약</h2>
-    <AISummaryCard
-      :summary="aiSummary.summary"
-      :good="aiSummary.good"
-      :bad="aiSummary.bad"
+
+    <h2 class="title02 mt-40 pb-12">AI 요약</h2>
+    <AISummaryCard v-bind="aiSummary" />
+
+    <RegretFeedbackCard v-bind="regretFeedback" />
+
+    <h2 class="title01 pt-40 pb-12">놓친 상품과 유사한 상품</h2>
+    <RecommendCards
+      :items="similarProducts"
+      :has-padding="false"
+      is-similar="유사도"
     />
-    <!-- 피드백(Request) -->
-    <RegretFeedbackCard
-      :product-id="regretFeedback.productId"
-      :user-name="regretFeedback.userName"
-      :is-surveyed="regretFeedback.isSurveyed"
-      :is-regretted="regretFeedback.isRegretted"
-      :regretted-reason="regretFeedback.regrettedReason"
-    />
-    <!-- 유사상품 -->
-    <h2 class="title01 pb-12 pt-40">놓친 상품과 유사한 상품</h2>
-    <RecommendCards :items="similarProducts" :has-padding="false" />
   </div>
 </template>

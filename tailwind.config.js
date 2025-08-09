@@ -16,10 +16,7 @@ export default {
   theme: {
     screens: {
       mobile: { max: '767px' },
-      md: '768px',
-      lg: '1024px',
-      xl: '1280px',
-      '2xl': '1536px',
+      tablet: { raw: '(min-width: 768px) and (max-width: 1023px)' },
     },
     fontFamily: {
       sans: ['Pretendard', ...defaultTheme.fontFamily.sans],

@@ -38,6 +38,8 @@ const sizeClass = computed(() => {
   switch (props.size) {
     case 'lg':
       return 'w-full p-8';
+    case 'sm':
+      return 'w-64 p-6';
     default:
       return 'w-1/4 p-6';
   }

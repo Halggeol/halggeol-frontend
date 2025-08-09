@@ -11,16 +11,7 @@ const props = defineProps({
 
 const portfolioData = computed(() => {
   if (!props.portfolio || props.portfolio.length === 0) {
-    return [
-      // {
-      //   type: 'savings',
-      //   ratio: 0.4,
-      // },
-      // {
-      //   type: 'fund',
-      //   ratio: 0.3,
-      // },
-    ];
+    return [];
   }
   return props.portfolio;
 });
@@ -49,44 +40,12 @@ const aggressiveRatio = computed(() =>
 const type = computed(() =>
   aggressiveRatio.value > 0.5 ? '공격형' : '안정형'
 );
-
-// 자산 비율 차트(공격형/안정형)
-// import { Doughnut } from 'vue-chartjs';
-// import { Chart, ArcElement } from 'chart.js';
-// Chart.register(ArcElement);
-
-// const chartData = computed(() => {
-//   const stableRatio = 1 - aggressiveRatio.value;
-//   return {
-//     labels: ['공격형', '안정형'],
-//     datasets: [
-//       {
-//         data: [aggressiveRatio.value * 100, stableRatio * 100],
-//         backgroundColor: ['#f87171', '#60a5fa'],
-//         hoverOffset: 4,
-//       },
-//     ],
-//   };
-// });
-
-// const chartOptions = {
-//   responsive: true,
-//   maintainAspectRatio: false,
-//   plugins: {
-//     legend: { display: false },
-//     tooltip: { enabled: false },
-//     title: { display: false },
-//   },
-// };
 </script>
 
 <template>
   <BaseCard size="lg" ratio="sm">
     <p class="title03 mb-1">자산비율</p>
-    <span class="text-body02">{{ type }} 자산이 높아요</span>
-    <!-- <div class="mt-4 w-full">
-      <Doughnut :data="chartData" :options="chartOptions" />
-    </div> -->
+    <span class="text-body02">{{ type }} 자산 비율이 높아요</span>
     <div class="mt-6 w-full">
       <div class="h-8 w-full bg-status-red/20 rounded-full overflow-hidden">
         <div
