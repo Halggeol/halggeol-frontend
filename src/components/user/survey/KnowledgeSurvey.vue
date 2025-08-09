@@ -30,9 +30,18 @@ const questionsPerPage = 5;
 
 const start = computed(() => page.value * questionsPerPage);
 const currentQuestions = computed(() => questions.slice(start.value, start.value + questionsPerPage));
-const allCurrentQuestionsAnswered = computed(() =>
-  currentQuestions.value.every(q => answers.value[q.number] !== undefined)
-);
+
+const canNext = computed(() => {
+  return currentQuestions.value.every(q => answers.value[q.number] !== undefined);
+});
+
+const nextLabel = computed(() => {
+  return canNext.value ? '다음' : '모든 문항에 응답해주세요';
+});
+
+const submitLabel = computed(() => {
+  return canNext.value ? '완료' : '모든 문항에 응답해주세요';
+});
 
 const handleAnswer = (questionNumber, userAnswer) => {
   answers.value = { ...answers.value, [questionNumber]: userAnswer };
@@ -89,10 +98,20 @@ const handleSubmit = async () => {
     <div class="w-[500px] bg-white rounded-lg">
 
       <div v-for="q in currentQuestions" :key="q.number" class="text-left mb-6">
-        <p class="mb-2 font-medium">{{ q.number }}. {{ q.question }}</p>
+        <p class="mb-2 font-medium flex items-center justify-between">
+          <span>
+            {{ q.number }}. {{ q.question }}
+            <span
+              style="font-size: 10px; vertical-align: top;"
+              :class="answers[q.number] === undefined ? 'text-red-500' : 'text-white'"
+            >
+              ●
+            </span>
+          </span>
+        </p>
         <div class="space-x-4">
           <button
-            class="px-4 py-2 rounded border"
+            class="ml-4 px-4 py-2 rounded border"
             :class="answers[q.number] === true ? 'bg-primary text-white' : 'bg-white text-gray-700'"
             @click="handleAnswer(q.number, true)"
           >O</button>
@@ -113,8 +132,8 @@ const handleSubmit = async () => {
         class="my-8"
         size="lg"
         variant="filled"
-        :disabled="!allCurrentQuestionsAnswered"
-        label="완료"
+        :disabled="!canNext"
+        :label="submitLabel"
         @click="handleSubmit">
       </BaseButton>
 
@@ -123,8 +142,8 @@ const handleSubmit = async () => {
         class="my-8"
         size="lg"
         variant="filled"
-        :disabled="!currentQuestions.every(q => answers[q.number] !== undefined)"
-        label="다음"
+        :disabled="!canNext"
+        :label="nextLabel"
         @click="handleNext">
       </BaseButton>
     </div>

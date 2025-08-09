@@ -128,3 +128,13 @@ export const leaveService = async () => {
     throw error;
   }
 };
+
+export const changeInsightCycle = async (body) => {
+  try {
+    const response = await api.patch('/me/update/cycle', body);
+    return response;
+  } catch (error) {
+    console.error('Update Insight Cycle API Error:', error);
+    throw error;
+  }
+}

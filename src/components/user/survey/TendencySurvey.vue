@@ -148,7 +148,6 @@ const investmentPeriodQuestion = {
 }
 
 const currentQuestions = computed(() => questions.slice(page.value * questionsPerPage, (page.value + 1) * questionsPerPage));
-const allCurrentAnswered = computed(() => currentQuestions.value.every(q => answers.value[q.number] !== undefined));
 
 const allExperiencePeriodsSelected = computed(() => {
   return experiences.value.every(option => {
@@ -159,6 +158,28 @@ const allExperiencePeriodsSelected = computed(() => {
     return experiencePeriods.value[option - 1] !== undefined;
   });
 });
+
+const canNext = computed(() => {
+  return currentQuestions.value.every(q => answers.value[q.number] !== undefined);
+});
+
+const nextLabel = computed(() => {
+  return canNext.value ? '다음' : '모든 문항에 응답해주세요';
+});
+
+const canSubmit = computed(() => {
+  return (
+    canNext.value &&
+    experiences.value.length > 0 &&
+    investmentPeriod.value !== null &&
+    allExperiencePeriodsSelected.value
+  );
+});
+
+const submitLabel = computed(() => {
+  return canSubmit.value ? '완료' : '모든 문항에 응답해주세요';
+});
+
 
 const handleAnswer = (questionNumber, optionIndex, score) => {
   answers.value[questionNumber] = { option: optionIndex + 1, optionScore: score };
@@ -177,7 +198,7 @@ const handleSubmit = async () => {
     optionScore: value.optionScore,
   }));
 
-  const experienceList = experiences.value.map(option => {
+    const experienceList = experiences.value.map(option => {
     const experienceOption = experiencesQuestion.options[option - 1];
     const periodIdx = experiencePeriods.value[option - 1];
     const period = periodIdx + 1;
@@ -273,7 +294,17 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
 
       <!-- 일반 문항 -->
       <div v-for="q in currentQuestions" :key="q.number" class="mb-6">
-        <p class="font-medium mb-2">{{ q.number }}. {{ q.question }}</p>
+        <p class="font-medium mb-2">
+          <span>
+            {{ q.number }}. {{ q.question }}
+            <span
+              style="font-size: 10px; vertical-align: top;"
+              :class="answers[q.number] === undefined ? 'text-red-500' : 'text-white'"
+            >
+              ●
+            </span>
+          </span>
+        </p>
         <div class="space-y-2">
           <div v-for="(opt, idx) in q.options" :key="idx">
             <button
@@ -289,7 +320,15 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
 
       <!-- 투자 경험 문항 (8번) -->
       <div v-if="(page + 1) * questionsPerPage >= questions.length" class="mb-6">
-        <p class="font-medium mb-2">{{ experiencesQuestion.number }}. {{ experiencesQuestion.question }}</p>
+        <p class="font-medium mb-2">
+          {{ experiencesQuestion.number }}. {{ experiencesQuestion.question }}
+          <span
+            style="font-size: 10px; vertical-align: top;"
+            :class="experiences.length === 0 ? 'text-red-500' : 'text-white'"
+          >
+            ●
+          </span>
+        </p>
         <div class="space-y-4">
           <div
             v-for="(opt, idx) in experiencesQuestion.options"
@@ -304,7 +343,10 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
                 v-model="experiences"
                 @change="(e) => { changeClickedExperience(idx + 1, e.target.checked) }"
               />
-              <span>{{ opt.text }}</span>
+              <span>
+                {{ opt.text }}
+                <span class="title01" :class="checkedCheckbox(idx + 1) && idx && experiencePeriods[idx] === undefined ? 'text-red-500' : 'text-white'">•</span>
+              </span>
             </label>
 
             <!-- 라디오 버튼: 기간 선택 -->
@@ -332,7 +374,15 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
 
       <!-- 투자 예정 기간 문항 (9번) -->
       <div v-if="(page + 1) * questionsPerPage >= questions.length" class="mb-6">
-        <p class="font-medium mb-2">{{ investmentPeriodQuestion.number }}. {{ investmentPeriodQuestion.question }}</p>
+        <p class="font-medium mb-2">
+          {{ investmentPeriodQuestion.number }}. {{ investmentPeriodQuestion.question }}
+          <span
+            style="font-size: 10px; vertical-align: top;"
+            :class="investmentPeriod === null ? 'text-red-500' : 'text-white'"
+          >
+            ●
+          </span>
+        </p>
         <div class="space-y-2">
           <div v-for="(opt, idx) in investmentPeriodQuestion.options" :key="idx">
             <button
@@ -352,8 +402,8 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
 
       <BaseButton
         v-if="(page + 1) * questionsPerPage >= questions.length"
-        :disabled="!allCurrentAnswered || experiences.length === 0 || investmentPeriod === null || !allExperiencePeriodsSelected"
-        label="완료"
+        :disabled="!canSubmit"
+        :label="submitLabel"
         size="lg"
         variant="filled"
         class="my-6"
@@ -362,8 +412,8 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
 
       <BaseButton
         v-else
-        :disabled="!allCurrentAnswered"
-        label="다음"
+        :disabled="!canNext"
+        :label="nextLabel"
         size="lg"
         variant="filled"
         class="my-6"
