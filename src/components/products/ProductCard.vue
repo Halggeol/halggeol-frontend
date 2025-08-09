@@ -92,8 +92,13 @@
           @click.stop="toggleLike"
           class="text-xl hover:scale-110 transition-transform"
           :title="isLiked ? '찜 해제' : '찜하기'"
+          :class="[
+            isLiked
+              ? 'text-red-500 hover:scale-110'
+              : 'text-gray-400 hover:text-gray-600 hover:scale-110',
+          ]"
         >
-          <Heart :color="isLiked ? '#FF4D4F' : '#A2A8AF'" />
+          <Heart />
         </button>
       </div>
     </div>
@@ -253,19 +258,19 @@ const getBaseText = type => {
   }
 };
 
-// 가입기간 범위 텍스트
-const getTermRangeText = () => {
-  const { saveTerm, min_save_term, max_save_term } = props.product;
+// // 가입기간 범위 텍스트
+// const getTermRangeText = () => {
+//   const { saveTerm, min_save_term, max_save_term } = props.product;
 
-  if (saveTerm) {
-    return `가입기간: ${saveTerm}개월`;
-  } else if (min_save_term && max_save_term) {
-    return `가입기간: ${min_save_term}~${max_save_term}개월`;
-  } else if (min_save_term) {
-    return `최소가입기간: ${min_save_term}개월`;
-  }
-  return '';
-};
+//   if (saveTerm) {
+//     return `가입기간: ${saveTerm}개월`;
+//   } else if (min_save_term && max_save_term) {
+//     return `가입기간: ${min_save_term}~${max_save_term}개월`;
+//   } else if (min_save_term) {
+//     return `최소가입기간: ${min_save_term}개월`;
+//   }
+//   return '';
+// };
 
 // 금액 포맷팅 (천 단위 구분)
 const formatAmount = amount => {

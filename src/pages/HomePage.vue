@@ -49,7 +49,7 @@ onMounted(() => {
     class="flex flex-col items-center justify-center min-h-screen space-y-6"
   >
     <span class="loading loading-spinner loading-xl"></span>
-    <p class="text-callout text-fg-secondary">대시보드를 불러오는 중...</p>
+    <p class="text-callout text-fg-primary">자산을 확인하고 있어요</p>
   </div>
 
   <!-- {{ dashboardData }} -->
@@ -62,7 +62,7 @@ onMounted(() => {
         ]"
       >
         <h2 class="title01 pb-12 pt-20">
-          {{ dashboardData?.userName || '사용자' }}님의 대시보드
+          {{ dashboardData?.userName }} 님, 안녕하세요
         </h2>
         <div class="pb-40 grid grid-rows-2 grid-cols-3 gap-6">
           <RegretScoreCard
@@ -94,8 +94,8 @@ onMounted(() => {
     <div class="mx-[10.8%]">
       <RankCards :ranking="dashboardData?.regretRanking" />
     </div>
-    <h2 class="title01 pb-12 pt-40 mx-[10.8%]">
-      {{ dashboardData?.userName || '사용자' }} 님을 위한 추천 상품
+    <h2 class="title01 pb-12 pt-40 mx-[10.8%]" v-if="isLoggedIn">
+      {{ dashboardData?.userName }} 님을 위한 추천 상품
     </h2>
     <RecommendCards
       v-if="isLoggedIn"

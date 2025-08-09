@@ -1,12 +1,12 @@
 <script setup>
 import BaseCard from '../common/BaseCard.vue';
+import Good from '../icons/regretScore/good.vue';
+import Bad from '../icons/regretScore/bad.vue';
+import Normal from '../icons/regretScore/normal.vue';
 import { ref, computed } from 'vue';
 
 // flip card
 const isFlipped = ref(false);
-
-// 목업데이터
-// const avgRegretScore = ref(87);
 
 const props = defineProps({
   regretScore: {
@@ -20,7 +20,8 @@ const props = defineProps({
 });
 
 const avgRegretScore = computed(() => {
-  return props.regretScore; // api 호출값이 null이면 0 처리
+  const regretScore = Math.floor(props.regretScore);
+  return regretScore; // api 호출값이 null이면 0 처리
 });
 
 // 후회 관련 차트
@@ -28,15 +29,27 @@ import { Doughnut } from 'vue-chartjs';
 import { Chart, ArcElement } from 'chart.js';
 Chart.register(ArcElement);
 
+const getRegretColor = score => {
+  if (score >= 60) return '#F23F3F';
+  if (score < 40) return '#287EFF';
+  return '#FFD338';
+};
+
+const getRegretFace = score => {
+  if (score >= 60) return Bad;
+  if (score < 40) return Good;
+  return Normal;
+};
+
 // 후회지수 차트
 const regretChartData = computed(() => ({
   labels: ['후회지수'],
   datasets: [
     {
       data: [avgRegretScore.value, 100 - avgRegretScore.value],
-      backgroundColor: ['#f87171', '#f8717133'],
+      backgroundColor: [getRegretColor(avgRegretScore), '#e5e7eb'],
       borderWidth: 0,
-      cutout: '70%',
+      cutout: '60%',
     },
   ],
 }));
@@ -60,7 +73,7 @@ const regretItemChartData = computed(() => ({
   datasets: [
     {
       data: [regretItemRatio.value, 100 - regretItemRatio.value],
-      backgroundColor: ['#60a5fa', '#60a5fa33'],
+      backgroundColor: [getRegretColor(regretItemRatio.value), '#e5e7eb'],
       borderWidth: 0,
       cutout: '60%',
       rotation: -90,
@@ -90,27 +103,37 @@ const regretItemChartOptions = {
   >
     <div class="flip-inner" :class="{ flipped: isFlipped }">
       <!-- 후회지수 -->
-
-      <div
-        class="card-face tooltip underline"
-        data-tip="나의 자산 대비 놓친 기회를 반영한 점수입니다."
-      >
-        <p class="title03 mb-6">후회지수</p>
+      <div class="card-face">
+        <p class="title03 mb-6">
+          후회지수
+          <span
+            class="inline-block relative group ml-1 align-top tooltip"
+            data-tip="내 자산 대비 놓친 기회를 반영한 점수"
+          >
+            <i class="text-caption text-gray-400 cursor-pointer">ⓘ</i>
+          </span>
+        </p>
         <div class="relative w-24 h-24 mx-auto">
           <Doughnut :data="regretChartData" :options="regretChartOptions" />
           <div class="absolute inset-0 flex items-center justify-center">
-            <span class="text-body02 text-status-red"
-              >{{ avgRegretScore }}%</span
-            >
+            <component
+              :is="getRegretFace(avgRegretScore)"
+              class="w-10 h-10 mb-2"
+            />
           </div>
         </div>
       </div>
       <!-- 후회상품비율 -->
-      <div
-        class="card-face back tooltip underline"
-        data-tip="나의 추천 상품 중 ‘후회해요’라고 응답한 상품의 비율입니다. "
-      >
-        <p class="title03 mb-6">후회상품비율</p>
+      <div class="card-face back">
+        <p class="title03 mb-6">
+          후회상품비율
+          <span
+            class="inline-block relative group ml-1 align-top tooltip"
+            data-tip="추천 상품 중 ‘후회해요’라고 응답한 상품의 비율"
+          >
+            <i class="text-caption text-gray-400 cursor-pointer">ⓘ</i>
+          </span>
+        </p>
         <div class="relative w-full max-h-24">
           <Doughnut
             :data="regretItemChartData"

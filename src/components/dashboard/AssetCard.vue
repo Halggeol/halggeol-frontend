@@ -1,7 +1,6 @@
 <script setup>
 import BaseCard from '../common/BaseCard.vue';
 import { ref, computed } from 'vue';
-// import jsonData from './mydata.json'; // 목업 데이터, 추후 실제 api로 수정
 
 const props = defineProps({
   assets: {
@@ -34,12 +33,6 @@ const asset = computed(() => {
   return parseInt(assetData.value.at(-1).asset);
 });
 
-// // 목업 데이터 사용 (기존 코드)
-// import jsonData from './mydata.json';
-// const assetData = jsonData.mydata;
-// const today = new Date(assetData.at(-1).date);
-// const asset = ref(assetData.at(-1).asset);
-
 // 필터칩 기준 과거 자산
 const pastAsset = computed(() => {
   if (!today.value) return asset.value;
@@ -48,10 +41,6 @@ const pastAsset = computed(() => {
   const pastDate = new Date(today.value);
   pastDate.setDate(today.value.getDate() - offsetDays);
   const pastDateStr = pastDate.toISOString().slice(0, 10);
-  // return (
-  //   assetData.value.findLast(entry => entry.date <= pastDateStr)?.asset ??
-  //   asset.value
-  // );
   const foundEntry = assetData.value.findLast(
     entry => entry.date <= pastDateStr
   );
@@ -64,7 +53,7 @@ const assetDiff = computed(() => {
   const formatted = Math.abs(diff).toLocaleString();
   return {
     value: diff,
-    message: `${diff === 0 ? '동일해요' : diff > 0 ? `+${formatted}원` : `-${formatted}원`}`,
+    message: `${diff === 0 ? '과 동일해요' : diff > 0 ? `+${formatted}원` : `-${formatted}원`}`,
     color:
       diff === 0
         ? 'text-fg-primary'
@@ -260,6 +249,7 @@ const chartOptions = {
 
 <template>
   <BaseCard size="lg">
+    <h2 class="title03 mb-8">자산 한 눈에 보기</h2>
     <span class="text-body02">
       {{
         {

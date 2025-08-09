@@ -8,7 +8,12 @@ import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { ref, computed, onUnmounted, watch } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
 import { extendLogin, logout } from '@/api/user';
-import { clearAccessToken, clearUsername, isReverifiedToken, getAccessToken } from '@/utils/authUtil';
+import {
+  clearAccessToken,
+  clearUsername,
+  isReverifiedToken,
+  getAccessToken,
+} from '@/utils/authUtil';
 import SearchModal from '../common/SearchModal.vue';
 import ExtendLoginModal from '../user/auth/ExtendLoginModal.vue';
 import UserModal from '../user/mypage/UserModal.vue';
@@ -73,7 +78,6 @@ const goTo = path => {
 };
 
 async function handleLogout() {
-  console.log('===== 로그아웃 핸들링 =====');
   await logout();
 
   clearAccessToken();
@@ -82,10 +86,7 @@ async function handleLogout() {
 }
 
 async function handleExtendLogin() {
-  console.log('===== 로그인 시간 연장 핸들링 =====');
-
   try {
-    console.log('===== extendLogin API 호출 =====');
     const response = await extendLogin();
 
     authStore.extendLogin(response.data?.accessToken);
@@ -114,6 +115,13 @@ watch(
   { immediate: true }
 );
 
+const showRemainingTimeText = computed(() => {
+  if (authStore.tokenRemainingSeconds <= 600) {
+    return `${remainingMinutes.value}분 ${remainingSeconds.value}초`;
+  }
+  return '로그인 연장';
+});
+
 // 남은 시간 5분 이하일 때 모달 표시
 watch(
   () => authStore.tokenRemainingSeconds,
@@ -140,21 +148,23 @@ onUnmounted(() => {
   <header class="bg-white fixed inset-x-0 top-0 z-50">
     <nav
       aria-label="Global"
-      class="mx-[10.8%] flex items-center justify-between py-4 mobile:hidden"
+      class="px-[10.8%] flex my-4 justify-between mobile:hidden"
     >
       <!-- 헤더 - 로고 영역 -->
-      <h1 class="flex">
-        <RouterLink to="/" class="-m-4 p-4"> 그때 할 걸 </RouterLink>
+      <h1 class="flex items-center w-52">
+        <RouterLink to="/" class="-m-4 p-4">그때 할 걸</RouterLink>
       </h1>
       <!-- 헤더 - gnb 영역 -->
-      <div class="flex gap-x-12">
+      <div class="flex items-center gap-x-12">
         <RouterLink
           v-for="item in navItems"
           :key="item.to"
           :to="item.to"
           :class="[
-            '-m-4 p-4 text-body02 text-fg-primary',
-            isActive(item.to, item.exact) ? 'font-bold' : '',
+            '-m-4 p-4 text-body02',
+            isActive(item.to, item.exact)
+              ? 'font-bold text-fg-primary'
+              : 'text-fg-secondary',
           ]"
         >
           {{ item.label }}
@@ -164,6 +174,7 @@ onUnmounted(() => {
           aria-label="Search"
           @click="isSearchModalOpen = true"
         >
+          <!-- icon은 svg sprite 방식으로 바꾸기 -->
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -179,21 +190,18 @@ onUnmounted(() => {
         </button>
       </div>
       <!-- 헤더 - 유저 영역 -->
-      <div class="flex gap-x-6 justify-end">
+      <div class="flex items-center gap-x-4 justify-end w-52">
         <template v-if="authStore.isLoggedIn">
-          <span
-            class="text-sm text-gray-500"
-          >
-            남은 시간: {{ remainingMinutes }}분 {{ remainingSeconds }}초
-          </span>
-
           <button
             @click="handleExtendLogin"
-            class="btn btn-sm btn-block btn-outline bg-primary border-0 rounded-2xl text-white h-6 w-20"
+            class="btn text-footnote font-normal py-2 bg-primary border-0 shadow-none hover:shadow-none rounded-full text-white h-6"
           >
-            로그인 연장
+            {{ showRemainingTimeText }}
           </button>
-          <button @click="toggleUserMenu" class="flex items-center gap-x-1">
+          <button
+            @click="toggleUserMenu"
+            class="flex items-center gap-x-2 max-w-28 truncate"
+          >
             {{ authStore.username }} 님 <UserInHeader />
           </button>
 
@@ -214,13 +222,12 @@ onUnmounted(() => {
         </template>
       </div>
     </nav>
+    <SearchModal
+      :is-open="isSearchModalOpen"
+      @update:is-open="isSearchModalOpen = $event"
+      @search="handleSearch"
+    />
   </header>
-
-  <SearchModal
-    :is-open="isSearchModalOpen"
-    @update:is-open="isSearchModalOpen = $event"
-    @search="handleSearch"
-  />
 
   <ExtendLoginModal
     :is-open="isExtendLoginModalOpen"
