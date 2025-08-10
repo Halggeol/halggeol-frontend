@@ -43,6 +43,10 @@ const handleAddScrap = productId => {
   addScrap(productId);
 };
 
+const handleSurveyCompleted = (newStatus) => {
+  productStatus.value = newStatus;
+};
+
 let isChangingState = false;
 
 const handleScroll = () => {
@@ -183,6 +187,7 @@ onUnmounted(() => {
           :product-id="route.params.productId"
           :product-detail="productDetail"
           :product-status="productStatus"
+          @survey-completed="handleSurveyCompleted"
         />
       </div>
     </div>
