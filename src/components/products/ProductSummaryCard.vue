@@ -34,9 +34,16 @@
           </h3>
           <p class="text-title-sm font-bold text-fg-primary">
             <span v-if="productDetail.minSaveTerm && productDetail.maxSaveTerm">
-              {{ productDetail.minSaveTerm }}~{{
-                productDetail.maxSaveTerm
-              }}개월
+              <template
+                v-if="productDetail.minSaveTerm === productDetail.maxSaveTerm"
+              >
+                {{ productDetail.minSaveTerm }}개월
+              </template>
+              <template v-else>
+                {{ productDetail.minSaveTerm }}~{{
+                  productDetail.maxSaveTerm
+                }}개월
+              </template>
             </span>
             <span v-else-if="productDetail.saveTerm">
               {{ productDetail.saveTerm }}개월
