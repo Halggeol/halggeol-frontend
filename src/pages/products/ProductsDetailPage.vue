@@ -133,6 +133,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  navigationStore.resetNavigation();
   window.removeEventListener('scroll', handleScroll);
 });
 </script>
