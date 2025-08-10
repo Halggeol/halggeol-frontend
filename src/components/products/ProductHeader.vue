@@ -98,18 +98,26 @@
         ]"
       >
         <BaseButton
-          :label="isScraped ? '❤️ 관심상품' : '🤍 관심상품'"
+          :label="'관심상품'"
           :size="isScrolled ? 'xs' : 'sm'"
           variant="outline"
           :disabled="isScrapLoading"
+          :hasIconFst="true"
           :class="[
             '!w-auto !whitespace-nowrap hover:bg-gray-50 transition-all duration-300 ease-in-out',
             isScrolled
-              ? '!px-4 !text-caption'
+              ? '!px-6 !text-caption'
               : '!px-6 md:!px-8 lg:!px-10 !text-footnote md:!text-callout',
           ]"
           @click="handleAddScrap"
-        />
+        >
+          <template #icon_fst>
+            <Heart
+              :isFilled="isScraped"
+              :class="['w-4 h-4', isScraped ? 'text-red-500' : 'text-gray-400']"
+            />
+          </template>
+        </BaseButton>
         <BaseButton
           label="가입하기"
           :size="isScrolled ? 'xs' : 'sm'"
@@ -130,6 +138,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 import BaseButton from '@/components/common/BaseButton.vue';
+import Heart from '@/components/icons/Heart.vue';
 import { addScrap, delScrap } from '@/api/product-detail';
 
 const props = defineProps({
