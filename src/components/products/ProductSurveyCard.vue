@@ -2,11 +2,7 @@
   <!-- 이미 피드백을 남긴 경우 블러 처리 -->
   <div v-if="isCompleted" class="relative">
     <div class="filter blur-sm pointer-events-none select-none">
-      <BaseCard
-        size="lg"
-        variant="outline"
-        class="bg-gray-secondary-200"
-      >
+      <BaseCard size="lg" variant="outline" class="bg-gray-secondary-200">
         <div class="space-y-6">
           <h3
             class="text-body01 tablet:text-title-sm wide:text-title-sm font-semibold text-fg-primary"
@@ -31,9 +27,7 @@
                 />
                 <span
                   class="text-footnote tablet:text-callout wide:text-callout text-fg-primary"
-                  >{{
-                    option.label
-                  }}</span
+                  >{{ option.label }}</span
                 >
               </label>
             </div>
@@ -66,12 +60,7 @@
   </div>
 
   <!-- 정상 설문 카드 -->
-  <BaseCard
-    v-else
-    size="lg"
-    variant="outline"
-    class="bg-gray-secondary-200"
-  >
+  <BaseCard v-else size="lg" variant="outline" class="bg-gray-secondary-200">
     <div class="space-y-6">
       <h3
         class="text-body01 tablet:text-title-sm wide:text-title-sm font-semibold text-fg-primary"
@@ -99,9 +88,7 @@
                 />
                 <span
                   class="text-footnote tablet:text-callout wide:text-callout text-fg-primary"
-                  >{{
-                    option.label
-                  }}</span
+                  >{{ option.label }}</span
                 >
                 <!-- 각 선택지별 설명 텍스트 -->
                 <div
