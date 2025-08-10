@@ -20,16 +20,35 @@ function onLoginClick() {
 
 const dashboardData = ref(null);
 const isLoading = ref(true);
+const isError = ref(false);
+const retryCount = ref(0); // New: Track retry attempts
+const maxRetries = 3; // New: Maximum number of retries
+const retryDelay = 1000; // New: Delay in milliseconds between retries
 
 const fetchDashboard = async () => {
   try {
     isLoading.value = true;
+    isError.value = false;
+    // Reset retryCount only on the initial call, not on retries
+    if (retryCount.value === 0) {
+      retryCount.value = 0;
+    }
 
     // API 호출
     const response = await getDashboardMain();
     dashboardData.value = response.data;
+    retryCount.value = 0; // Reset retry count on success
   } catch (error) {
     console.error('대시보드 로딩 실패:', error);
+    if (retryCount.value < maxRetries) {
+      retryCount.value++;
+      console.log(`Retrying... Attempt ${retryCount.value} of ${maxRetries}`);
+      await new Promise(resolve => setTimeout(resolve, retryDelay));
+      fetchDashboard(); // Retry the fetch
+    } else {
+      isError.value = true; // Set error state after max retries
+      retryCount.value = 0; // Reset retry count
+    }
   } finally {
     isLoading.value = false;
   }
@@ -50,6 +69,15 @@ onMounted(() => {
   >
     <span class="loading loading-spinner loading-xl"></span>
     <p class="text-callout text-fg-primary">자산을 확인하고 있어요</p>
+  </div>
+
+  <!-- 에러 상태 -->
+  <div
+    v-else-if="isError"
+    class="flex flex-col items-center justify-center min-h-screen space-y-6"
+  >
+    <p class="text-callout text-fg-primary">데이터를 불러오는 데 실패했습니다.</p>
+    <BaseButton @click="fetchDashboard">다시 시도</BaseButton>
   </div>
 
   <!-- {{ dashboardData }} -->
