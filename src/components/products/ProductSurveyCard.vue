@@ -134,13 +134,26 @@ const props = defineProps({
   },
 });
 
-// 이미 완료된 설문인지 확인
+const emit = defineEmits(['survey-completed']);
+
+// Function to check if survey is completed from localStorage
+const isSurveyCompletedInLocalStorage = (productId) => {
+  const completedSurveys = JSON.parse(localStorage.getItem('completedSurveys') || '{}');
+  return completedSurveys[productId] === true;
+};
+
+// Function to mark survey as completed in localStorage
+const markSurveyCompletedInLocalStorage = (productId) => {
+  const completedSurveys = JSON.parse(localStorage.getItem('completedSurveys') || '{}');
+  completedSurveys[productId] = true;
+  localStorage.setItem('completedSurveys', JSON.stringify(completedSurveys));
+};
+
 const isCompleted = computed(() => {
-  return props.productStatus !== null && props.productStatus !== '';
-  // return false; // 개발용
+  // Check both productStatus and localStorage
+  return (props.productStatus !== null && props.productStatus !== '') || isSurveyCompletedInLocalStorage(props.productId);
 });
 
-// 설문 제출
 const submitSurvey = async () => {
   if (!selectedStatus.value) return;
 
@@ -148,30 +161,26 @@ const submitSurvey = async () => {
     await updateProductStatus(props.productId, selectedStatus.value);
     console.log('상품 상태 업데이트 완료:', selectedStatus.value);
 
-    // 추가 액션 처리
     if (selectedStatus.value === '관심') {
-      // 고민해볼래요 선택 시 스크랩 추가
       await addScrap(props.productId);
       console.log('스크랩 추가 완료');
     } else if (selectedStatus.value === '가입') {
-      // 가입할래요 선택 시 새 창에서 가입 링크 열기
       if (props.productDetail.regLink) {
         window.open(props.productDetail.regLink, '_blank');
       }
     }
 
-    closeSurvey();
+    // Mark survey as completed in localStorage
+    markSurveyCompletedInLocalStorage(props.productId);
+
+    // Emit event (optional, but good for parent to know)
+    emit('survey-completed', selectedStatus.value);
+
   } catch (error) {
     console.error('설문 처리 실패:', error);
   }
 };
 
-// 설문 닫기
-const closeSurvey = () => {
-  navigationStore.resetNavigation();
-};
-
-// 상태값을 한글 라벨로 변환
 const getStatusLabel = status => {
   const statusMap = {
     가입: '가입 할래요',
@@ -179,16 +188,13 @@ const getStatusLabel = status => {
     회고: '가입 안 할래요',
   };
 
-  // status가 객체인 경우 (예: { status: '가입' }) 처리
   if (typeof status === 'object' && status !== null) {
     return statusMap[status.status] || status.status || '알 수 없음';
   }
 
-  // status가 문자열인 경우
   return statusMap[status] || status || '알 수 없음';
 };
 
-// 상태별 설명 텍스트 반환
 const getStatusDescription = status => {
   const descriptionMap = {
     가입: '금융 상품 가입 링크로 연결해드려요',

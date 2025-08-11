@@ -34,8 +34,9 @@
           v-for="product in filteredProducts"
           :key="product.id"
           :product="product"
-          :isScrapped="product.isScraped"
-          @toggle-scrap="handleToggleScrap"
+          :isLiked="product.isScraped"
+          @toggle-like="handleToggleScrap"
+          @click="goToDetail(product.id)"
         />
       </div>
     </div>
@@ -47,17 +48,19 @@ import { ref, computed, onMounted } from 'vue';
 import ProductCard from '@/components/products/ProductCard.vue';
 import MyProductFilter from '@/components/products/MyProductFilter.vue';
 import { getUserProductsList } from '@/api/list';
+import { addScrap, delScrap } from '@/api/product-detail';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const myProducts = ref([]);
 const loading = ref(false);
 const error = ref(null);
-const scrapedProductIds = ref(new Set());
 
 const currentFilters = ref({
   productTypes: [],
 });
 
-// API에서 사용자 가입 상품 조회
 const fetchMyProducts = async () => {
   loading.value = true;
   error.value = null;
@@ -65,13 +68,11 @@ const fetchMyProducts = async () => {
   try {
     const response = await getUserProductsList();
 
-    // DTO 구조에 맞게 데이터 매핑
     myProducts.value = response.data.map(product => ({
       id: product.productId,
       productId: product.productId,
       company: product.company,
       name: product.name,
-      tag1: product.tag1,
       tag2: product.tag2,
       tag3: product.tag3,
       title: product.title,
@@ -79,12 +80,10 @@ const fetchMyProducts = async () => {
         product.productId[0].toUpperCase() === 'pension' ||
         product.productId[0].toUpperCase() === 'fund'
           ? null
-          : product.subTitle, // TODO: 추후 백엔드에서 DTO, 쿼리문 값 수정해야함. 임시로 수동 처리
+          : product.subTitle,
       amount: product.amount,
-      type: getProductType(product), // 상품 유형 추출 함수 필요
+      type: getProductType(product),
       product_type: getProductType(product),
-      viewCnt: 0, // DTO에서 제공되지 않음
-      scrapCnt: 0, // DTO에서 제공되지 않음
       isScraped: product.isScraped,
     }));
 
@@ -96,8 +95,11 @@ const fetchMyProducts = async () => {
   }
 };
 
+function goToDetail(productId) {
+  router.push(`/products/detail/${productId}`);
+}
+
 const getProductType = product => {
-  // productId가 없거나 유효하지 않으면 기본값 반환
   if (
     !product.productId ||
     typeof product.productId !== 'string' ||
@@ -124,13 +126,29 @@ const handleFilterChange = filters => {
   console.log('MyProduct filters:', filters);
 };
 
-const handleToggleScrap = ({ productId, isScrapped }) => {
-  if (isScrapped) {
-    console.log(`스크랩 해제 요청: productId ${productId}`);
-    scrapedProductIds.value.delete(productId);
-  } else {
-    console.log(`스크랩 요청: productId ${productId}`);
-    scrapedProductIds.value.add(productId);
+const handleToggleScrap = async ({ productId, isLiked }) => {
+  const productIndex = myProducts.value.findIndex(
+    p => p.productId === productId
+  );
+  if (productIndex === -1) return;
+
+  const productToUpdate = myProducts.value[productIndex];
+  const originalIsScraped = productToUpdate.isScraped;
+
+  try {
+    productToUpdate.isScraped = !isLiked;
+
+    if (isLiked) {
+      console.log(`스크랩 해제 요청: productId ${productId}`);
+      await delScrap(productId);
+    } else {
+      console.log(`스크랩 요청: productId ${productId}`);
+      await addScrap(productId);
+    }
+  } catch (e) {
+    console.error('스크랩 처리 실패:', e);
+    alert('스크랩 처리 중 오류가 발생했습니다.');
+    productToUpdate.isScraped = originalIsScraped;
   }
 };
 
@@ -138,7 +156,6 @@ const filteredProducts = computed(() => {
   let productsToFilter = [...myProducts.value];
   const filters = currentFilters.value;
 
-  // 상품 유형 필터링
   if (
     filters.productTypes &&
     filters.productTypes.length > 0 &&
