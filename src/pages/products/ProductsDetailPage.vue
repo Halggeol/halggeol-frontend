@@ -43,6 +43,10 @@ const handleAddScrap = productId => {
   addScrap(productId);
 };
 
+const handleSurveyCompleted = (newStatus) => {
+  productStatus.value = newStatus;
+};
+
 let isChangingState = false;
 
 const handleScroll = () => {
@@ -129,6 +133,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  navigationStore.resetNavigation();
   window.removeEventListener('scroll', handleScroll);
 });
 </script>
@@ -183,6 +188,7 @@ onUnmounted(() => {
           :product-id="route.params.productId"
           :product-detail="productDetail"
           :product-status="productStatus"
+          @survey-completed="handleSurveyCompleted"
         />
       </div>
     </div>
