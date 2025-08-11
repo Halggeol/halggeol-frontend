@@ -44,7 +44,7 @@ const fetchDashboard = async () => {
       retryCount.value++;
       console.log(`Retrying... Attempt ${retryCount.value} of ${maxRetries}`);
       await new Promise(resolve => setTimeout(resolve, retryDelay));
-      fetchDashboard(); // Retry the fetch
+      await fetchDashboard(); // Retry the fetch
     } else {
       isError.value = true; // Set error state after max retries
       retryCount.value = 0; // Reset retry count
