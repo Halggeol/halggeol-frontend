@@ -56,6 +56,13 @@ async function handleSyncMydata() {
         </p>
       </div>
 
+      <!-- 로딩 중 화면 -->
+      <div v-if="isLoading" class="flex flex-col items-center justify-center grow">
+        <!-- 스피너 -->
+        <div class="w-12 h-12 border-4 border-gray-300 border-t-primary rounded-full animate-spin mb-6"></div>
+        <p class="text-gray-700">마이데이터를 연동 중입니다...</p>
+      </div>
+
       <!-- 연동하기 버튼 -->
       <BaseButton
         class="mt-auto mb-32"

@@ -78,7 +78,7 @@ onMounted(() => {
 function convertCycleString(cycle) {
   if (cycle === 'WEEKLY_1') return '1주';
   if (cycle === 'WEEKLY_2') return '2주';
-  if (cycle === 'MONTHLY_1') return '1달';
+  if (cycle === 'MONTHLY_1') return '1개월';
   return '';
 }
 
