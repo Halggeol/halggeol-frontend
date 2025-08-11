@@ -156,7 +156,9 @@ const formatTag1 = (tag1, type) => {
   const normalizedType = normalizeType(type);
   switch (normalizedType) {
     case 'deposit':
+      return `최소 ${tag1}개월`;
     case 'savings':
+      return `최소 ${tag1}개월`;
     case 'forex':
       return tag1;
     case 'pension':
@@ -173,9 +175,11 @@ const formatTag2 = (tag2, type) => {
   const normalizedType = normalizeType(type);
   switch (normalizedType) {
     case 'deposit':
-    case 'savings':
-    case 'forex':
       return `최대 ${tag2}개월`;
+    case 'savings':
+      return `최대 ${tag2}개월`;
+    case 'forex':
+      return tag2;
     case 'pension':
       return tag2; // 연금 종류 그대로
     case 'fund':
