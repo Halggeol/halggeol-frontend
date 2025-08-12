@@ -35,3 +35,26 @@ export const getPopularSearches = async (size = 5) => {
     return []; // 실패 시 항상 빈 배열을 반환합니다.
   }
 };
+
+// 최근 검색어 개별 삭제 (로그인 필요)
+export const deleteRecentSearch = async keyword => {
+  try {
+    // keyword가 URL 경로에 포함되므로, 인코딩하여 안전하게 전달
+    await api.delete(`/search-logs/recent/${encodeURIComponent(keyword)}`);
+    return true;
+  } catch (error) {
+    console.error('최근 검색어 개별 삭제 API 호출 실패: ', error);
+    return false;
+  }
+};
+
+// 최근 검색어 전체 삭제 (로그인 필요)
+export const deleteAllRecentSearches = async () => {
+  try {
+    await api.delete('/search-logs/recent/all');
+    return true;
+  } catch (error) {
+    console.error('최근 검색어 전체 삭제 API 실패', error);
+    return false;
+  }
+};
