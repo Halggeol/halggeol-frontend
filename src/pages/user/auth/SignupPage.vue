@@ -122,6 +122,12 @@ function validatePasswords() {
 
 async function handleJoinSubmit() {
   console.log('===== 회원가입 요청 핸들링 =====');
+
+  const originalBirth = form.value.birth;
+  form.value.birth = `${form.value.birth.slice(0,4)}-${form.value.birth.slice(4,6)}-${form.value.birth.slice(6,8)}`;
+
+  console.log(form.value.birth);
+
   Object.keys(form.value).forEach((field) => {
     if (field === 'password' || field === 'confirmPassword')
       validatePasswords(field);
@@ -142,6 +148,8 @@ async function handleJoinSubmit() {
       router.push({ name: 'signup/survey', params: { type: 'knowledge' } });
 
     } catch (error) {
+      form.value.birth = originalBirth;
+
       if (error.response?.status === 409) {
         result.value = {
           message: '이미 가입된 이메일입니다.',
@@ -161,6 +169,9 @@ async function handleJoinSubmit() {
 const displayBirth = computed(() => {
   const digits = form.value.birth;
 
+  if (digits.includes('-'))
+    return digits;
+
   if (digits.length >= 4 && digits.length < 6)
     return `${digits.slice(0, 4)}-${digits.slice(4)}`;
   else if (digits.length >= 6)
@@ -174,6 +185,29 @@ function inputBirth(birth) {
     form.value.birth = form.value.birth + birth.data;
   else
     form.value.birth = form.value.birth.slice(0, -1);
+}
+
+const displayPhone = computed(() => {
+  const digits = form.value.phone;
+
+  if (digits.includes('-'))
+    return digits;
+
+  if (digits.length < 3)
+    return digits;
+  if (digits.length <= 6)
+    return `${digits.slice(0, 3)}-${digits.slice(3)}${digits.length >= 6 ? '-' + digits.slice(6) : ''}`;
+  if (digits.length === 11)
+    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+  else
+    return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+});
+
+function inputPhone(phone) {
+  if (phone.data != null)
+    form.value.phone = form.value.phone + phone.data;
+  else
+    form.value.phone = form.value.phone.slice(0, -1);
 }
 
 function inputStyleClass(error) {
@@ -213,11 +247,11 @@ function openPolicyModal() {
         <div class="mb-3">
           <input
             type="text"
-            v-model="displayBirth"
+            :value="displayBirth"
             @input="inputBirth"
             @blur="validateBirth()"
             :class="inputStyleClass(errors.birth)"
-            placeholder="생년월일 (YYYY-MM-DD)"
+            placeholder="생년월일"
             :disabled="result.success"
           />
           <small v-if="errors.birth" class="text-red-500 mt-1 block">{{ errors.birth }}</small>
@@ -227,10 +261,11 @@ function openPolicyModal() {
         <div class="mb-3">
           <input
             type="text"
-            v-model="form.phone"
+            :value="displayPhone"
+            @input="inputPhone"
             @blur="validateField('phone')"
             :class="inputStyleClass(errors.phone)"
-            placeholder="전화번호 ('-' 제외)"
+            placeholder="전화번호"
             :disabled="result.success"
           />
           <small v-if="errors.phone" class="text-red-500 mt-1 block">{{ errors.phone }}</small>

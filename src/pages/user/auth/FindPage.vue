@@ -28,6 +28,29 @@ const canSubmit = computed(() => {
   return false;
 })
 
+const displayPhone = computed(() => {
+  const digits = phone.value;
+
+  if (digits.includes('-'))
+    return digits;
+
+  if (digits.length < 3)
+    return digits;
+  if (digits.length <= 6)
+    return `${digits.slice(0, 3)}-${digits.slice(3)}${digits.length >= 6 ? '-' + digits.slice(6) : ''}`;
+  if (digits.length === 11)
+    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+  else
+    return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+});
+
+function inputPhone(inputPhone) {
+  if (inputPhone.data != null)
+    phone.value = phone.value + inputPhone.data;
+  else
+    phone.value = phone.value.slice(0, -1);
+}
+
 function switchTab(tab) {
   activeTab.value = tab;
   // 상태 초기화
@@ -80,12 +103,20 @@ async function handleRequestResetPassword() {
   if (canSubmit.value) {
     try {
       console.log("===== requestPasswordReset API 호출 =====");
-      await requestPasswordReset({ email: email.value });
+      const response = await requestPasswordReset({ email: email.value });
 
-      result.value = {
-        message: '입력하신 이메일로 비밀번호 재설정 링크가 전송되었습니다.',
-        success: true
-      };
+      if (response.success) {
+        result.value = {
+          message: '입력하신 이메일로 비밀번호 재설정 링크가 전송되었습니다.',
+          success: true
+        };
+      }
+      else {
+        result.value = {
+          message: '이메일 전송에 실패했습니다.',
+          success: false
+        };
+      }
     } catch (error) {
       result.value = {
         message: '오류가 발생했습니다.',
@@ -130,8 +161,9 @@ async function handleRequestResetPassword() {
         />
         <input
           type="text"
-          v-model="phone"
-          placeholder="전화번호 ('-' 제외)"
+          :value="displayPhone"
+          @input="inputPhone"
+          placeholder="전화번호"
           class="w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors border-gray-300 focus:border-blue-500"
         />
 

@@ -18,7 +18,11 @@ async function handleSyncMydata() {
     isLoading.value = true;
     // const authUrl = await syncMydata();
     // window.location.href = authUrl;
-    router.push('/signup/success');
+
+    // TODO: 네이버 인증서 이동 or 로딩 화면 구현
+    setTimeout(() => {
+      router.push('/signup/success');
+    }, 3000);
 
   } catch (error) {
     alert('오류가 발생했습니다.');
@@ -50,6 +54,13 @@ async function handleSyncMydata() {
           연동한 마이데이터로 나의 자산을<br />
           쉽고 빠르게 분석할 수 있어요
         </p>
+      </div>
+
+      <!-- 로딩 중 화면 -->
+      <div v-if="isLoading" class="flex flex-col items-center justify-center grow">
+        <!-- 스피너 -->
+        <div class="w-12 h-12 border-4 border-gray-300 border-t-primary rounded-full animate-spin mb-6"></div>
+        <p class="text-gray-700">마이데이터를 연동 중입니다...</p>
       </div>
 
       <!-- 연동하기 버튼 -->

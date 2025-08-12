@@ -50,18 +50,17 @@
 
       <!-- 추가 정보 -->
       <div class="mt-2 text-xs text-gray-500 space-y-1">
-        <!-- 사용자 가입금액 (MyProductPage에서만 사용) -->
         <div v-if="product.amount" class="text-sm font-semibold text-blue-600">
           가입금액: {{ formatAmount(product.amount) }}
         </div>
 
-        <div v-if="product.minAmount">
+        <!-- <div v-if="product.minAmount">
           최소 가입금액: {{ formatAmount(product.minAmount) }}
         </div>
         <div v-if="getTermRangeText()">
           {{ getTermRangeText() }}
         </div>
-        <!-- <div v-if="product.viewCnt || product.scrapCnt" class="flex space-x-3">
+        <div v-if="product.viewCnt || product.scrapCnt" class="flex space-x-3">
           <span v-if="product.viewCnt">조회 {{ product.viewCnt }}</span>
           <span v-if="product.scrapCnt">관심 {{ product.scrapCnt }}</span>
         </div> -->
@@ -93,8 +92,13 @@
           @click.stop="toggleLike"
           class="text-xl hover:scale-110 transition-transform"
           :title="isLiked ? '찜 해제' : '찜하기'"
+          :class="[
+            isLiked
+              ? 'text-red-500 hover:scale-110'
+              : 'text-gray-400 hover:text-gray-600 hover:scale-110',
+          ]"
         >
-          <Heart :color="isLiked ? '#FF4D4F' : '#A2A8AF'" />
+          <Heart />
         </button>
       </div>
     </div>
@@ -152,9 +156,11 @@ const formatTag1 = (tag1, type) => {
   const normalizedType = normalizeType(type);
   switch (normalizedType) {
     case 'deposit':
-    case 'savings':
-    case 'forex':
       return `최소 ${tag1}개월`;
+    case 'savings':
+      return `최소 ${tag1}개월`;
+    case 'forex':
+      return tag1;
     case 'pension':
       return tag1 === 1 ? '확정급여형' : '확정기여형';
     case 'fund':
@@ -169,9 +175,11 @@ const formatTag2 = (tag2, type) => {
   const normalizedType = normalizeType(type);
   switch (normalizedType) {
     case 'deposit':
-    case 'savings':
-    case 'forex':
       return `최대 ${tag2}개월`;
+    case 'savings':
+      return `최대 ${tag2}개월`;
+    case 'forex':
+      return tag2;
     case 'pension':
       return tag2; // 연금 종류 그대로
     case 'fund':
@@ -254,19 +262,19 @@ const getBaseText = type => {
   }
 };
 
-// 가입기간 범위 텍스트
-const getTermRangeText = () => {
-  const { saveTerm, min_save_term, max_save_term } = props.product;
+// // 가입기간 범위 텍스트
+// const getTermRangeText = () => {
+//   const { saveTerm, min_save_term, max_save_term } = props.product;
 
-  if (saveTerm) {
-    return `가입기간: ${saveTerm}개월`;
-  } else if (min_save_term && max_save_term) {
-    return `가입기간: ${min_save_term}~${max_save_term}개월`;
-  } else if (min_save_term) {
-    return `최소가입기간: ${min_save_term}개월`;
-  }
-  return '';
-};
+//   if (saveTerm) {
+//     return `가입기간: ${saveTerm}개월`;
+//   } else if (min_save_term && max_save_term) {
+//     return `가입기간: ${min_save_term}~${max_save_term}개월`;
+//   } else if (min_save_term) {
+//     return `최소가입기간: ${min_save_term}개월`;
+//   }
+//   return '';
+// };
 
 // 금액 포맷팅 (천 단위 구분)
 const formatAmount = amount => {

@@ -56,8 +56,8 @@ const emit = defineEmits(['update:filters']);
 
 // 상품 유형 옵션
 const productTypes = [
-  { value: 'deposit', label: '정기예금' },
-  { value: 'savings', label: '정기적금' },
+  { value: 'deposit', label: '예금' },
+  { value: 'savings', label: '적금' },
   { value: 'pension', label: '연금' },
   { value: 'fund', label: '펀드' },
   { value: 'forex', label: '외화' },

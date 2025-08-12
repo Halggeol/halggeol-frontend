@@ -66,7 +66,7 @@ import ProductSort from '@/components/products/ProductSort.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { addScrap, delScrap } from '@/api/product-detail';
 import { getScrapedProductIds } from '@/api/scrap';
-import axios from 'axios';
+import api from '@/api';
 
 const route = useRoute();
 const router = useRouter();
@@ -121,7 +121,7 @@ const fetchProducts = async () => {
     console.log('API 호출:', apiUrl);
 
     const [productsResponse, scrapedIdsResponse] = await Promise.all([
-      axios.get(apiUrl),
+      api.get(apiUrl),
       getScrapedProductIds(), // 관심상품 ID 목록 요청
     ]);
 
@@ -129,12 +129,8 @@ const fetchProducts = async () => {
     scrapedProductIds.value = new Set(scrapedIdsResponse);
     error.value = null;
   } catch (err) {
-    if (axios.isAxiosError(err) && err.response) {
-      error.value = `서버 오류: ${err.response.status}`;
-    } else {
-      error.value = '상품 목록을 불러오는 데 실패했습니다.';
-      console.error('API 호출 중 오류 발생:', err);
-    }
+    error.value = '상품 목록을 불러오는 데 실패했습니다.';
+    console.error('API 호출 중 오류 발생:', err);
   } finally {
     loading.value = false;
   }
@@ -170,6 +166,13 @@ const handleSortChange = sort => {
 };
 
 const handleToggleLike = async ({ productId, isLiked }) => {
+  const token = sessionStorage.getItem('accessToken');
+  if (!token) {
+    alert('로그인이 필요합니다.');
+    router.push('/login'); // 로그인 페이지로 이동
+    return; // 함수 실행을 여기서 중단합니다.
+  }
+
   if (isScrapLoading.value) return;
   console.log('버튼 클릭 - 현재 isLiked:', isLiked);
 

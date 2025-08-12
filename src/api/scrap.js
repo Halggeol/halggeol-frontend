@@ -2,7 +2,7 @@ import api from '@/utils/axios';
 
 // 찜한 상품 ID 목록 조회
 export const getScrapedProductIds = async () => {
-  const token = localStorage.getItem('accessToken');
+  const token = sessionStorage.getItem('accessToken');
   if (!token) return [];
 
   try {
