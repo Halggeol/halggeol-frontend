@@ -76,7 +76,7 @@ async function handleLogout() {
   closeUserModal();
   if (interval) {
     clearInterval(interval);
-    interval.null;
+    interval = null;
   }
   await logout();
 
