@@ -9,6 +9,9 @@ import {
   analyzeProductWithGemini,
 } from '@/api/product-detail';
 import { useNavigationStore } from '@/stores/navigation';
+import { useAuthStore } from '@/stores/authStore';
+
+const authStore = useAuthStore();
 
 import ProductHeader from '@/components/products/ProductHeader.vue';
 import ProductSummaryCard from '@/components/products/ProductSummaryCard.vue';
@@ -43,7 +46,7 @@ const handleAddScrap = productId => {
   addScrap(productId);
 };
 
-const handleSurveyCompleted = (newStatus) => {
+const handleSurveyCompleted = newStatus => {
   productStatus.value = newStatus;
 };
 
@@ -79,7 +82,6 @@ const handleScroll = () => {
   }
 };
 
-// ✅ 추가: AI 요약 정보만 불러오는 비동기 함수
 const fetchGeminiData = async product => {
   isGeminiLoading.value = true;
   geminiError.value = null;
@@ -168,6 +170,7 @@ onUnmounted(() => {
       <div class="px-[10.8%] space-y-6 py-8">
         <ProductSummaryCard :productDetail="productDetail">
           <AISummaryCard
+            v-if="authStore.isLoggedIn"
             :summary="productDetail.description"
             :good="geminiData.advantage"
             :bad="geminiData.disadvantage"

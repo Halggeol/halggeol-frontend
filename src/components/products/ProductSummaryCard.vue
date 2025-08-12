@@ -72,11 +72,8 @@
         <!-- 수익률 -->
         <div class="text-center">
           <h3 class="text-callout font-medium text-fg-secondary mb-3">
-            <div
-              class="tooltip"
-              data-tip="총보수율(TER)을 제외한 수익률입니다."
-            >
-              <span class="underline"> 3개월 수익률 </span>
+            <div class="tooltip" data-tip="3개월간 변동 수치">
+              <span class="underline"> 기준가 변동 </span>
             </div>
           </h3>
           <p
@@ -84,10 +81,8 @@
             :class="getPriceMovementColor(productDetail.fundPriceMovement)"
           >
             {{
-              productDetail.fundPriceMovement ||
-              productDetail.rate + '%' ||
-              '-'
-            }}%
+              productDetail.fundPriceMovement || productDetail.rate + '%' || '-'
+            }}
           </p>
         </div>
 
@@ -187,8 +182,18 @@
             <span class="underline">나와의 적합도</span>
           </div>
         </h3>
-        <p class="text-title-sm font-bold text-status-blue">
-          {{ productDetail.score }} %
+        <p
+          :class="[
+            'text-title-sm font-bold text-status-blue',
+            { tooltip: !authStore.isLoggedIn },
+          ]"
+          :data-tip="
+            !authStore.isLoggedIn
+              ? '로그인 후 적합도를 확인할 수 있습니다.'
+              : null
+          "
+        >
+          {{ authStore.isLoggedIn ? productDetail.score + ' %' : '??' }}
         </p>
       </div>
     </BaseCard>
@@ -201,6 +206,9 @@
 <script setup>
 import { computed } from 'vue';
 import BaseCard from '@/components/common/BaseCard.vue';
+import { useAuthStore } from '@/stores/authStore';
+
+const authStore = useAuthStore();
 
 const props = defineProps({
   productDetail: {
