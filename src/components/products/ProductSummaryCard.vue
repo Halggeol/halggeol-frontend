@@ -187,8 +187,18 @@
             <span class="underline">나와의 적합도</span>
           </div>
         </h3>
-        <p class="text-title-sm font-bold text-status-blue">
-          {{ productDetail.score }} %
+        <p
+          :class="[
+            'text-title-sm font-bold text-status-blue',
+            { tooltip: !authStore.isLoggedIn },
+          ]"
+          :data-tip="
+            !authStore.isLoggedIn
+              ? '로그인 후 적합도를 확인할 수 있습니다.'
+              : null
+          "
+        >
+          {{ authStore.isLoggedIn ? productDetail.score + ' %' : '??' }}
         </p>
       </div>
     </BaseCard>
@@ -201,6 +211,9 @@
 <script setup>
 import { computed } from 'vue';
 import BaseCard from '@/components/common/BaseCard.vue';
+import { useAuthStore } from '@/stores/authStore';
+
+const authStore = useAuthStore();
 
 const props = defineProps({
   productDetail: {
