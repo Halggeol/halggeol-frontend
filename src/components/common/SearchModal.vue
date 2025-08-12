@@ -165,7 +165,6 @@ const searchFromList = keyword => {
   searchQuery.value = keyword;
   performSearch();
 };
-
 const clearSearch = () => {
   searchQuery.value = '';
   searchInput.value?.focus();
