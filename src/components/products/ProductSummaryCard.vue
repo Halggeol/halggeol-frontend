@@ -72,11 +72,8 @@
         <!-- 수익률 -->
         <div class="text-center">
           <h3 class="text-callout font-medium text-fg-secondary mb-3">
-            <div
-              class="tooltip"
-              data-tip="총보수율(TER)을 제외한 수익률입니다."
-            >
-              <span class="underline"> 3개월 수익률 </span>
+            <div class="tooltip" data-tip="3개월간 변동 수치">
+              <span class="underline"> 기준가 변동 </span>
             </div>
           </h3>
           <p
@@ -84,10 +81,8 @@
             :class="getPriceMovementColor(productDetail.fundPriceMovement)"
           >
             {{
-              productDetail.fundPriceMovement ||
-              productDetail.rate + '%' ||
-              '-'
-            }}%
+              productDetail.fundPriceMovement || productDetail.rate + '%' || '-'
+            }}
           </p>
         </div>
 
