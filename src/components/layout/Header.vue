@@ -73,6 +73,11 @@ const goTo = path => {
 };
 
 async function handleLogout() {
+  closeUserModal();
+  if (interval) {
+    clearInterval(interval);
+    interval = null;
+  }
   await logout();
 
   authStore.logout();
@@ -218,6 +223,7 @@ onUnmounted(() => {
     </nav>
     <SearchModal
       :is-open="isSearchModalOpen"
+      :is-logged-in="authStore.isLoggedIn"
       @update:is-open="isSearchModalOpen = $event"
       @search="handleSearch"
     />

@@ -58,24 +58,58 @@
       </div>
 
       <div class="mt-6 flex">
-        <div class="w-1/2 pr-3">
+        <div v-if="isLoggedIn" class="w-1/2 pr-3 relative pb-8">
           <h3 class="text-lg font-bold mb-3">최근 검색어</h3>
           <ul v-if="recentSearches.length > 0">
             <li
               v-for="(item, index) in recentSearches"
               :key="`recent-${index}`"
               @click="searchFromList(item.keyword)"
-              class="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-100 rounded px-2"
+              class="group flex justify-between items-center py-2 cursor-pointer hover:bg-gray-100 rounded px-2"
             >
               <span>{{ item.keyword || '' }}</span>
+              <button
+                @click.stop="removeRecentSearch(item.keyword)"
+                class="p-1 text-gray-400 hover:text-gray-700 opacity-60 hover:opacity-100 transition-opacity"
+                title="삭제"
+              >
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
             </li>
           </ul>
           <p v-else class="text-gray-500 text-sm p-2">
             최근 검색 기록이 없습니다.
           </p>
+          <div
+            class="absolute bottom-0 right-6"
+            v-if="recentSearches.length > 0"
+          >
+            <button
+              @click="removeAllRecentSearches"
+              class="text-sm text-gray-500 hover:text-gray-800"
+            >
+              전체 삭제
+            </button>
+          </div>
         </div>
 
-        <div class="w-1/2 pl-3">
+        <div
+          :class="[
+            isLoggedIn ? 'w-1/2 pl-3 border-l border-gray-200' : 'w-full',
+          ]"
+        >
           <h3 class="text-lg font-bold mb-3">인기 검색어</h3>
           <ul v-if="popularSearches.length > 0">
             <li
@@ -99,12 +133,21 @@
 
 <script setup>
 import { ref, watch, nextTick } from 'vue';
-import { getRecentSearches, getPopularSearches } from '@/api/search';
+import {
+  getRecentSearches,
+  getPopularSearches,
+  deleteRecentSearch,
+  deleteAllRecentSearches,
+} from '@/api/search';
 
 const props = defineProps({
   isOpen: {
     type: Boolean,
     default: false,
+  },
+  isLoggedIn: {
+    type: Boolean,
+    default: false, // 로그인 상태를 prop으로 받습니다.
   },
 });
 
@@ -138,19 +181,28 @@ const fetchPopularSearches = async () => {
 
 watch(
   () => props.isOpen,
-  isOpen => {
-    if (isOpen) {
+  newIsOpen => {
+    if (newIsOpen) {
       nextTick(() => searchInput.value?.focus());
-      fetchRecentSearches();
+      // 로그인 상태일 때만 최근 검색어를 불러옵니다.
+      if (props.isLoggedIn) {
+        fetchRecentSearches();
+      }
+      // 인기 검색어는 항상 불러옵니다.
       fetchPopularSearches();
     } else {
       searchQuery.value = '';
+      // 모달이 닫힐 때 목록을 비워 다음 열릴 때 이전 데이터가 보이지 않게 합니다.
+      if (props.isLoggedIn) {
+        recentSearches.value = [];
+      }
+      popularSearches.value = [];
     }
   }
 );
 
 const performSearch = () => {
-  if (!searchQuery.value) {
+  if (!searchQuery.value?.trim()) {
     return; // 유효하지 않으면 아무것도 하지 않고 함수를 즉시 종료합니다.
   }
   const query = searchQuery.value.trim();
@@ -165,6 +217,7 @@ const searchFromList = keyword => {
   searchQuery.value = keyword;
   performSearch();
 };
+
 const clearSearch = () => {
   searchQuery.value = '';
   searchInput.value?.focus();
@@ -172,5 +225,27 @@ const clearSearch = () => {
 
 const closeModal = () => {
   emit('update:isOpen', false);
+};
+
+const removeRecentSearch = async keyword => {
+  try {
+    const success = await deleteRecentSearch(keyword);
+    if (success) {
+      await fetchRecentSearches();
+    }
+  } catch (error) {
+    console.error('최근 검색어 삭제 처리 실패: ', error);
+  }
+};
+
+const removeAllRecentSearches = async () => {
+  try {
+    const success = await deleteAllRecentSearches();
+    if (success) {
+      await fetchRecentSearches();
+    }
+  } catch (error) {
+    console.error('최근 검색어 전체 삭제 처리 실패: ', error);
+  }
 };
 </script>
