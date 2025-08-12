@@ -178,6 +178,8 @@ watch(
       nextTick(() => searchInput.value?.focus());
       fetchRecentSearches();
       fetchPopularSearches();
+      fetchRecentSearches();
+      fetchPopularSearches();
     } else {
       searchQuery.value = '';
     }
