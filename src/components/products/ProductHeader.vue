@@ -97,11 +97,7 @@
             : 'flex flex-col gap-3 mt-auto',
         ]"
       >
-        <div
-          :disabled="authStore.isLoggedIn"
-          class="tooltip"
-          data-tip="로그인 후 시도할 수 있습니다."
-        >
+        <div v-if="authStore.isLoggedIn">
           <BaseButton
             :label="'관심상품'"
             :size="isScrolled ? 'xs' : 'sm'"
