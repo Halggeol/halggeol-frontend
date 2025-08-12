@@ -17,6 +17,7 @@ export default {
     screens: {
       mobile: { max: '767px' },
       tablet: { raw: '(min-width: 768px) and (max-width: 1023px)' },
+      wide: { min: '1536px' },
     },
     fontFamily: {
       sans: ['Pretendard', ...defaultTheme.fontFamily.sans],
@@ -41,17 +42,26 @@ export default {
       colors: {
         // 주요 컬러 - 일단 스켈레톤 사용 색으로 지정. gray 영역은 tailwind 기본 색상 사용
         primary: {
-          ...generateColors('#A2A8AF'),
+          ...generateColors('#696E76'), // #FF5858(빨간 계열로 가면), #FFD338(국민은행)
         },
         secondary: {
-          ...generateColors('#E0E2E4'),
+          ...generateColors('#C6CBD0'), // #383838(빨간 계열로 가면), #FFBC00(국민은행)
+        },
+        'gray-primary': {
+          ...generateColors('#60584C'), // 국민은행
+        },
+        'gray-secondary': {
+          ...generateColors('#918274'), // 국민은행
         },
         // 폰트 컬러
         'fg-primary': {
-          ...generateColors('#25282B'),
+          ...generateColors('#26282c'),
         },
         'fg-secondary': {
-          ...generateColors('#6D757E'),
+          ...generateColors('#696E76'),
+        },
+        'fg-gray': {
+          ...generateColors('#C6CBD0'),
         },
         // 기본 상태
         'status-blue': { ...generateColors('#287EFF') },
