@@ -58,7 +58,7 @@
       </div>
 
       <div class="mt-6 flex">
-        <div class="w-1/2 pr-3 relative pb-8">
+        <div v-if="isLoggedIn" class="w-1/2 pr-3 relative pb-8">
           <h3 class="text-lg font-bold mb-3">최근 검색어</h3>
           <ul v-if="recentSearches.length > 0">
             <li
@@ -105,7 +105,11 @@
           </div>
         </div>
 
-        <div class="w-1/2 pl-3 border-l border-gray-200">
+        <div
+          :class="[
+            isLoggedIn ? 'w-1/2 pl-3 border-l border-gray-200' : 'w-full',
+          ]"
+        >
           <h3 class="text-lg font-bold mb-3">인기 검색어</h3>
           <ul v-if="popularSearches.length > 0">
             <li
@@ -141,6 +145,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isLoggedIn: {
+    type: Boolean,
+    default: false, // 로그인 상태를 prop으로 받습니다.
+  },
 });
 
 const emit = defineEmits(['update:isOpen', 'search']);
@@ -173,15 +181,22 @@ const fetchPopularSearches = async () => {
 
 watch(
   () => props.isOpen,
-  isOpen => {
-    if (isOpen) {
+  newIsOpen => {
+    if (newIsOpen) {
       nextTick(() => searchInput.value?.focus());
-      fetchRecentSearches();
-      fetchPopularSearches();
-      fetchRecentSearches();
+      // 로그인 상태일 때만 최근 검색어를 불러옵니다.
+      if (props.isLoggedIn) {
+        fetchRecentSearches();
+      }
+      // 인기 검색어는 항상 불러옵니다.
       fetchPopularSearches();
     } else {
       searchQuery.value = '';
+      // 모달이 닫힐 때 목록을 비워 다음 열릴 때 이전 데이터가 보이지 않게 합니다.
+      if (props.isLoggedIn) {
+        recentSearches.value = [];
+      }
+      popularSearches.value = [];
     }
   }
 );
