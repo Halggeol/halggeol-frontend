@@ -1,14 +1,12 @@
 import api from '@/utils/axios';
 
-const baseUrl = `/insight/details`;
-
 export const getInsightDetail = async (round, productId) => {
-  const response = await api.get(baseUrl, { params: { round, productId } });
+  const response = await api.get(`/insight/${round}/products/${productId}`);
   return response.data;
 };
 
 export const submitRegretSurvey = async surveyData => {
-  const response = await api.patch(baseUrl, surveyData);
+  const response = await api.patch(`/insight/feedback`, surveyData);
   return response.data;
 };
 
@@ -24,6 +22,17 @@ export const mapRegretInsightResponse = data => {
 
 // 후회 시뮬레이션 카드
 export const mapRegretSimulationResponse = data => {
+  if (!data) {
+    return {
+      prefix: null,
+      asset: null,
+      isCompound: null,
+      rate: null,
+      saveTerm: null,
+      minLimit: null,
+      maxLimit: null,
+    };
+  }
   const prefix = data.id[0];
   const asset = data.forexInfo?.[0]?.asset ?? data.profits?.[0]?.asset;
   const isAggressive = prefix === 'A' || prefix === 'F';
@@ -37,7 +46,7 @@ export const mapRegretSimulationResponse = data => {
     prefix,
     asset: asset,
     isCompound: data.isCompound,
-    rate: data.interestRate,
+    interestRate: data.interestRate,
     saveTerm: saveTerm,
     minLimit: minLimit,
     maxLimit: maxLimit,
@@ -46,6 +55,12 @@ export const mapRegretSimulationResponse = data => {
 
 // 후회 날씨
 export const mapRegretWeatherResponse = data => {
+  if (!data) {
+    return {
+      regretScore: null,
+      missAmount: null,
+    };
+  }
   return {
     regretScore: data.regretScore,
     missAmount: data.missAmount,
@@ -54,6 +69,13 @@ export const mapRegretWeatherResponse = data => {
 
 // AI 요약
 export const mapAISummaryResponse = data => {
+  if (!data) {
+    return {
+      summary: null,
+      good: null,
+      bad: null,
+    };
+  }
   return {
     summary: data.description,
     good: data.advantage,
@@ -63,6 +85,15 @@ export const mapAISummaryResponse = data => {
 
 // 후회 피드백 설문
 export const mapRegretFeedbackResponse = data => {
+  if (!data) {
+    return {
+      userName: null,
+      productId: null,
+      isSurveyed: null,
+      isRegretted: null,
+      regrettedReason: null,
+    };
+  }
   return {
     userName: data.name,
     productId: data.id,
@@ -82,11 +113,14 @@ export const mapSimilarProductsResponse = data => {
 };
 
 function getSaveTerm(start, end) {
+  if (!start || !end) return null;
+
   const startDate = new Date(start);
   const endDate = new Date(end);
 
   const yearDiff = endDate.getFullYear() - startDate.getFullYear();
   const monthDiff = endDate.getMonth() - startDate.getMonth();
+  // const dateDiff = endDate.getDate() - startDate.getDate();
 
   return yearDiff * 12 + monthDiff;
 }

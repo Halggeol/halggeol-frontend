@@ -203,25 +203,13 @@ router.beforeEach((to, _from, next) => {
 });
 
 // 첫 페이지 로딩에 불필요한 페이지 이후 로딩
-const pagesToPrefetch = [
-  '@/pages/products/ProductsDetailPage.vue',
-  '@/pages/user/myproduct/MyProductPage.vue',
-  '@/pages/products/ProductsListPage.vue',
-  '@/pages/insight/InsightPage.vue',
-  '@/pages/insight/InsightCollectionPage.vue',
-  '@/pages/user/mypage/MyPage.vue',
-  '@/pages/user/mypage/TermsPage.vue',
-  '@/pages/user/survey/SurveyPage.vue',
-  '@/pages/ScrapPage.vue',
-  '@/pages/user/auth/SyncMydataPage.vue',
-  '@/pages/user/auth/FindPage.vue',
-];
+const modulesToPrefetch = import.meta.glob('@/pages/**/*.vue');
 
 router.afterEach(() => {
   setTimeout(() => {
-    pagesToPrefetch.forEach(pagePath => {
-      import(/* @vite-ignore */ pagePath);
-    });
+    for (const importer in modulesToPrefetch) {
+      modulesToPrefetch[importer]();
+    }
   }, 3000);
 });
 

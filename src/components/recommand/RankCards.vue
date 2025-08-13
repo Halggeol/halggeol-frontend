@@ -2,6 +2,8 @@
 import BaseCard from '../common/BaseCard.vue';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import Tooltiip from '../icons/Tooltiip.vue';
+import CheckCircle from '../icons/CheckCircle.vue';
 
 const router = useRouter();
 
@@ -34,44 +36,52 @@ function hideHighRisk() {
   showHighRisk.value = !showHighRisk.value;
 }
 
-// 카테고리 매핑
-const categoryMap = {
-  D: '예금',
-  S: '적금',
-  A: '연금',
-  C: '연금',
-  F: '펀드',
-  X: '외환',
+const productTypeConfig = {
+  D: { name: '예금', bgColor: 'bg-savings', textColor: 'text-fg-savings' },
+  S: { name: '적금', bgColor: 'bg-cash', textColor: 'text-fg-cash' },
+  A: {
+    name: '연금',
+    bgColor: 'bg-aggressive',
+    textColor: 'text-fg-aggressive',
+  },
+  C: { name: '연금', bgColor: 'bg-pension', textColor: 'text-fg-pension' },
+  F: { name: '펀드', bgColor: 'bg-fund', textColor: 'text-fg-fund' },
+  X: { name: '외환', bgColor: 'bg-forex', textColor: 'text-fg-forex' },
+  default: {
+    name: '기타',
+    bgColor: 'bg-[#F7F7F8]',
+    textColor: 'text-fg-primary',
+  },
 };
 </script>
 
 <template>
   <div class="pb-12 pt-40 flex justify-between align-center">
     <h2 class="title01">
-      이때 살 걸 금융상품 랭킹
+      이때 살걸 금융상품 랭킹
       <span
         class="inline-block relative group ml-1 tooltip"
         data-tip="많은 사용자가 가입하지 않아 후회한 금융상품"
       >
-        <i class="text-caption text-gray-400 cursor-pointer">ⓘ</i>
-        <!-- 툴팁 박스 수정 -->
+        <Tooltiip class="text-fg-secondary" />
       </span>
     </h2>
     <!-- 아이콘 추후 수정 -->
-    <p class="cursor-pointer" @click="hideHighRisk">
-      <i>{{ showHighRisk ? ' ⃝' : '⦿' }}</i
-      >고위험상품 숨기기
+    <p class="cursor-pointer flex items-center" @click="hideHighRisk">
+      <CheckCircle :checked="!showHighRisk" class="w-5 h-5 mr-2" />
+      고위험상품 숨기기
     </p>
   </div>
-  <div class="ranking pb-40 grid grid-rows-2 grid-cols-3 gap-6">
+  <div class="ranking grid grid-rows-2 grid-cols-3 gap-6 tablet:gap-4">
     <BaseCard
       v-if="topItem"
       @click="goToDetail(topItem.productId)"
       variant="tinted"
       size="lg"
-      class="row-span-2"
       :class="[
-        'cursor-pointer',
+        'row-span-2 cursor-pointer',
+        (productTypeConfig[topItem.productId[0]] || productTypeConfig.default)
+          .bgColor,
         !showHighRisk && isHighRisk(topItem.risk)
           ? 'opacity-50 pointer-events-none'
           : '',
@@ -82,9 +92,22 @@ const categoryMap = {
           <span class="title02 mt-6">1</span>
           <!-- 등락 표기 -->
           <div class="rank-content flex-1">
-            <span class="text-body02 mb-1">{{
-              categoryMap[topItem.productId[0]]
-            }}</span>
+            <span
+              class="text-body02 mb-2"
+              :class="
+                (
+                  productTypeConfig[topItem.productId[0]] ||
+                  productTypeConfig.default
+                ).textColor
+              "
+            >
+              {{
+                (
+                  productTypeConfig[topItem.productId[0]] ||
+                  productTypeConfig.default
+                ).name
+              }}
+            </span>
             <p class="title02 mb-2 line-clamp-2">
               {{ topItem.productName }}
             </p>
@@ -120,9 +143,14 @@ const categoryMap = {
         <span class="title02 mt-6">{{ item.rank }}</span>
         <!-- 등락 표기 -->
         <div class="rank-content">
-          <span class="text-body02 mb-1">{{
-            categoryMap[item.productId[0]]
-          }}</span>
+          <span class="text-body02 mb-2 text-fg-primary">
+            {{
+              (
+                productTypeConfig[item.productId[0]] ||
+                productTypeConfig.default
+              ).name
+            }}
+          </span>
           <p class="title02 mb-2 line-clamp-2">{{ item.productName }}</p>
           <span
             v-if="isHighRisk(item.risk)"
