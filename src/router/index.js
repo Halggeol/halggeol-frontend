@@ -1,5 +1,7 @@
 // import { createRouter, createWebHistory } from 'vue-router';
 import { createRouter, createWebHashHistory } from 'vue-router'; // 배포용
+import { useAuthStore } from '@/stores/authStore';
+
 // Layout
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
 import SideBarLayout from '@/layouts/SideBarLayout.vue';
@@ -7,7 +9,8 @@ import UserLayout from '@/layouts/UserLayout.vue';
 
 // 미리 로딩할 페이지
 import HomePage from '@/pages/HomePage.vue';
-import NotFound from '@/pages/NotFound.vue';
+import NotFound from '@/pages/NotFoundPage.vue';
+import Error500 from '@/pages/Error500Page.vue';
 import LoginPage from '@/pages/user/auth/LoginPage.vue';
 import SignupPage from '@/pages/user/auth/SignupPage.vue';
 
@@ -15,7 +18,7 @@ import SignupPage from '@/pages/user/auth/SignupPage.vue';
 const insightNavItems = [
   { to: '/insight', label: '회고 인사이트' },
   { to: '/insight/fund', label: '펀드 모아보기' },
-  { to: '/insight/aggressive', label: '공격형 연금 모아보기' },
+  { to: '/insight/aggressive', label: '공격형연금 모아보기' },
 ];
 
 const mypageNavItems = [
@@ -46,7 +49,7 @@ const commonRoutes = [
   {
     path: '/insight',
     component: SideBarLayout,
-    meta: { navItems: insightNavItems },
+    meta: { navItems: insightNavItems, requiresAuth: true },
     children: [
       {
         path: '',
@@ -83,10 +86,12 @@ const commonRoutes = [
       },
     ],
   },
+
   // 관심상품
   {
     path: '/scrap',
     component: DefaultLayout,
+    meta: { requiresAuth: true },
     children: [
       {
         path: '',
@@ -95,6 +100,7 @@ const commonRoutes = [
       },
     ],
   },
+
   // 가입상품
   {
     path: '/myproduct',
@@ -162,23 +168,17 @@ const commonRoutes = [
     ],
   },
 
-  // 마이페이지-재설문
-  {
-    path: '/mypage',
-    component: UserLayout,
-    children: [
-      {
-        path: 'survey/:type', // knowledge, tendency
-        name: 'mypage/survey',
-        component: () => import('@/pages/user/survey/SurveyPage.vue'),
-      },
-    ],
-  },
   // 404 페이지
   {
     path: '/:catchAll(.*)',
     name: 'NotFound',
     component: NotFound,
+  },
+  // 505 페이지
+  {
+    path: '/500',
+    name: '500',
+    components: Error500,
   },
 ];
 
@@ -190,29 +190,38 @@ const router = createRouter({
   routes,
 });
 
-// 전역 가드 (로그인 여부 확인 등)
-// router.beforeEach((to, from, next) => {
-//   if (to.meta.requiresAuth && !localStorage.getItem('userToken')) {
-//     next('/login') // 토큰이 없으면 로그인 페이지로 리다이렉트
-//   } else {
-//     next()
-//   }
-// })
+// 로그인 필요 페이지 전역 가드
+router.beforeEach((to, _from, next) => {
+  const authStore = useAuthStore();
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  if (requiresAuth && !authStore.isLoggedIn) {
+    console.log('Unauthorized (Pinia), redirecting to login...');
+    next('/login');
+  } else {
+    next();
+  }
+});
 
 // 첫 페이지 로딩에 불필요한 페이지 이후 로딩
-router.afterEach((to, from) => {
+const pagesToPrefetch = [
+  '@/pages/products/ProductsDetailPage.vue',
+  '@/pages/user/myproduct/MyProductPage.vue',
+  '@/pages/products/ProductsListPage.vue',
+  '@/pages/insight/InsightPage.vue',
+  '@/pages/insight/InsightCollectionPage.vue',
+  '@/pages/user/mypage/MyPage.vue',
+  '@/pages/user/mypage/TermsPage.vue',
+  '@/pages/user/survey/SurveyPage.vue',
+  '@/pages/ScrapPage.vue',
+  '@/pages/user/auth/SyncMydataPage.vue',
+  '@/pages/user/auth/FindPage.vue',
+];
+
+router.afterEach(() => {
   setTimeout(() => {
-    import('@/pages/products/ProductsDetailPage.vue');
-    import('@/pages/user/myproduct/MyProductPage.vue');
-    import('@/pages/products/ProductsListPage.vue');
-    import('@/pages/insight/InsightPage.vue');
-    import('@/pages/insight/InsightCollectionPage.vue');
-    import('@/pages/user/mypage/MyPage.vue');
-    import('@/pages/user/mypage/TermsPage.vue');
-    import('@/pages/user/survey/SurveyPage.vue');
-    import('@/pages/ScrapPage.vue');
-    import('@/pages/user/auth/SyncMydataPage.vue');
-    import('@/pages/user/auth/FindPage.vue');
+    pagesToPrefetch.forEach(pagePath => {
+      import(/* @vite-ignore */ pagePath);
+    });
   }, 3000);
 });
 

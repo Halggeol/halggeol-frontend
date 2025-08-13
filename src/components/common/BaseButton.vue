@@ -1,5 +1,5 @@
 <!-- 사용 방법
-props: 
+props:
 - size: 버튼 크기 [sm|md(default)|lg]
 - variant: 버튼 스타일 [outline|filled(default)|ghost]
 - disabled: 버튼 비활성화 여부
@@ -43,9 +43,9 @@ const props = defineProps({
     type: String,
     default: '시작하기',
   },
-})
+});
 
-import { computed } from 'vue'
+import { computed } from 'vue';
 // 기본 레이아웃
 const baseClass = computed(() => {
   return [
@@ -53,50 +53,54 @@ const baseClass = computed(() => {
     (props.hasIconFst || props.hasIconLst) && 'gap-2',
   ]
     .filter(Boolean)
-    .join(' ')
-})
+    .join(' ');
+});
 
 // 버튼 사이즈
 const sizeClass = computed(() => {
   switch (props.size) {
     case 'sm':
-      return 'px-6 py-4'
+      return 'px-6 py-4';
     case 'lg':
-      return 'w-full py-3'
+      return 'w-full py-3';
     default:
-      return 'w-1/4 py-4'
+      return 'w-1/4 py-4';
   }
-})
+});
 
 // 버튼 스타일+비활성화 여부
 const variantClass = computed(() => {
   if (props.disabled) {
     switch (props.variant) {
       case 'outline':
-        return 'border border-gray-300 bg-transparent text-gray-300 cursor-not-allowed'
+        return 'border border-fg-gray bg-transparent text-fg-gray cursor-not-allowed';
       case 'ghost':
-        return 'bg-transparent text-gray-300 cursor-not-allowed'
+        return 'bg-transparent text-fg-gray cursor-not-allowed';
       default:
-        return 'bg-gray-100 text-gray-300 cursor-not-allowed'
+        return 'bg-[#EBEEF0] text-fg-gray cursor-not-allowed';
     }
   }
   switch (props.variant) {
     case 'outline':
-      return 'border border-gray-400 bg-transparent text-fg-primary'
+      return 'border border-fg-secondary bg-transparent text-fg-primary hover:bg-[#EBEEF0]';
     case 'ghost':
-      return 'bg-transparent text-primary'
+      return 'bg-transparent text-primary';
     default:
-      return 'bg-primary text-white'
+      return 'bg-primary text-white';
   }
-})
+});
 
 // 클릭 이벤트
-const emit = defineEmits(['click'])
+const emit = defineEmits(['click']);
 </script>
 
 <template>
   <!-- 버튼 영역 -->
-  <button :class="[baseClass, sizeClass, variantClass]" :disabled="disabled" @click="emit('click')">
+  <button
+    :class="[baseClass, sizeClass, variantClass]"
+    :disabled="disabled"
+    @click="emit('click')"
+  >
     <slot name="icon_fst" v-if="hasIconFst" />
     {{ label }}
     <slot name="icon_lst" v-if="hasIconLst" />

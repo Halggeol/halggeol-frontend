@@ -36,22 +36,20 @@ const user = reactive({
 });
 
 const renewDate = computed(() => {
-  if (surveyType.value === 'knowledge')
-    return user.knowledgeRenewDate;
-  else if (surveyType.value === 'tendency')
-    return user.investmentTypeRenewDate;
+  if (surveyType.value === 'knowledge') return user.knowledgeRenewDate;
+  else if (surveyType.value === 'tendency') return user.investmentTypeRenewDate;
   return '';
-})
+});
 
 const result = ref({
   message: '',
-  success: false
+  success: false,
 });
 
 // 버튼 핸들러
 const changePassword = () => {
   isResetPasswordModalOpen.value = true;
-}
+};
 
 const retakeKnowledgeTest = () => {
   surveyType.value = 'knowledge';
@@ -72,8 +70,8 @@ const changeInsightCycle = () => {
 };
 
 onMounted(() => {
- setUserInfo();
-})
+  setUserInfo();
+});
 
 function convertCycleString(cycle) {
   if (cycle === 'WEEKLY_1') return '1주';
@@ -84,7 +82,7 @@ function convertCycleString(cycle) {
 
 function handleRetakeSurveyConfirm() {
   isRetakeSurveyModalOpen.value = false;
-  router.push(`/mypage/survey/${surveyType.value}`);
+  router.push(`/signup/survey/${surveyType.value}`);
 }
 
 async function setUserInfo() {
@@ -97,7 +95,7 @@ async function setUserInfo() {
     if (!response.data || !response.data.profile) {
       result.value = {
         message: '사용자 정보가 없습니다.',
-        success: false
+        success: false,
       };
     }
 
@@ -112,11 +110,10 @@ async function setUserInfo() {
     user.investmentType = profile.risk;
     user.investmentTypeRenewDate = profile.riskRenewDate;
     user.insightCycle = profile.insightCycle;
-
   } catch (error) {
     result.value = {
       message: '사용자 정보 조회에 실패했습니다.',
-      success: false
+      success: false,
     };
   }
 }
@@ -124,14 +121,13 @@ async function setUserInfo() {
 function handleCycleChanged(newCycle) {
   user.insightCycle = newCycle;
 }
-
 </script>
 
 <template>
   <div class="w-full mx-auto mt-8 p-6">
     <!-- 제목 -->
     <h2 class="title01 font-bold mb-2 text-left">내 정보</h2>
-    <hr class="mb-10"/>
+    <hr class="mb-10" />
 
     <!-- 정보 리스트 -->
     <div class="space-y-6 text-sm">
@@ -208,7 +204,9 @@ function handleCycleChanged(newCycle) {
       <!-- 인사이트 주기 -->
       <div class="flex items-center justify-between w-full">
         <div class="w-1/3 font-medium text-gray-800">인사이트 제공 주기</div>
-        <div class="w-1/2 text-gray-900">{{ convertCycleString(user.insightCycle) }}</div>
+        <div class="w-1/2 text-gray-900">
+          {{ convertCycleString(user.insightCycle) }}
+        </div>
         <div class="w-1/3 text-right">
           <button
             class="text-gray-400 text-sm hover:text-gray-600 hover:underline"
@@ -222,7 +220,10 @@ function handleCycleChanged(newCycle) {
 
     <!-- 탈퇴하기 버튼 -->
     <div class="my-28">
-      <button class="text-sm text-gray-400 hover:underline" @click="leaveService">
+      <button
+        class="text-sm text-gray-400 hover:underline"
+        @click="leaveService"
+      >
         탈퇴하기
       </button>
     </div>
