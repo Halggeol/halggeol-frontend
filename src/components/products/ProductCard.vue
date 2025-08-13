@@ -5,13 +5,16 @@
   >
     <!-- 왼쪽 정보 영역 -->
     <div class="flex-1">
-      <p class="text-sm text-gray-500">{{ product.company }}</p>
-      <h3 class="text-lg font-semibold mt-1">{{ product.name }}</h3>
+      <p class="text-footnote text-fg-secondary">{{ product.company }}</p>
+      <h3 class="text-body02 font-bold text-fg-primary mt-1">
+        {{ product.name }}
+      </h3>
 
       <!-- 태그들 -->
       <div class="mt-2 flex flex-wrap gap-2">
         <span
-          class="text-[13px] bg-blue-500 text-white px-2 py-[2px] rounded-full"
+          class="text-[13px] px-2 py-[2px] rounded-full"
+          :style="getProductTypeStyles(product.type)"
         >
           {{ getProductTypeLabel(product.type) }}
         </span>
@@ -19,7 +22,7 @@
         <!-- tag1 -->
         <span
           v-if="product.tag1"
-          class="text-[13px] bg-green-500 text-white px-2 py-[2px] rounded-full"
+          class="text-[13px] bg-[#83BCFF] text-white px-2 py-[2px] rounded-full"
         >
           {{ formatTag1(product.tag1, product.type) }}
         </span>
@@ -27,7 +30,7 @@
         <!-- tag2 -->
         <span
           v-if="product.tag2"
-          class="text-[13px] bg-purple-500 text-white px-2 py-[2px] rounded-full"
+          class="text-[13px] bg-[#62CDE7] text-white px-2 py-[2px] rounded-full"
         >
           {{ formatTag2(product.tag2, product.type) }}
         </span>
@@ -35,7 +38,7 @@
         <!-- tag3 -->
         <span
           v-if="product.tag3"
-          class="text-[13px] bg-orange-500 text-white px-2 py-[2px] rounded-full"
+          class="text-[13px] bg-[#6CD18C] text-white px-2 py-[2px] rounded-full"
         >
           {{ formatTag3(product.tag3, product.type) }}
         </span>
@@ -140,6 +143,25 @@ const getProductTypeLabel = type => {
     forex: '외화',
   };
   return typeMap[normalizedType] || normalizedType;
+};
+
+// 상품 유형별 색상 클래스 반환 함수
+const getProductTypeStyles = type => {
+  const normalizedType = normalizeType(type);
+  const styleMap = {
+    deposit: { backgroundColor: '#FFEFEE', color: '#FB0000' },
+    savings: { backgroundColor: '#FFF4DF', color: '#F95A00' },
+    fund: { backgroundColor: '#ECF0FF', color: '#1544BC' },
+    pension: { backgroundColor: '#F9EFFA', color: '#CC0CCC' },
+    forex: { backgroundColor: '#F9EFE3', color: '#995C14' },
+  };
+  // 해당하는 타입이 없으면 기본 회색 스타일을 반환
+  return (
+    styleMap[normalizedType] || {
+      backgroundColor: '#6B7280',
+      color: '#FFFFFF',
+    }
+  );
 };
 
 // 금융권 라벨 변환

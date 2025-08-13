@@ -13,7 +13,7 @@
           @update:sort="handleSortChange"
         />
       </div>
-      <h2 class="text-2xl font-bold mb-6 text-gray-800">상품 목록</h2>
+      <h2 class="text-body01 font-bold mb-6 text-gray-800">상품 목록</h2>
 
       <div v-if="searchQuery" class="mb-4 text-gray-600">
         <span class="font-bold">"{{ searchQuery }}"</span>에 대한 검색
@@ -39,7 +39,7 @@
 
       <div
         v-else-if="products.length === 0"
-        class="text-gray-600 text-center py-10"
+        class="text-body02 text-gray-600 text-center py-10"
       >
         <p v-if="searchQuery">검색 결과가 없습니다.</p>
         <p v-else>해당 조건에 맞는 상품이 없습니다.</p>

@@ -6,8 +6,8 @@
       v-show="isTypeVisible(type)"
       class="bg-white rounded-xl shadow-md overflow-hidden"
     >
-      <div class="px-6 py-4 bg-gray-100 border-b border-gray-200">
-        <h2 class="text-xl font-bold text-gray-800">
+      <div class="px-6 py-4 bg-primary border-b border-secondary">
+        <h2 class="text-title03 text-white">
           {{ getProductTypeLabel(type) }}
         </h2>
       </div>

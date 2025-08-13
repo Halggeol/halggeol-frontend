@@ -7,7 +7,7 @@
 
     <div class="flex-1 p-5 h-screen overflow-y-auto">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl font-bold text-gray-800">관심 상품 목록</h2>
+        <h2 class="text-body01 font-bold text-gray-800">관심 상품 목록</h2>
         <ProductSort
           :modelValue="currentSort"
           @update:sort="handleSortChange"
