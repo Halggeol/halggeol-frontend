@@ -19,7 +19,7 @@ const result = ref({ message: '', success: false });
 const options = [
   { value: 'WEEKLY_1', label: '1주' },
   { value: 'WEEKLY_2', label: '2주' },
-  { value: 'MONTHLY_1', label: '1달' }
+  { value: 'MONTHLY_1', label: '1개월' }
 ];
 
 const canSubmit = computed(() => selected.value !== props.currentCycle && !loading.value);
