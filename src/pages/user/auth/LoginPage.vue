@@ -79,15 +79,15 @@ async function handleLoginSubmit() {
 function inputStyleClass(field) {
   return [
     'w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors',
-    errors.value[field] ? 'border-red-500 bg-red-100 placeholder-red-500' : 'border-gray-300 focus:border-blue-500',
+    errors.value[field] ? 'border-status-red bg-status-red-100 placeholder-status-red' : 'border-gray-300 focus:border-status-blue',
   ];
 }
 </script>
 
 <template>
-  <div class="h-screen flex items-center justify-center bg-gray-50 relative">
+  <div class="h-[calc(100vh-56px)] flex items-center justify-center bg-gray-50 relative">
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
-      <h2 class="text-center title02 font-bold mb-6">로그인</h2>
+      <h2 class="text-center title02 mb-6">로그인</h2>
 
       <!-- 로그인 폼 -->
       <form @submit.prevent novalidate>
@@ -101,7 +101,7 @@ function inputStyleClass(field) {
             placeholder="이메일"
             :disabled="result.success"
           />
-          <small v-if="errors.email" class="text-red-500 mt-1 block">{{ errors.email }}</small>
+          <small v-if="errors.email" class="text-status-red mt-1 block">{{ errors.email }}</small>
         </div>
 
         <!-- 비밀번호 -->
@@ -127,7 +127,7 @@ function inputStyleClass(field) {
             </button>
           </div>
 
-          <small v-if="errors.password" class="text-red-500 mt-1 block">{{ errors.password }}</small>
+          <small v-if="errors.password" class="text-status-red mt-1 block">{{ errors.password }}</small>
         </div>
 
         <!-- 로그인 버튼 -->
@@ -144,14 +144,14 @@ function inputStyleClass(field) {
         <!-- 결과 메세지 -->
         <small
           v-if="result.message"
-          :class="result.success ? 'text-green-500' : 'text-red-500'"
+          :class="result.success ? 'text-status-blue' : 'text-status-red'"
           class="mt-1 block pt-2"
         >
           {{ result.message }}
         </small>
 
         <!-- 하단 링크 -->
-        <div class="mt-6 text-center text-xs text-gray-500 space-x-3">
+        <div class="mt-6 text-center text-callout text-fg-secondary space-x-3">
           <RouterLink to="/find" class="hover:underline">아이디 / 비밀번호 찾기</RouterLink>
           <span>|</span>
           <RouterLink to="/signup/request" class="hover:underline">회원가입</RouterLink>

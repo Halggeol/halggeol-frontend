@@ -58,16 +58,16 @@ async function handleEmailSubmit() {
 function inputStyleClass() {
   return [
     'w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors',
-    error.value ? 'border-red-500 bg-red-100 placeholder-red-500' : 'border-gray-300 focus:border-blue-500',
+    error.value ? 'border-status-red bg-red-100 placeholder-status-red' : 'border-gray-300 focus:border-status-blue',
   ];
 }
 
 </script>
 
 <template>
-  <div class="h-screen flex items-center justify-center bg-gray-50 relative">
+  <div class="h-[calc(100vh-56px)] flex items-center justify-center bg-gray-50 relative">
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
-      <h2 class="text-center title02 font-bold mb-6">회원가입</h2>
+      <h2 class="text-center title02 mb-6">회원가입</h2>
 
       <!-- 이메일 인증 폼 -->
       <form @submit.prevent novalidate>
@@ -80,7 +80,7 @@ function inputStyleClass() {
             placeholder="이메일"
             :disabled="result.success"
           />
-          <small v-if="error" class="text-red-500 mt-1 block">{{ error }}</small>
+          <small v-if="error" class="text-status-red mt-1 block">{{ error }}</small>
         </div>
 
         <!-- 본인인증하기 버튼 -->
@@ -97,7 +97,7 @@ function inputStyleClass() {
         <!-- 결과 메세지 -->
         <small
           v-if="result.message"
-          :class="result.success ? 'text-green-500' : 'text-red-500'"
+          :class="result.success ? 'text-status-blue' : 'text-status-red'"
           class="mt-1 block pt-2"
         >
           {{ result.message }}

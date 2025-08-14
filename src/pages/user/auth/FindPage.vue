@@ -128,24 +128,24 @@ async function handleRequestResetPassword() {
 </script>
 
 <template>
-  <div class="h-screen flex items-center justify-center bg-gray-50 relative">
+  <div class="h-[calc(100vh-56px)] flex items-center justify-center bg-gray-50 relative">
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
-      <h2 class="text-center title02 font-bold mb-6">아이디 / 비밀번호 찾기</h2>
+      <h2 class="text-center title02 mb-6">아이디 / 비밀번호 찾기</h2>
 
       <!-- 탭 전환 버튼 -->
       <div class="flex justify-center mb-6 gap-4">
         <button
           @click="switchTab('findId')"
-          :class="['px-4 py-2 rounded-md text-sm font-medium',
-                   activeTab === 'findId' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700']"
+          :class="['px-4 py-2 rounded-md',
+                   activeTab === 'findId' ? 'bg-gray-secondary text-white' : 'bg-gray-100 text-fg-secondary']"
         >
           아이디 찾기
         </button>
 
         <button
           @click="switchTab('resetPassword')"
-          :class="['px-4 py-2 rounded-md text-sm font-medium',
-                   activeTab === 'resetPassword' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700']"
+          :class="['px-4 py-2 rounded-md',
+                   activeTab === 'resetPassword' ? 'bg-gray-secondary text-white' : 'bg-gray-100 text-fg-secondary']"
         >
           비밀번호 재설정
         </button>
@@ -157,14 +157,14 @@ async function handleRequestResetPassword() {
           type="text"
           v-model="name"
           placeholder="이름"
-          class="w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors border-gray-300 focus:border-blue-500"
+          class="w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors border-gray-300 focus:border-status-blue"
         />
         <input
           type="text"
           :value="displayPhone"
           @input="inputPhone"
           placeholder="전화번호"
-          class="w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors border-gray-300 focus:border-blue-500"
+          class="w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors border-gray-300 focus:border-status-blue"
         />
 
         <!-- 아이디 찾기 버튼 -->
@@ -179,7 +179,7 @@ async function handleRequestResetPassword() {
         </BaseButton>
         <small
           v-if="result.message"
-          :class="result.success ? 'text-green-500' : 'text-red-500'"
+          :class="result.success ? 'text-status-blue' : 'text-status-red'"
           class="mt-1 block pt-2"
         >
           {{ result.message }}
@@ -219,7 +219,7 @@ async function handleRequestResetPassword() {
           type="email"
           v-model="email"
           placeholder="가입한 이메일"
-          class="w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors border-gray-300 focus:border-blue-500"
+          class="w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors border-gray-300 focus:border-status-blue"
         />
 
         <!-- 비밀번호 재설정 버튼 -->
@@ -234,7 +234,7 @@ async function handleRequestResetPassword() {
         </BaseButton>
         <small
           v-if="result.message"
-          :class="result.success ? 'text-green-500' : 'text-red-500'"
+          :class="result.success ? 'text-status-blue' : 'text-status-red'"
           class="mt-1 block pt-2"
         >
           {{ result.message }}
