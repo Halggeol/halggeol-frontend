@@ -83,8 +83,8 @@
               class="text-body02 tablet:text-title-sm wide:text-title-sm font-bold text-fg-primary"
             >
               {{
-                productDetail.fundPrice * 10
-                  ? formatCurrency(productDetail.fundPrice * 10, false)
+                productDetail.fundPrice
+                  ? formatCurrency(productDetail.fundPrice, false)
                   : '-'
               }}
             </p>

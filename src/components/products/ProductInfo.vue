@@ -132,7 +132,7 @@
             class="text-footnote tablet:text-body02 wide:text-body02 text-fg-primary font-medium"
             >{{
               // 소수점 첫째자리 까지만
-              (productDetail.fundPrice * 10).toFixed(1)
+              productDetail.fundPrice.toFixed(1)
             }}</span
           >
         </div>

@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'bg-gray-secondary-200',
+      productTypeHeaderBgClass,
       isScrolled
         ? 'py-4 sticky top-0 z-50 shadow-lg'
         : 'py-8 tablet:py-12 wide:py-16',
@@ -22,7 +22,11 @@
           class="flex flex-wrap items-center gap-2 mb-4 tablet:gap-3 wide:gap-3 tablet:mb-6 wide:mb-6"
         >
           <span
-            class="inline-flex items-center px-3 py-1 rounded-full bg-gray-primary text-white text-caption font-medium"
+            :class="[
+              'inline-flex items-center px-3 py-1 rounded-full text-caption font-medium',
+              productTypeBadgeClasses.bg,
+              productTypeBadgeClasses.text,
+            ]"
             >{{ productTypeName }}</span
           >
           <span
@@ -197,6 +201,46 @@ const productTypeName = computed(() => {
     X: '외화',
   };
   return typeMapping[idPrefix.value] || '금융상품';
+});
+
+const productTypeHeaderBgClass = computed(() => {
+  const prefix = idPrefix.value;
+  switch (prefix) {
+    case 'D':
+      return 'bg-cash';
+    case 'S':
+      return 'bg-savings';
+    case 'A':
+      return 'bg-aggressive';
+    case 'C':
+      return 'bg-pension';
+    case 'F':
+      return 'bg-fund';
+    case 'X':
+      return 'bg-forex';
+    default:
+      return 'bg-gray-secondary-200';
+  }
+});
+
+const productTypeBadgeClasses = computed(() => {
+  const prefix = idPrefix.value;
+  switch (prefix) {
+    case 'D':
+      return { bg: 'bg-fg-cash', text: 'text-white' };
+    case 'S':
+      return { bg: 'bg-fg-savings', text: 'text-white' };
+    case 'A':
+      return { bg: 'bg-fg-aggressive', text: 'text-white' };
+    case 'C':
+      return { bg: 'bg-fg-pension', text: 'text-white' };
+    case 'F':
+      return { bg: 'bg-fg-fund', text: 'text-white' };
+    case 'X':
+      return { bg: 'bg-fg-forex', text: 'text-white' };
+    default:
+      return { bg: 'bg-gray-primary', text: 'text-white' };
+  }
 });
 
 const handleAddScrap = async () => {
