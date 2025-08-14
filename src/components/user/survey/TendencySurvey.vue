@@ -12,7 +12,7 @@ const router = useRouter();
 const route = useRoute();
 
 const page = ref(0);
-const questionsPerPage = 5;
+const questionsPerPage = 3;
 
 const answers = ref({});
 const experiences = ref([]);
@@ -289,136 +289,135 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
 </script>
 
 <template>
-  <div class="flex justify-center min-h-screen">
-    <div class="w-[500px] bg-white rounded-lg">
-
-      <!-- 일반 문항 -->
-      <div v-for="q in currentQuestions" :key="q.number" class="mb-6">
-        <p class="font-medium mb-2">
-          <span>
-            {{ q.number }}. {{ q.question }}
-            <span
-              style="font-size: 10px; vertical-align: top;"
-              :class="answers[q.number] === undefined ? 'text-red-500' : 'text-white'"
-            >
-              ●
-            </span>
-          </span>
-        </p>
-        <div class="space-y-2">
-          <div v-for="(opt, idx) in q.options" :key="idx">
-            <button
-              class="w-full text-left px-4 py-2 border rounded"
-              :class="answers[q.number]?.option === idx + 1 ? 'bg-primary text-white' : 'bg-white text-gray-700'"
-              @click="handleAnswer(q.number, idx, opt.score)"
-            >
-              {{ opt.text }}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 투자 경험 문항 (8번) -->
-      <div v-if="(page + 1) * questionsPerPage >= questions.length" class="mb-6">
-        <p class="font-medium mb-2">
-          {{ experiencesQuestion.number }}. {{ experiencesQuestion.question }}
+  <div class="h-full w-[500px] flex flex-col">
+    <!-- 일반 문항 -->
+    <div v-for="q in currentQuestions" :key="q.number" class="mb-6">
+      <p class="text-body02 mb-4">
+        <span>
+          {{ q.number }}. {{ q.question }}
           <span
             style="font-size: 10px; vertical-align: top;"
-            :class="experiences.length === 0 ? 'text-red-500' : 'text-white'"
+            :class="answers[q.number] === undefined ? 'text-status-red' : 'text-white'"
           >
             ●
           </span>
-        </p>
-        <div class="space-y-4">
-          <div
-            v-for="(opt, idx) in experiencesQuestion.options"
-            :key="idx"
-            class="space-y-1"
+        </span>
+      </p>
+      <div class="space-y-2 text-callout">
+        <div v-for="(opt, idx) in q.options" :key="idx">
+          <button
+            class="w-full text-left px-4 py-2 border rounded"
+            :class="answers[q.number]?.option === idx + 1 ? 'bg-gray-secondary-350 text-white' : 'bg-white text-fg-primary'"
+            @click="handleAnswer(q.number, idx, opt.score)"
           >
-            <!-- 체크박스: 해당 투자 경험이 있는지 -->
-            <label class="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                :value="idx + 1"
-                v-model="experiences"
-                @change="(e) => { changeClickedExperience(idx + 1, e.target.checked) }"
-              />
-              <span>
-                {{ opt.text }}
-                <span class="title01" :class="checkedCheckbox(idx + 1) && idx && experiencePeriods[idx] === undefined ? 'text-red-500' : 'text-white'">•</span>
-              </span>
-            </label>
-
-            <!-- 라디오 버튼: 기간 선택 -->
-            <div
-              v-if="opt.period"
-              class="ml-6 space-x-4"
-            >
-              <label
-                v-for="(period, pIdx) in opt.period"
-                :key="pIdx"
-                class="inline-flex items-center space-x-1"
-              >
-                <input
-                  type="radio"
-                  :value="pIdx"
-                  v-model="experiencePeriods[idx]"
-                  :disabled="!checkedCheckbox(idx + 1)"
-                />
-                <span class="text-sm text-gray-700">{{ period.text }}</span>
-              </label>
-            </div>
-          </div>
+            {{ opt.text }}
+          </button>
         </div>
       </div>
-
-      <!-- 투자 예정 기간 문항 (9번) -->
-      <div v-if="(page + 1) * questionsPerPage >= questions.length" class="mb-6">
-        <p class="font-medium mb-2">
-          {{ investmentPeriodQuestion.number }}. {{ investmentPeriodQuestion.question }}
-          <span
-            style="font-size: 10px; vertical-align: top;"
-            :class="investmentPeriod === null ? 'text-red-500' : 'text-white'"
-          >
-            ●
-          </span>
-        </p>
-        <div class="space-y-2">
-          <div v-for="(opt, idx) in investmentPeriodQuestion.options" :key="idx">
-            <button
-              class="w-full text-left px-4 py-2 border rounded"
-              :class="investmentPeriod === idx + 1 ? 'bg-primary text-white' : 'bg-white text-gray-700'"
-              @click="investmentPeriod = idx + 1"
-            >
-              {{ opt.text }}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="text-sm text-gray-400 text-center mb-6">
-        {{ page + 1 }} / {{ Math.ceil(questions.length / questionsPerPage) }}
-      </div>
-
-      <BaseButton
-        v-if="(page + 1) * questionsPerPage >= questions.length"
-        :disabled="!canSubmit"
-        :label="submitLabel"
-        size="lg"
-        variant="filled"
-        class="my-6"
-        @click="handleSubmit"
-      />
-
-      <BaseButton
-        v-else
-        :disabled="!canNext"
-        :label="nextLabel"
-        size="lg"
-        variant="filled"
-        class="my-6"
-        @click="handleNext"
-      />
     </div>
+
+    <!-- 투자 경험 문항 (8번) -->
+    <div v-if="(page + 1) * questionsPerPage >= questions.length" class="mb-6">
+      <p class="text-body02 mb-2">
+        {{ experiencesQuestion.number }}. {{ experiencesQuestion.question }}
+        <span
+          style="font-size: 10px; vertical-align: top;"
+          :class="experiences.length === 0 ? 'text-status-red' : 'text-white'"
+        >
+          ●
+        </span>
+      </p>
+      <div class="space-y-4 text-callout">
+        <div
+          v-for="(opt, idx) in experiencesQuestion.options"
+          :key="idx"
+          class="space-y-1"
+        >
+          <!-- 체크박스: 해당 투자 경험이 있는지 -->
+          <label class="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              class="mr-2 w-4 h-4 text-gray-secondary bg-base-100 border-border-gray-secondary focus:ring-gray-secondary"
+              :value="idx + 1"
+              v-model="experiences"
+              @change="(e) => { changeClickedExperience(idx + 1, e.target.checked) }"
+            />
+            <span>
+              {{ opt.text }}
+              <span class="title01" :class="checkedCheckbox(idx + 1) && idx && experiencePeriods[idx] === undefined ? 'text-status-red' : 'text-white'">•</span>
+            </span>
+          </label>
+
+          <!-- 라디오 버튼: 기간 선택 -->
+          <div
+            v-if="opt.period"
+            class="ml-6 space-x-4 text-callout"
+          >
+            <label
+              v-for="(period, pIdx) in opt.period"
+              :key="pIdx"
+              class="inline-flex items-center space-x-1"
+            >
+              <input
+                type="radio"
+                class="mr-2 w-4 h-4 text-gray-secondary bg-base-100 border-border-gray-secondary focus:ring-gray-secondary"
+                :value="pIdx"
+                v-model="experiencePeriods[idx]"
+                :disabled="!checkedCheckbox(idx + 1)"
+              />
+              <span class="text-sm text-fg-primary">{{ period.text }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 투자 예정 기간 문항 (9번) -->
+    <div v-if="(page + 1) * questionsPerPage >= questions.length" class="mb-6">
+      <p class="text-body02 mb-2">
+        {{ investmentPeriodQuestion.number }}. {{ investmentPeriodQuestion.question }}
+        <span
+          style="font-size: 10px; vertical-align: top;"
+          :class="investmentPeriod === null ? 'text-status-red' : 'text-white'"
+        >
+          ●
+        </span>
+      </p>
+      <div class="space-y-2">
+        <div v-for="(opt, idx) in investmentPeriodQuestion.options" :key="idx">
+          <button
+            class="w-full text-left px-4 py-2 border rounded"
+            :class="investmentPeriod === idx + 1 ? 'bg-gray-secondary-350 text-white' : 'bg-white text-fg-primary'"
+            @click="investmentPeriod = idx + 1"
+          >
+            {{ opt.text }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-footnote text-fg-secondary text-center mb-6">
+      {{ page + 1 }} / {{ Math.ceil(questions.length / questionsPerPage) }}
+    </div>
+
+    <BaseButton
+      v-if="(page + 1) * questionsPerPage >= questions.length"
+      class="mt-auto mb-20 shrink-0"
+      :disabled="!canSubmit"
+      :label="submitLabel"
+      size="lg"
+      variant="filled"
+      @click="handleSubmit"
+    />
+
+    <BaseButton
+      v-else
+      class="mt-auto mb-20 shrink-0"
+      :disabled="!canNext"
+      :label="nextLabel"
+      size="lg"
+      variant="filled"
+      @click="handleNext"
+    />
   </div>
 </template>

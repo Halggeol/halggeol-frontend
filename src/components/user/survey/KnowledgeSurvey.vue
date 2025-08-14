@@ -94,59 +94,56 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="flex justify-center min-h-screen">
-    <div class="w-[500px] bg-white rounded-lg">
-
-      <div v-for="q in currentQuestions" :key="q.number" class="text-left mb-6">
-        <p class="mb-2 font-medium flex items-center justify-between">
-          <span>
-            {{ q.number }}. {{ q.question }}
-            <span
-              style="font-size: 10px; vertical-align: top;"
-              :class="answers[q.number] === undefined ? 'text-red-500' : 'text-white'"
-            >
-              ●
-            </span>
+  <div class="h-full flex flex-col">
+    <div v-for="q in currentQuestions" :key="q.number" class="text-left grow">
+      <p class="mb-4 text-body02 flex items-center justify-between">
+        <span>
+          {{ q.number }}. {{ q.question }}
+          <span
+            style="font-size: 10px; vertical-align: top;"
+            :class="answers[q.number] === undefined ? 'text-status-red' : 'text-white'"
+          >
+            ●
           </span>
-        </p>
-        <div class="space-x-4">
-          <button
-            class="ml-4 px-4 py-2 rounded border"
-            :class="answers[q.number] === true ? 'bg-primary text-white' : 'bg-white text-gray-700'"
-            @click="handleAnswer(q.number, true)"
-          >O</button>
-          <button
-            class="px-4 py-2 rounded border"
-            :class="answers[q.number] === false ? 'bg-primary text-white' : 'bg-white text-gray-700'"
-            @click="handleAnswer(q.number, false)"
-          >X</button>
-        </div>
+        </span>
+      </p>
+      <div class="space-x-4">
+        <button
+          class="ml-4 px-4 py-2 rounded border"
+          :class="answers[q.number] === true ? 'bg-gray-secondary-350 text-white' : 'bg-white text-fg-primary'"
+          @click="handleAnswer(q.number, true)"
+        >O</button>
+        <button
+          class="px-4 py-2 rounded border"
+          :class="answers[q.number] === false ? 'bg-gray-secondary-350 text-white' : 'bg-white text-fg-primary'"
+          @click="handleAnswer(q.number, false)"
+        >X</button>
       </div>
-
-      <div class="text-sm text-gray-400 text-center mb-6">
-        {{ page + 1 }} / {{ Math.ceil(questions.length / questionsPerPage) }}
-      </div>
-
-      <BaseButton
-        v-if="start + questionsPerPage >= questions.length"
-        class="my-8"
-        size="lg"
-        variant="filled"
-        :disabled="!canNext"
-        :label="submitLabel"
-        @click="handleSubmit">
-      </BaseButton>
-
-      <BaseButton
-        v-else
-        class="my-8"
-        size="lg"
-        variant="filled"
-        :disabled="!canNext"
-        :label="nextLabel"
-        @click="handleNext">
-      </BaseButton>
     </div>
+
+    <div class="text-footnote text-fg-secondary text-center mb-6">
+      {{ page + 1 }} / {{ Math.ceil(questions.length / questionsPerPage) }}
+    </div>
+
+    <BaseButton
+      v-if="start + questionsPerPage >= questions.length"
+      class="mt-auto mb-20 shrink-0"
+      size="lg"
+      variant="filled"
+      :disabled="!canNext"
+      :label="submitLabel"
+      @click="handleSubmit">
+    </BaseButton>
+
+    <BaseButton
+      v-else
+      class="mt-auto mb-20 shrink-0"
+      size="lg"
+      variant="filled"
+      :disabled="!canNext"
+      :label="nextLabel"
+      @click="handleNext">
+    </BaseButton>
   </div>
 </template>
 
