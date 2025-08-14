@@ -11,7 +11,7 @@
           type="text"
           v-model="searchQuery"
           @keyup.enter="performSearch"
-          class="w-full pl-6 pr-20 py-4 border-0 focus:ring-0 rounded-full bg-gray-100 placeholder-gray-500 text-body02"
+          class="w-full pl-6 pr-20 py-4 border-0 focus:ring-0 rounded-full bg-gray-100 placeholder-fg-gray text-body02"
           placeholder="검색어를 입력하세요."
         />
 
@@ -59,7 +59,9 @@
 
       <div class="mt-6 flex">
         <div v-if="isLoggedIn" class="w-1/2 pr-3 relative pb-8">
-          <h3 class="text-lg font-bold mb-3">최근 검색어</h3>
+          <h3 class="text-body02 font-bold text-fg-primary mb-3">
+            최근 검색어
+          </h3>
           <ul v-if="recentSearches.length > 0">
             <li
               v-for="(item, index) in recentSearches"
@@ -67,7 +69,7 @@
               @click="searchFromList(item.keyword)"
               class="group flex justify-between items-center py-2 cursor-pointer hover:bg-gray-100 rounded px-2"
             >
-              <span>{{ item.keyword || '' }}</span>
+              <span class="text-callout">{{ item.keyword || '' }}</span>
               <button
                 @click.stop="removeRecentSearch(item.keyword)"
                 class="p-1 text-gray-400 hover:text-gray-700 opacity-60 hover:opacity-100 transition-opacity"
@@ -89,7 +91,7 @@
               </button>
             </li>
           </ul>
-          <p v-else class="text-gray-500 text-sm p-2">
+          <p v-else class="text-fg-secondary text-footnote p-2">
             최근 검색 기록이 없습니다.
           </p>
           <div
@@ -98,7 +100,7 @@
           >
             <button
               @click="removeAllRecentSearches"
-              class="text-sm text-gray-500 hover:text-gray-800"
+              class="text-footnote text-fg-secondary hover:text-fg-primary"
             >
               전체 삭제
             </button>
@@ -110,7 +112,9 @@
             isLoggedIn ? 'w-1/2 pl-3 border-l border-gray-200' : 'w-full',
           ]"
         >
-          <h3 class="text-lg font-bold mb-3">인기 검색어</h3>
+          <h3 class="text-body02 font-bold text-fg-primary mb-3">
+            인기 검색어
+          </h3>
           <ul v-if="popularSearches.length > 0">
             <li
               v-for="(item, index) in popularSearches"
@@ -118,11 +122,13 @@
               @click="searchFromList(item.keyword)"
               class="flex items-center py-2 cursor-pointer hover:bg-gray-100 rounded px-2"
             >
-              <span class="font-bold mr-2 text-blue-600">{{ index + 1 }}</span>
-              <span>{{ item.keyword || '' }}</span>
+              <span class="text-body02 font-bold mr-2 text-primary">{{
+                index + 1
+              }}</span>
+              <span class="text-callout">{{ item.keyword || '' }}</span>
             </li>
           </ul>
-          <p v-else class="text-gray-500 text-sm p-2">
+          <p v-else class="text-fg-secondary text-footnote p-2">
             인기 검색어가 없습니다.
           </p>
         </div>

@@ -38,10 +38,17 @@
         등록된 관심 상품이 없습니다.
       </div>
 
+      <div
+        v-else-if="filteredProducts.length === 0"
+        class="text-gray-600 text-center py-10"
+      >
+        선택하신 필터에 맞는 상품이 없습니다.
+      </div>
+
       <ScrapSection
         v-else
         :key="currentSort"
-        :scrapedProducts="products"
+        :scrapedProducts="filteredProducts"
         :selectedFilters="currentFilters"
         @toggle-like="handleToggleLike"
         @product-click="handleProductClick"
@@ -51,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import ProductSort from '@/components/products/ProductSort.vue';
 import ScrapFilter from '@/components/scrap/ScrapFilter.vue';
 import ScrapSection from '@/components/scrap/ScrapSection.vue';
@@ -68,7 +75,7 @@ const error = ref(null);
 
 // 필터 상태를 URL에서 관리
 const currentFilters = ref({
-  productTypes: [], // 빈 배열로 초기화
+  types: [], // 빈 배열로 초기화
 });
 const currentSort = ref('popularDesc');
 const isScrapLoading = ref(false);
@@ -79,7 +86,7 @@ const fetchProducts = async () => {
 
   try {
     const params = {
-      productTypes: currentFilters.value.productTypes.join(',') || undefined,
+      types: currentFilters.value.types.join(',') || undefined,
       sort: currentSort.value,
     };
 
@@ -103,11 +110,26 @@ const handleFilterChange = filters => {
   router.push({
     query: {
       ...route.query,
-      productTypes:
-        filters.types.length > 0 ? filters.types.join(',') : undefined,
+      types: filters.types?.length > 0 ? filters.types.join(',') : undefined,
     },
   });
 };
+
+const filteredProducts = computed(() => {
+  const selectedTypes = currentFilters.value.types;
+
+  // 선택된 필터가 없으면 전체 상품 목록을 반환합니다.
+  if (!selectedTypes || selectedTypes.length === 0) {
+    return products.value;
+  }
+
+  // 선택된 필터가 있으면, 해당 'type'을 가진 상품만 필터링합니다.
+  return products.value.filter(product =>
+    // product 객체의 상품 유형 속성 이름이 'type'이라고 가정합니다.
+    // 만약 다른 이름(예: productType)이라면 이 부분을 수정해야 합니다.
+    selectedTypes.includes(product.type)
+  );
+});
 
 const handleSortChange = sort => {
   console.log('Sort changed:', sort);
@@ -170,9 +192,7 @@ watch(
   () => route.query,
   newQuery => {
     currentFilters.value = {
-      productTypes: newQuery.productTypes
-        ? newQuery.productTypes.split(',')
-        : [],
+      types: newQuery.types ? newQuery.types.split(',') : [],
     };
     currentSort.value = newQuery.sort || 'popularDesc';
     fetchProducts();
