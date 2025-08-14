@@ -193,7 +193,8 @@ const createChart = () => {
           title: {
             display: false,
           },
-          min: minY - padding,
+          // min: minY - padding,
+          min: 0,
           max: maxY + padding,
           ticks: {
             callback: function (value) {
