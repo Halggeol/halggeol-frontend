@@ -224,7 +224,7 @@ function openPolicyModal() {
 </script>
 
 <template>
-  <div class="h-[calc(100vh-56px)] flex items-center justify-center bg-gray-50 relative">
+  <div class="h-[calc(100vh-56px)] flex items-center justify-center bg-base-200 relative">
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
       <h2 class="text-center title02 mb-6">회원가입</h2>
 
