@@ -1,6 +1,7 @@
 <template>
   <div class="flex items-start">
     <ScrapFilter
+      class="flex-shrink-0 w-64 wide:w-80 transition-all duration-300"
       @filtersChanged="handleFilterChange"
       :initialFilters="currentFilters"
     />

@@ -16,7 +16,7 @@ export default {
   theme: {
     screens: {
       mobile: { max: '767px' },
-      tablet: { raw: '(min-width: 768px) and (max-width: 1023px)' },
+      tablet: { raw: '(min-width: 768px) and (max-width: 1280px)' },
       wide: { min: '1536px' },
     },
     fontFamily: {
@@ -66,6 +66,19 @@ export default {
         // 기본 상태
         'status-blue': { ...generateColors('#287EFF') },
         'status-red': { ...generateColors('#F23F3F') },
+        // 상품별 색상
+        savings: '#FFF4DF',
+        'fg-savings': '#F95A00',
+        cash: '#FFEFEE',
+        'fg-cash': '#FB0000',
+        forex: '#F9EFE3',
+        'fg-forex': '#995C14',
+        fund: '#ECF0FF',
+        'fg-fund': '#1544BC',
+        pension: '#6CD18C',
+        'fg-pension': '#11A740',
+        aggressive: '#F9EFFA',
+        'fg-aggressive': '#CC0CCC',
       },
       boxShadow: {
         card: '0px 2px 6px rgba(0, 0, 0, 0.1)',

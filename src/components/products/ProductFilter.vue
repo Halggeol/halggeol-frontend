@@ -168,7 +168,7 @@
             type="number"
             v-model.number="inputAmount"
             placeholder="금액을 입력해 주세요"
-            class="w-full p-2 pr-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+            class="w-full p-2 pr-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-callout"
             @keyup.enter="handleAmountInput"
           />
           <button

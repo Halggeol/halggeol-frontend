@@ -1,17 +1,19 @@
 <template>
   <div class="flex items-start">
     <ProductFilter
+      class="flex-shrink-0 w-64 wide:w-80 transition-all duration-300"
       :initialFilters="currentFilters"
       @filtersChanged="handleFilterChange"
     />
     <div class="flex-1 p-5 h-screen overflow-y-auto">
-      <div class="flex justify-end mb-4">
+      <div class="flex justify-between items-baseline mb-6 px-4">
+        <h2 class="text-body01 font-bold text-gray-800">상품 목록</h2>
         <ProductSort
+          class="mt-6"
           :modelValue="currentSort"
           @update:sort="handleSortChange"
         />
       </div>
-      <h2 class="text-body01 font-bold mb-6 text-gray-800">상품 목록</h2>
 
       <div v-if="searchQuery" class="mb-4 text-gray-600">
         <span class="font-bold">"{{ searchQuery }}"</span>에 대한 검색
@@ -101,7 +103,7 @@ const fetchProducts = async () => {
       params.append('minAmount', currentFilters.value.minAmount);
     if (currentSort.value) params.append('sort', currentSort.value);
 
-    const apiUrl = `http://localhost:8080/api/products?${params.toString()}`;
+    const apiUrl = `https://54.175.115.255:8080/backend-1.0-SNAPSHOT/api/products?${params.toString()}`;
     const [productsResponse, scrapedIdsResponse] = await Promise.all([
       api.get(apiUrl),
       getScrapedProductIds(),
