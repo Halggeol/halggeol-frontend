@@ -128,13 +128,13 @@ function handleCycleChanged(newCycle) {
 </script>
 
 <template>
-  <div class="h-[calc(100vh-56px-114px)] pt-12 flex flex-col">
+  <div class="h-[calc(100vh-56px-114px)] pt-12">
     <!-- 제목 -->
-    <h2 class="title02 mb-2 text-left">내 정보</h2>
+    <h2 class="title02 mb-4 text-left">내 정보</h2>
     <hr class="mb-10"/>
 
     <!-- 정보 리스트 -->
-    <div class="space-y-6 text-body02">
+    <div class="space-y-8 text-body02">
       <!-- 이름 -->
       <div class="flex items-center justify-between w-full">
         <div class="w-1/3 text-body02 text-fg-secondary">이름</div>
