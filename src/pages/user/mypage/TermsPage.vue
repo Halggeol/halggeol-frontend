@@ -11,27 +11,21 @@ function formatSectionTitles(text) {
 </script>
 
 <template>
-  <div class="w-full mx-auto mt-8 p-6">
+  <div class="h-[calc(100vh-56px-114px)] pt-12 flex flex-col">
     <!-- 제목 -->
-    <h2 class="title01 font-bold mb-6 text-left">이용약관</h2>
+    <h2 class="title02 font-bold mb-6 text-left">이용약관</h2>
 
-    <!-- 가로 방향 분할 -->
-    <div class="flex flex-col">
       <!-- 이용약관 -->
-      <div class="flex-1">
-        <div class="mb-10 border rounded p-4 h-[250px] overflow-y-auto text-sm leading-relaxed whitespace-pre-line">
-          <div v-html="formatSectionTitles(termsText)"></div>
-        </div>
+      <div class="text-callout mb-10 border rounded p-4 h-[250px] overflow-y-auto leading-relaxed whitespace-pre-line">
+        <div v-html="formatSectionTitles(termsText)"></div>
       </div>
 
-    <h2 class="title01 font-bold mb-6 text-left">개인정보 처리방침</h2>
+    <!-- 제목 -->
+    <h2 class="title02 font-bold mb-6 text-left">개인정보 처리방침</h2>
 
-    <!-- 개인정보 처리방침 -->
-      <div class="flex-1">
-        <div class="border rounded p-4 h-[250px] overflow-y-auto text-sm leading-relaxed whitespace-pre-line">
-          <div v-html="formatSectionTitles(privacyText)"></div>
-        </div>
+      <!-- 개인정보 처리방침 -->
+      <div class="text-callout border rounded p-4 h-[250px] overflow-y-auto leading-relaxed whitespace-pre-line">
+        <div v-html="formatSectionTitles(privacyText)"></div>
       </div>
     </div>
-  </div>
 </template>
