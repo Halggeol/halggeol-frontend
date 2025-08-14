@@ -20,8 +20,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import { Bar } from 'vue-chartjs';
+import { ref, watch, computed } from 'vue';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -30,13 +29,17 @@ import {
   Title,
   Tooltip,
   Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale,
 } from 'chart.js';
 
 // Chart.js 등록
-ChartJS.register(CategoryScale, LinearScale);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 // props 정의
 const props = defineProps({
@@ -70,7 +73,7 @@ function formatDate(dateString) {
 }
 
 // 차트 생성
-const createChart = () => {
+const chartData = () => {
   if (!chartCanvas.value) return;
 
   const selected = props.forexInfo?.find(
@@ -223,7 +226,7 @@ const createChart = () => {
         padding: 0,
       },
     },
-  },
+  });
 };
 
 // 선택된 통화가 바뀔 때마다 차트 데이터 업데이트
