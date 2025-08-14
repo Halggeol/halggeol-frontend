@@ -68,8 +68,8 @@ watch(
 <template>
   <dialog v-if="isOpen" class="modal" open>
     <div class="modal-box max-w-sm">
-      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" @click="handleClose">✕</button>
-      <h3 class="text-lg font-bold mb-4">인사이트 주기 변경</h3>
+      <button class="absolute right-4 top-4" @click="handleClose">✕</button>
+      <h3 class="text-body01 font-bold mb-4">인사이트 주기 변경</h3>
 
       <form @submit.prevent>
         <!-- 옵션 목록 -->
@@ -80,7 +80,7 @@ watch(
               :value="option.value"
               v-model="selected"
               :disabled="loading"
-              class="accent-gray-500"
+              class="mr-2 w-4 h-4 text-gray-secondary bg-base-100 border-border-gray-secondary focus:ring-gray-secondary"
             />
             <span>{{ option.label }}</span>
           </label>
@@ -98,7 +98,7 @@ watch(
         <!-- 결과 메시지 -->
         <small
           v-if="result.message"
-          :class="result.success ? 'text-green-500' : 'text-red-500'"
+          :class="result.success ? 'text-status-blue' : 'text-status-red'"
           class="block mt-2"
         >
           {{ result.message }}
