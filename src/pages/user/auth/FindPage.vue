@@ -105,7 +105,7 @@ async function handleRequestResetPassword() {
       console.log("===== requestPasswordReset API 호출 =====");
       const response = await requestPasswordReset({ email: email.value });
 
-      if (response.success) {
+      if (response.data.success) {
         result.value = {
           message: '입력하신 이메일로 비밀번호 재설정 링크가 전송되었습니다.',
           success: true
