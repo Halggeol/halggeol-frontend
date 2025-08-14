@@ -45,7 +45,7 @@ function startSurvey() {
       </div>
 
       <!-- 설문 온보딩 -->
-      <div v-if="!started" class="w-full flex flex-col grow whitespace-nowrap">
+      <div v-if="!started" class="w-full flex flex-col grow whitespace-nowrap text-fg-primary">
         <!-- 상단 설명 영역 -->
         <div>
           <h1 v-if="type === 'knowledge'" class="text-title-lg">

@@ -96,7 +96,7 @@ const handleSubmit = async () => {
 <template>
   <div class="h-full flex flex-col">
     <div v-for="q in currentQuestions" :key="q.number" class="text-left grow">
-      <p class="mb-4 text-body02 flex items-center justify-between">
+      <p class="mb-4 text-body02 text-fg-primary flex items-center justify-between">
         <span>
           {{ q.number }}. {{ q.question }}
           <span

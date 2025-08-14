@@ -292,7 +292,7 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
   <div class="h-full w-[500px] flex flex-col">
     <!-- 일반 문항 -->
     <div v-for="q in currentQuestions" :key="q.number" class="mb-6">
-      <p class="text-body02 mb-4">
+      <p class="text-body02 text-fg-primary mb-4">
         <span>
           {{ q.number }}. {{ q.question }}
           <span
@@ -306,7 +306,7 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
       <div class="space-y-2 text-callout">
         <div v-for="(opt, idx) in q.options" :key="idx">
           <button
-            class="w-full text-left px-4 py-2 border rounded"
+            class="w-full text-left px-4 py-2 border rounded text-fg-primary"
             :class="answers[q.number]?.option === idx + 1 ? 'bg-gray-secondary-350 text-white' : 'bg-white text-fg-primary'"
             @click="handleAnswer(q.number, idx, opt.score)"
           >
@@ -318,7 +318,7 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
 
     <!-- 투자 경험 문항 (8번) -->
     <div v-if="(page + 1) * questionsPerPage >= questions.length" class="mb-6">
-      <p class="text-body02 mb-2">
+      <p class="text-body02 text-fg-primary mb-2">
         {{ experiencesQuestion.number }}. {{ experiencesQuestion.question }}
         <span
           style="font-size: 10px; vertical-align: top;"
@@ -327,7 +327,7 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
           ●
         </span>
       </p>
-      <div class="space-y-4 text-callout">
+      <div class="space-y-4 text-callout text-fg-primary">
         <div
           v-for="(opt, idx) in experiencesQuestion.options"
           :key="idx"
@@ -351,7 +351,7 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
           <!-- 라디오 버튼: 기간 선택 -->
           <div
             v-if="opt.period"
-            class="ml-6 space-x-4 text-callout"
+            class="ml-6 space-x-4 text-callout text-fg-primary"
           >
             <label
               v-for="(period, pIdx) in opt.period"
@@ -365,7 +365,7 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
                 v-model="experiencePeriods[idx]"
                 :disabled="!checkedCheckbox(idx + 1)"
               />
-              <span class="text-sm text-fg-primary">{{ period.text }}</span>
+              <span>{{ period.text }}</span>
             </label>
           </div>
         </div>
@@ -374,7 +374,7 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
 
     <!-- 투자 예정 기간 문항 (9번) -->
     <div v-if="(page + 1) * questionsPerPage >= questions.length" class="mb-6">
-      <p class="text-body02 mb-2">
+      <p class="text-body02 text-fg-primary mb-4">
         {{ investmentPeriodQuestion.number }}. {{ investmentPeriodQuestion.question }}
         <span
           style="font-size: 10px; vertical-align: top;"
