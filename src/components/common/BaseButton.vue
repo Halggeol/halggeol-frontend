@@ -44,7 +44,9 @@ const props = defineProps({
     default: '시작하기',
   },
 });
+});
 
+import { computed } from 'vue';
 import { computed } from 'vue';
 // 기본 레이아웃
 const baseClass = computed(() => {
@@ -55,17 +57,23 @@ const baseClass = computed(() => {
     .filter(Boolean)
     .join(' ');
 });
+    .join(' ');
+});
 
 // 버튼 사이즈
 const sizeClass = computed(() => {
   switch (props.size) {
     case 'sm':
       return 'px-6 py-4';
+      return 'px-6 py-4';
     case 'lg':
+      return 'w-full py-3';
       return 'w-full py-3';
     default:
       return 'w-1/4 py-4';
+      return 'w-1/4 py-4';
   }
+});
 });
 
 // 버튼 스타일+비활성화 여부
@@ -73,29 +81,38 @@ const variantClass = computed(() => {
   if (props.disabled) {
     switch (props.variant) {
       case 'outline':
-        return 'border border-fg-gray bg-transparent text-fg-gray cursor-not-allowed';
+        return 'border border-gray-300 bg-transparent text-gray-300 cursor-not-allowed';
       case 'ghost':
-        return 'bg-transparent text-fg-gray cursor-not-allowed';
+        return 'bg-transparent text-gray-300 cursor-not-allowed';
       default:
-        return 'bg-[#EBEEF0] text-fg-gray cursor-not-allowed';
+        return 'bg-gray-100 text-gray-300 cursor-not-allowed';
     }
   }
   switch (props.variant) {
     case 'outline':
-      return 'border border-fg-secondary bg-transparent text-fg-primary hover:bg-[#EBEEF0]';
+      return 'border border-gray-400 bg-transparent text-fg-primary';
     case 'ghost':
       return 'bg-transparent text-primary';
+    case 'basic':
+      return 'bg-gray-100 border-gray-400';
     default:
-      return 'bg-primary text-white';
+      return 'bg-primary text-white text-fg-primary';
   }
+});
 });
 
 // 클릭 이벤트
+const emit = defineEmits(['click']);
 const emit = defineEmits(['click']);
 </script>
 
 <template>
   <!-- 버튼 영역 -->
+  <button
+    :class="[baseClass, sizeClass, variantClass]"
+    :disabled="disabled"
+    @click="emit('click')"
+  >
   <button
     :class="[baseClass, sizeClass, variantClass]"
     :disabled="disabled"

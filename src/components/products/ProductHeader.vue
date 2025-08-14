@@ -1,115 +1,80 @@
 <template>
   <div
     :class="[
-      'bg-gradient-to-r from-secondary-200 to-secondary-300 px-[10.8%]',
-      isScrolled ? 'py-4 sticky top-0 z-50 shadow-lg' : 'py-12 lg:py-16',
+      'bg-gray-secondary-200',
+      isScrolled
+        ? 'py-4 sticky top-0 z-50 shadow-lg'
+        : 'py-8 tablet:py-12 wide:py-16',
     ]"
     :style="{
       height: isScrolled ? '80px' : 'auto',
-      minHeight: isScrolled ? '80px' : '360px',
+      minHeight: isScrolled
+        ? '80px'
+        : isScrollEffectEnabled
+        ? '360px'
+        : 'auto',
     }"
   >
+    <!-- Default Header -->
     <div
-      :class="[
-        'flex justify-between gap-6',
-        isScrolled ? 'items-center' : 'items-start',
-      ]"
+      v-if="!isScrolled"
+      class="px-4 tablet:px-[10.8%] flex flex-col tablet:flex-row justify-between items-start gap-6"
     >
-      <!-- 왼쪽 컨텐츠 -->
+      <!-- Left Content -->
       <div class="flex-1 min-w-0">
-        <!-- 헤더 콘텐츠 -->
-        <div class="relative w-full">
-          <!-- 일반 상태 콘텐츠 -->
-          <div
-            :class="[
-              'transition-all duration-300 ease-in-out absolute inset-0',
-              isScrolled
-                ? 'opacity-0 pointer-events-none'
-                : 'opacity-100 pointer-events-auto',
-            ]"
+        <div
+          class="flex flex-wrap items-center gap-2 mb-4 tablet:gap-3 tablet:mb-6"
+        >
+          <span
+            class="inline-flex items-center px-3 py-1 rounded-full bg-gray-primary text-white text-caption font-medium"
+            >{{ productTypeName }}</span
           >
-            <div class="flex items-center gap-3 mb-6">
-              <span
-                class="inline-flex items-center px-3 py-1 rounded-full bg-primary text-white text-caption font-medium"
-                >{{ productTypeName }}</span
-              >
-              <span
-                v-if="productDetail.joinMember"
-                class="inline-flex items-center px-3 py-1 rounded-full bg-fg-secondary-100 text-fg-primary text-caption"
-                >{{ productDetail.joinMember }}</span
-              >
-              <span
-                v-if="productDetail.joinWay"
-                class="inline-flex items-center px-3 py-1 rounded-full bg-fg-secondary-100 text-fg-primary text-caption"
-                >{{ productDetail.joinWay }}</span
-              >
-            </div>
-
-            <h1
-              class="text-title-lg lg:text-title-xl font-bold text-fg-primary mb-6"
-            >
-              {{ productDetail.name }}
-            </h1>
-
-            <div class="flex items-center gap-2 mb-8">
-              <span class="text-status-red">❤️</span>
-              <span class="text-footnote text-fg-secondary">
-                <strong class="text-fg-primary">{{
-                  productDetail.scrapCnt
-                }}</strong
-                >명이 관심갖고있음
-              </span>
-            </div>
-
-            <div
-              class="text-footnote text-fg-secondary leading-relaxed pr-4 max-w-2xl overflow-hidden"
-            >
-              제공되는 정보는 금융감독원
-              <strong class="text-fg-primary">{{ renewDate }}</strong
-              >일에 공시된 내용을 기반으로 작성되었으며, 금융상품 광고가
-              아닙니다. 실제 상품 가입 시점에 변동될 수 있으므로 상품 가입 시 꼭
-              다시 확인하시기 바랍니다.
-            </div>
-          </div>
-
-          <!-- 축소된 상태 콘텐츠 -->
-          <div
-            :class="[
-              'transition-all duration-300 ease-in-out absolute inset-0 flex items-center',
-              isScrolled
-                ? 'opacity-100 pointer-events-auto'
-                : 'opacity-0 pointer-events-none',
-            ]"
+          <span
+            v-if="productDetail.joinMember"
+            class="inline-flex items-center px-3 py-1 rounded-full bg-fg-secondary-100 text-fg-primary text-caption"
+            >{{ productDetail.joinMember }}</span
           >
-            <h1 class="text-title-sm font-bold text-fg-primary">
-              {{ productDetail.name }}
-            </h1>
-          </div>
+          <span
+            v-if="productDetail.joinWay"
+            class="inline-flex items-center px-3 py-1 rounded-full bg-fg-secondary-100 text-fg-primary text-caption"
+            >{{ productDetail.joinWay }}</span
+          >
+        </div>
+        <h1
+          class="text-title-md tablet:text-title-lg wide:text-title-xl text-fg-primary font-bold mb-4 tablet:mb-6"
+        >
+          {{ productDetail.name }}
+        </h1>
+        <div class="flex items-center gap-2 mb-6 tablet:mb-8">
+          <span class="text-status-red"
+            ><Heart :class="['w-4 h-4 text-red-500']" /></span
+          ><span class="text-footnote text-fg-secondary">
+            <strong class="text-fg-primary">{{ productDetail.scrapCnt }}</strong
+            >명이 관심갖고있음
+          </span>
+        </div>
+        <div
+          class="text-caption tablet:text-footnote text-fg-secondary leading-relaxed max-w-2xl overflow-hidden"
+        >
+          제공되는 정보는 금융감독원
+          <strong class="text-fg-primary">{{ renewDate }}</strong
+          >일에 공시된 내용을 기반으로 작성되었으며, 금융상품 광고가 아닙니다.
+          실제 상품 가입 시점에 변동될 수 있으므로 상품 가입 시 꼭 다시
+          확인하시기 바랍니다.
         </div>
       </div>
-
-      <!-- 오른쪽 버튼들 -->
+      <!-- Right Buttons -->
       <div
-        :class="[
-          'flex-shrink-0 transition-all duration-300 ease-in-out',
-          isScrolled
-            ? 'flex gap-3 items-center'
-            : 'flex flex-col gap-3 mt-auto',
-        ]"
+        class="flex-shrink-0 w-full tablet:w-auto flex gap-3 mt-6 tablet:mt-auto tablet:flex-col"
       >
-        <div v-if="authStore.isLoggedIn">
+        <div v-if="authStore.isLoggedIn" class="flex-1 tablet:flex-initial">
           <BaseButton
-            :label="'관심상품'"
-            :size="isScrolled ? 'xs' : 'sm'"
-            variant="outline"
+            label="관심상품"
+            size="sm"
+            variant="basic"
             :disabled="isScrapLoading || !authStore.isLoggedIn"
             :hasIconFst="true"
-            :class="[
-              '!w-auto !whitespace-nowrap hover:bg-gray-50 transition-all duration-300 ease-in-out',
-              isScrolled
-                ? '!px-6 !text-caption'
-                : '!px-6 md:!px-8 lg:!px-10 !text-footnote md:!text-callout',
-            ]"
+            class="!w-full tablet:!w-auto !whitespace-nowrap hover:bg-gray-50 !px-4 !text-caption tablet:!px-8 tablet:!text-footnote wide:!px-10 wide:!text-callout"
             @click="handleAddScrap"
           >
             <template #icon_fst>
@@ -125,14 +90,53 @@
         </div>
         <BaseButton
           label="가입하기"
-          :size="isScrolled ? 'xs' : 'sm'"
+          size="sm"
           variant="filled"
-          :class="[
-            '!w-auto !whitespace-nowrap transition-all duration-300 ease-in-out',
-            isScrolled
-              ? '!px-4 !text-caption'
-              : '!px-6 md:!px-8 lg:!px-10 !text-footnote md:!text-callout',
-          ]"
+          class="flex-1 tablet:!flex-initial !w-full tablet:!w-auto !whitespace-nowrap !px-4 !text-caption tablet:!px-8 tablet:!text-footnote wide:!px-10 wide:!text-callout"
+          @click="handleNavigate"
+        />
+      </div>
+    </div>
+
+    <!-- Scrolled Header -->
+    <div
+      v-else
+      class="h-full px-4 tablet:px-[10.8%] flex justify-between items-center gap-6"
+    >
+      <!-- Left Content (Scrolled) -->
+      <div class="flex-1 min-w-0">
+        <h1 class="text-title-sm font-bold text-fg-primary truncate pr-4">
+          {{ productDetail.name }}
+        </h1>
+      </div>
+      <!-- Right Buttons (Scrolled) -->
+      <div class="flex-shrink-0 flex gap-3 items-center">
+        <div v-if="authStore.isLoggedIn">
+          <BaseButton
+            label=""
+            size="xs"
+            variant="basic"
+            :disabled="isScrapLoading || !authStore.isLoggedIn"
+            :hasIconFst="true"
+            class="!w-auto !whitespace-nowrap hover:bg-gray-50 !px-6 !text-caption"
+            @click="handleAddScrap"
+          >
+            <template #icon_fst>
+              <Heart
+                :isFilled="isScraped"
+                :class="[
+                  'w-4 h-4',
+                  isScraped ? 'text-red-500' : 'text-gray-400',
+                ]"
+              />
+            </template>
+          </BaseButton>
+        </div>
+        <BaseButton
+          label="가입하기"
+          size="xs"
+          variant="filled"
+          class="!w-auto !whitespace-nowrap !px-4 !text-caption"
           @click="handleNavigate"
         />
       </div>
@@ -161,6 +165,10 @@ const props = defineProps({
   isScrolled: {
     type: Boolean,
     default: false,
+  },
+  isScrollEffectEnabled: {
+    type: Boolean,
+    default: true,
   },
 });
 
