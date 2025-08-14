@@ -66,7 +66,9 @@ onUnmounted(() => {
       class="flex flex-col items-center justify-center p-8"
     >
       <span class="loading loading-spinner loading-lg"></span>
-      <p class="text-footnote tablet:text-callout text-fg-secondary">
+      <p
+        class="text-footnote tablet:text-callout wide:text-callout text-fg-secondary"
+      >
         AI 요약 정보 생성중..
       </p>
     </div>
@@ -75,17 +77,19 @@ onUnmounted(() => {
       v-else-if="timeoutError || props.error"
       class="flex flex-col items-center justify-center p-8 text-red-600"
     >
-      <p class="text-footnote tablet:text-callout">
+      <p class="text-footnote tablet:text-callout wide:text-callout">
         불러오는데 실패했습니다.
       </p>
     </div>
     <div v-else>
-      <span class="text-body02 tablet:text-body01 font-bold">{{ props.summary }}</span>
-      <p class="text-footnote tablet:text-body02 py-6">
+      <span class="text-body02 tablet:text-body01 wide:text-body01 font-bold">{{
+        props.summary
+      }}</span>
+      <p class="text-footnote tablet:text-body02 wide:text-body02 py-6">
         <span class="font-semibold text-status-red-400">장점 </span
         >{{ props.good }}
       </p>
-      <p class="text-footnote tablet:text-body02">
+      <p class="text-footnote tablet:text-body02 wide:text-body02">
         <span class="font-semibold text-status-blue-400">단점 </span
         >{{ props.bad }}
       </p>

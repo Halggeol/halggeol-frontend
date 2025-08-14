@@ -8,22 +8,18 @@
     ]"
     :style="{
       height: isScrolled ? '80px' : 'auto',
-      minHeight: isScrolled
-        ? '80px'
-        : isScrollEffectEnabled
-        ? '360px'
-        : 'auto',
+      minHeight: isScrolled ? '80px' : isScrollEffectEnabled ? '360px' : 'auto',
     }"
   >
     <!-- Default Header -->
     <div
       v-if="!isScrolled"
-      class="px-4 tablet:px-[10.8%] flex flex-col tablet:flex-row justify-between items-start gap-6"
+      class="px-4 tablet:px-[10.8%] wide:px-[10.8%] flex flex-col tablet:flex-row wide:flex-row justify-between items-start gap-6"
     >
       <!-- Left Content -->
       <div class="flex-1 min-w-0">
         <div
-          class="flex flex-wrap items-center gap-2 mb-4 tablet:gap-3 tablet:mb-6"
+          class="flex flex-wrap items-center gap-2 mb-4 tablet:gap-3 wide:gap-3 tablet:mb-6 wide:mb-6"
         >
           <span
             class="inline-flex items-center px-3 py-1 rounded-full bg-gray-primary text-white text-caption font-medium"
@@ -41,11 +37,11 @@
           >
         </div>
         <h1
-          class="text-title-md tablet:text-title-lg wide:text-title-xl text-fg-primary font-bold mb-4 tablet:mb-6"
+          class="text-title-md tablet:text-title-lg wide:text-title-xl text-fg-primary font-bold mb-4 tablet:mb-6 wide:mb-6"
         >
           {{ productDetail.name }}
         </h1>
-        <div class="flex items-center gap-2 mb-6 tablet:mb-8">
+        <div class="flex items-center gap-2 mb-6 tablet:mb-8 wide:mb-8">
           <span class="text-status-red"
             ><Heart :class="['w-4 h-4 text-red-500']" /></span
           ><span class="text-footnote text-fg-secondary">
@@ -54,7 +50,7 @@
           </span>
         </div>
         <div
-          class="text-caption tablet:text-footnote text-fg-secondary leading-relaxed max-w-2xl overflow-hidden"
+          class="text-caption tablet:text-footnote wide:text-footnote text-fg-secondary leading-relaxed max-w-2xl overflow-hidden"
         >
           제공되는 정보는 금융감독원
           <strong class="text-fg-primary">{{ renewDate }}</strong
@@ -65,16 +61,19 @@
       </div>
       <!-- Right Buttons -->
       <div
-        class="flex-shrink-0 w-full tablet:w-auto flex gap-3 mt-6 tablet:mt-auto tablet:flex-col"
+        class="flex-shrink-0 w-full tablet:w-auto wide:w-auto flex gap-3 mt-6 tablet:mt-auto wide:mt-auto tablet:flex-col wide:flex-col"
       >
-        <div v-if="authStore.isLoggedIn" class="flex-1 tablet:flex-initial">
+        <div
+          v-if="authStore.isLoggedIn"
+          class="flex-1 tablet:flex-initial wide:flex-initial"
+        >
           <BaseButton
             label="관심상품"
             size="sm"
             variant="basic"
             :disabled="isScrapLoading || !authStore.isLoggedIn"
             :hasIconFst="true"
-            class="!w-full tablet:!w-auto !whitespace-nowrap hover:bg-gray-50 !px-4 !text-caption tablet:!px-8 tablet:!text-footnote wide:!px-10 wide:!text-callout"
+            class="!w-full tablet:!w-auto wide:!w-auto !whitespace-nowrap hover:bg-gray-50 !px-4 !text-caption tablet:!px-8 wide:!px-10 tablet:!text-footnote wide:!text-callout"
             @click="handleAddScrap"
           >
             <template #icon_fst>
@@ -92,7 +91,7 @@
           label="가입하기"
           size="sm"
           variant="filled"
-          class="flex-1 tablet:!flex-initial !w-full tablet:!w-auto !whitespace-nowrap !px-4 !text-caption tablet:!px-8 tablet:!text-footnote wide:!px-10 wide:!text-callout"
+          class="flex-1 tablet:!flex-initial wide:!flex-initial !w-full tablet:!w-auto wide:!w-auto !whitespace-nowrap !px-4 !text-caption tablet:!px-8 wide:!px-10 tablet:!text-footnote wide:!text-callout"
           @click="handleNavigate"
         />
       </div>
@@ -101,7 +100,7 @@
     <!-- Scrolled Header -->
     <div
       v-else
-      class="h-full px-4 tablet:px-[10.8%] flex justify-between items-center gap-6"
+      class="h-full px-4 tablet:px-[10.8%] wide:px-[10.8%] flex justify-between items-center gap-6"
     >
       <!-- Left Content (Scrolled) -->
       <div class="flex-1 min-w-0">

@@ -2,15 +2,23 @@
   <!-- 이미 피드백을 남긴 경우 블러 처리 -->
   <div v-if="isCompleted" class="relative">
     <div class="filter blur-sm pointer-events-none select-none">
-      <BaseCard size="lg" variant="tinted">
+      <BaseCard
+        size="lg"
+        variant="outline"
+        class="bg-gray-secondary-200"
+      >
         <div class="space-y-6">
-          <h3 class="text-title-sm font-semibold text-fg-primary">
+          <h3
+            class="text-body01 tablet:text-title-sm wide:text-title-sm font-semibold text-fg-primary"
+          >
             금융상품은 어떠셨나요?
           </h3>
 
-          <div class="flex items-center justify-between">
+          <div
+            class="flex flex-col tablet:flex-row wide:flex-row items-stretch tablet:items-center wide:items-center justify-between"
+          >
             <!-- 라디오 버튼 그룹 -->
-            <div class="flex gap-4">
+            <div class="flex flex-wrap gap-4">
               <label
                 v-for="option in statusOptions"
                 :key="option.value"
@@ -19,16 +27,23 @@
                 <input
                   type="radio"
                   :value="option.value"
-                  class="mr-2 w-4 h-4 text-primary bg-base-100 border-border-primary focus:ring-primary focus:ring-2"
+                  class="mr-2 w-4 h-4 text-status-red bg-base-100 border-border-primary focus:ring-status-red focus:ring-2"
                 />
-                <span class="text-callout text-fg-primary">{{
-                  option.label
-                }}</span>
+                <span
+                  class="text-footnote tablet:text-callout wide:text-callout text-fg-primary"
+                  >{{
+                    option.label
+                  }}</span
+                >
               </label>
             </div>
 
             <!-- 제출 버튼 -->
-            <BaseButton variant="primary" size="sm" class="px-6">
+            <BaseButton
+              variant="primary"
+              size="sm"
+              class="px-6 mt-4 tablet:mt-0 wide:mt-0"
+            >
               제출
             </BaseButton>
           </div>
@@ -36,9 +51,11 @@
       </BaseCard>
     </div>
     <div
-      class="absolute inset-0 flex flex-col items-center justify-center bg-base-100/50"
+      class="absolute inset-0 flex flex-col items-center justify-center bg-base-100/50 p-4"
     >
-      <h4 class="text-title-sm font-semibold text-fg-primary mb-2">
+      <h4
+        class="text-body01 tablet:text-title-sm wide:text-title-sm font-semibold text-fg-primary mb-2 text-center"
+      >
         이 상품에 대한 피드백을 이미
         <span class="text-primary font-bold">{{
           getStatusLabel(productStatus)
@@ -49,17 +66,26 @@
   </div>
 
   <!-- 정상 설문 카드 -->
-  <BaseCard v-else size="lg" variant="tinted">
+  <BaseCard
+    v-else
+    size="lg"
+    variant="outline"
+    class="bg-gray-secondary-200"
+  >
     <div class="space-y-6">
-      <h3 class="text-title-sm font-semibold text-fg-primary">
+      <h3
+        class="text-body01 tablet:text-title-sm wide:text-title-sm font-semibold text-fg-primary"
+      >
         금융상품은 어떠셨나요?
       </h3>
 
       <div class="space-y-1">
         <div class="relative">
-          <div class="flex items-center justify-between">
+          <div
+            class="flex flex-col tablet:flex-row wide:flex-row items-stretch tablet:items-center wide:items-center justify-between"
+          >
             <!-- 라디오 버튼 그룹 -->
-            <div class="flex gap-4">
+            <div class="flex flex-wrap gap-4">
               <label
                 v-for="option in statusOptions"
                 :key="option.value"
@@ -69,15 +95,18 @@
                   type="radio"
                   :value="option.value"
                   v-model="selectedStatus"
-                  class="mr-2 w-4 h-4 text-primary bg-base-100 border-border-primary focus:ring-primary focus:ring-2"
+                  class="mr-2 w-4 h-4 text-status-red bg-base-100 border-border-primary focus:ring-status-red focus:ring-2"
                 />
-                <span class="text-callout text-fg-primary">{{
-                  option.label
-                }}</span>
+                <span
+                  class="text-footnote tablet:text-callout wide:text-callout text-fg-primary"
+                  >{{
+                    option.label
+                  }}</span
+                >
                 <!-- 각 선택지별 설명 텍스트 -->
                 <div
                   v-if="selectedStatus === option.value"
-                  class="absolute top-full left-6 mt-1 text-callout text-fg-secondary whitespace-nowrap z-10"
+                  class="absolute top-full left-0 tablet:left-6 wide:left-6 mt-1 text-footnote tablet:text-callout wide:text-callout text-fg-secondary whitespace-nowrap z-10"
                 >
                   {{ getStatusDescription(option.value) }}
                 </div>
@@ -90,7 +119,7 @@
               size="sm"
               @click="submitSurvey"
               :disabled="!selectedStatus"
-              class="px-6"
+              class="px-6 w-full tablet:w-auto wide:w-auto mt-4 tablet:mt-0 wide:mt-0"
               label="제출"
             >
             </BaseButton>
@@ -137,21 +166,28 @@ const props = defineProps({
 const emit = defineEmits(['survey-completed']);
 
 // Function to check if survey is completed from localStorage
-const isSurveyCompletedInLocalStorage = (productId) => {
-  const completedSurveys = JSON.parse(localStorage.getItem('completedSurveys') || '{}');
+const isSurveyCompletedInLocalStorage = productId => {
+  const completedSurveys = JSON.parse(
+    localStorage.getItem('completedSurveys') || '{}'
+  );
   return completedSurveys[productId] === true;
 };
 
 // Function to mark survey as completed in localStorage
-const markSurveyCompletedInLocalStorage = (productId) => {
-  const completedSurveys = JSON.parse(localStorage.getItem('completedSurveys') || '{}');
+const markSurveyCompletedInLocalStorage = productId => {
+  const completedSurveys = JSON.parse(
+    localStorage.getItem('completedSurveys') || '{}'
+  );
   completedSurveys[productId] = true;
   localStorage.setItem('completedSurveys', JSON.stringify(completedSurveys));
 };
 
 const isCompleted = computed(() => {
   // Check both productStatus and localStorage
-  return (props.productStatus !== null && props.productStatus !== '') || isSurveyCompletedInLocalStorage(props.productId);
+  return (
+    (props.productStatus !== null && props.productStatus !== '') ||
+    isSurveyCompletedInLocalStorage(props.productId)
+  );
 });
 
 const submitSurvey = async () => {
@@ -175,7 +211,6 @@ const submitSurvey = async () => {
 
     // Emit event (optional, but good for parent to know)
     emit('survey-completed', selectedStatus.value);
-
   } catch (error) {
     console.error('설문 처리 실패:', error);
   }

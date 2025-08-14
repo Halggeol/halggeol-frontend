@@ -1,20 +1,24 @@
 <template>
   <div class="space-y-4">
-    <BaseCard size="lg" variant="outline" class="w-full p-6 tablet:p-8">
+    <BaseCard
+      size="lg"
+      variant="outline"
+      class="w-full p-6 tablet:p-8 wide:p-8"
+    >
       <div
-        class="grid grid-cols-2 gap-y-6 gap-x-4 place-items-center tablet:flex tablet:flex-row tablet:justify-around tablet:items-start tablet:gap-x-8 w-full"
+        class="grid grid-cols-2 gap-y-6 gap-x-4 place-items-center tablet:flex wide:flex tablet:flex-row wide:flex-row tablet:justify-around wide:justify-around tablet:items-start wide:items-start tablet:gap-x-8 wide:gap-x-8 w-full"
       >
         <!-- 예금/적금 -->
         <template v-if="isDepositOrSavings">
           <!-- 최고금리 -->
           <div class="text-center">
             <h3
-              class="text-footnote tablet:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3"
+              class="text-footnote tablet:text-callout wide:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3 wide:mb-3"
             >
               최고금리
             </h3>
             <p
-              class="text-body02 tablet:text-title-sm font-bold text-fg-primary"
+              class="text-body02 tablet:text-title-sm wide:text-title-sm font-bold text-fg-primary"
             >
               {{ productDetail.primeRate || productDetail.rate }} %
             </p>
@@ -23,12 +27,12 @@
           <!-- 기본금리 -->
           <div class="text-center">
             <h3
-              class="text-footnote tablet:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3"
+              class="text-footnote tablet:text-callout wide:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3 wide:mb-3"
             >
               기본금리
             </h3>
             <p
-              class="text-body02 tablet:text-title-sm font-bold text-fg-primary"
+              class="text-body02 tablet:text-title-sm wide:text-title-sm font-bold text-fg-primary"
             >
               {{ productDetail.rate }} %
             </p>
@@ -37,12 +41,12 @@
           <!-- 저축기간 -->
           <div class="text-center">
             <h3
-              class="text-footnote tablet:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3"
+              class="text-footnote tablet:text-callout wide:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3 wide:mb-3"
             >
               저축기간
             </h3>
             <p
-              class="text-body02 tablet:text-title-sm font-bold text-fg-primary"
+              class="text-body02 tablet:text-title-sm wide:text-title-sm font-bold text-fg-primary"
             >
               <span
                 v-if="productDetail.minSaveTerm && productDetail.maxSaveTerm"
@@ -71,12 +75,12 @@
           <!-- 기준가 -->
           <div class="text-center">
             <h3
-              class="text-footnote tablet:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3"
+              class="text-footnote tablet:text-callout wide:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3 wide:mb-3"
             >
               기준가
             </h3>
             <p
-              class="text-body02 tablet:text-title-sm font-bold text-fg-primary"
+              class="text-body02 tablet:text-title-sm wide:text-title-sm font-bold text-fg-primary"
             >
               {{
                 productDetail.fundPrice * 10
@@ -89,14 +93,14 @@
           <!-- 수익률 -->
           <div class="text-center">
             <h3
-              class="text-footnote tablet:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3"
+              class="text-footnote tablet:text-callout wide:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3 wide:mb-3"
             >
               <div class="tooltip" data-tip="3개월간 변동 수치">
                 <span class="underline"> 기준가 변동 </span>
               </div>
             </h3>
             <p
-              class="text-body02 tablet:text-title-sm font-bold"
+              class="text-body02 tablet:text-title-sm wide:text-title-sm font-bold"
               :class="getPriceMovementColor(productDetail.fundPriceMovement)"
             >
               {{
@@ -110,12 +114,12 @@
           <!-- TER(총보수율) -->
           <div class="text-center">
             <h3
-              class="text-footnote tablet:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3"
+              class="text-footnote tablet:text-callout wide:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3 wide:mb-3"
             >
               총보수율(TER)
             </h3>
             <p
-              class="text-body02 tablet:text-title-sm font-bold text-fg-primary"
+              class="text-body02 tablet:text-title-sm wide:text-title-sm font-bold text-fg-primary"
             >
               {{ productDetail.ter ? productDetail.ter + '%' : '-' }}
             </p>
@@ -127,12 +131,12 @@
           <!-- 금리 -->
           <div class="text-center">
             <h3
-              class="text-footnote tablet:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3"
+              class="text-footnote tablet:text-callout wide:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3 wide:mb-3"
             >
               금리
             </h3>
             <p
-              class="text-body02 tablet:text-title-sm font-bold text-fg-primary"
+              class="text-body02 tablet:text-title-sm wide:text-title-sm font-bold text-fg-primary"
             >
               {{ productDetail.rate }} %
             </p>
@@ -141,12 +145,12 @@
           <!-- 통화 -->
           <div class="text-center">
             <h3
-              class="text-footnote tablet:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3"
+              class="text-footnote tablet:text-callout wide:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3 wide:mb-3"
             >
               통화
             </h3>
             <p
-              class="text-body02 tablet:text-title-sm font-bold text-fg-primary"
+              class="text-body02 tablet:text-title-sm wide:text-title-sm font-bold text-fg-primary"
             >
               {{ productDetail.currency || '-' }}
             </p>
@@ -155,7 +159,7 @@
           <!-- 최소금액 -->
           <div class="text-center">
             <h3
-              class="text-footnote tablet:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3"
+              class="text-footnote tablet:text-callout wide:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3 wide:mb-3"
             >
               <div
                 class="tooltip"
@@ -165,7 +169,7 @@
               </div>
             </h3>
             <p
-              class="text-body02 tablet:text-title-sm font-bold text-fg-primary"
+              class="text-body02 tablet:text-title-sm wide:text-title-sm font-bold text-fg-primary"
             >
               {{
                 productDetail.minLimit
@@ -181,12 +185,12 @@
           <!-- 금리 -->
           <div class="text-center">
             <h3
-              class="text-footnote tablet:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3"
+              class="text-footnote tablet:text-callout wide:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3 wide:mb-3"
             >
               수익률
             </h3>
             <p
-              class="text-body02 tablet:text-title-sm font-bold text-fg-primary"
+              class="text-body02 tablet:text-title-sm wide:text-title-sm font-bold text-fg-primary"
             >
               {{ productDetail.rate }} %
             </p>
@@ -195,12 +199,12 @@
           <!-- 최소보장이율 -->
           <div class="text-center">
             <h3
-              class="text-footnote tablet:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3"
+              class="text-footnote tablet:text-callout wide:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3 wide:mb-3"
             >
               최소보장이율
             </h3>
             <p
-              class="text-body02 tablet:text-title-sm font-bold text-fg-primary"
+              class="text-body02 tablet:text-title-sm wide:text-title-sm font-bold text-fg-primary"
             >
               {{
                 productDetail.minGuaranteeRate
@@ -213,12 +217,12 @@
           <!-- 연금종류 -->
           <div class="text-center">
             <h3
-              class="text-footnote tablet:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3"
+              class="text-footnote tablet:text-callout wide:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3 wide:mb-3"
             >
               연금종류
             </h3>
             <p
-              class="text-body02 tablet:text-title-sm font-bold text-fg-primary"
+              class="text-body02 tablet:text-title-sm wide:text-title-sm font-bold text-fg-primary"
             >
               {{ productDetail.pensionKind || '-' }}
             </p>
@@ -228,7 +232,7 @@
         <!-- 공통: 나와의 적합도 -->
         <div class="text-center">
           <h3
-            class="text-footnote tablet:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3"
+            class="text-footnote tablet:text-callout wide:text-callout font-medium text-fg-secondary mb-2 tablet:mb-3 wide:mb-3"
           >
             <div
               class="tooltip"
@@ -239,7 +243,7 @@
           </h3>
           <p
             :class="[
-              'text-body02 tablet:text-title-sm font-bold text-status-blue',
+              'text-body02 tablet:text-title-sm wide:text-title-sm font-bold text-status-blue',
               { tooltip: !authStore.isLoggedIn },
             ]"
             :data-tip="
