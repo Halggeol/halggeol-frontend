@@ -11,6 +11,8 @@ import InsightLineChart from '@/components/insight/InsightLineChart.vue';
 import ForexBarChart from '@/components/insight/InsightBarChart.vue';
 import InsightDetailPage from '@/pages/insight/InsightDetailPage.vue';
 import LoadingPage from '@/pages/LoadingPage.vue';
+import BaseCard from '@/components/common/BaseCard.vue';
+import PagenationsButton from '@/components/icons/insight/PagenationsButton.vue';
 
 const props = defineProps({
   filterType: {
@@ -48,7 +50,6 @@ const filteredProductsData = computed(() => {
 const availableRounds = computed(() => {
   return filteredProductsData.value.map(p => p.round).sort((a, b) => a - b);
 });
-const productsData = computed(() => insightStore.products);
 const currentRound = computed(() =>
   route.query.round ? Number(route.query.round) : null
 );
@@ -57,6 +58,13 @@ const currentProducts = computed(() => {
     filteredProductsData.value.find(p => p.round === currentRound.value)
       ?.products ?? []
   );
+});
+const currentRecDate = computed(() => {
+  return (
+    filteredProductsData.value.find(p => p.round === currentRound.value)
+      ?.recDate ?? null
+  );
+  // - split 해서 년/월/일 붙이기
 });
 const currentProductId = computed(() => route.query.productId || null);
 
@@ -157,23 +165,37 @@ watch(
 </script>
 
 <template>
-  <div class="insight-container">
+  <div>
     <LoadingPage v-if="isLoading && !detailData" />
     <div v-else>
-      <div class="chart-nav">
-        <button @click="changeRound(false)" :disabled="!productsData.length">
+      <div class="chart-nav round-navigation">
+        <!-- <button
+          @click="changeRound(false)"
+          :disabled="availableRounds.indexOf(currentRound) === 0"
+        >
           ❮
-        </button>
+        </button> -->
+        <PagenationsButton
+          @click="changeRound(false)"
+          :disabled="availableRounds.indexOf(currentRound) === 0"
+          class="hover:shadow-card rounded-full"
+        />
         <span>{{ currentRound }}회차</span>
-        <button @click="changeRound(true)" :disabled="!productsData.length">
-          ❯
-        </button>
+        <PagenationsButton
+          @click="changeRound(true)"
+          :disabled="
+            availableRounds.indexOf(currentRound) === availableRounds.length - 1
+          "
+          class="hover:shadow-card rounded-full scale-x-[-1]"
+        />
       </div>
 
-      <div class="main-content">
-        <div class="products-sidebar">
+      <div class="issue-date">발행일 {{ currentRecDate }}</div>
+
+      <div class="flex min-h-full gap-10 tablet:flex-col tablet:gap-7">
+        <div>
           <div v-if="currentProducts.length === 0" class="no-products">
-            <p>해당 조건에 맞는 상품이 없습니다.</p>
+            <p>텅 화면으로 변경</p>
           </div>
           <div v-else>
             <div
@@ -183,19 +205,16 @@ watch(
               :key="product.productId"
               @click="handleProductClick(product.productId)"
             >
-              <span class="product-number">{{ idx + 1 }}</span>
+              <span class="text-body02 font-semibold text-fg-primary">{{
+                idx + 1
+              }}</span>
               <span class="product-name">{{ product.name }}</span>
             </div>
           </div>
         </div>
 
-        <div class="chart-area">
-          <div v-if="isLoading" class="loading-container">
-            <p>상세 정보 로딩 중...</p>
-          </div>
-          <div v-else-if="!detailData" class="no-data-message">
-            <p>상품을 선택해주세요.</p>
-          </div>
+        <BaseCard size="lg" variant="outline">
+          <LoadingPage v-if="!detailData" />
           <div v-else>
             <div v-if="isForexProduct" class="currency-selector">
               <select v-model="selectedCurrency">
@@ -220,7 +239,7 @@ watch(
               </div>
             </div>
           </div>
-        </div>
+        </BaseCard>
       </div>
       <InsightDetailPage :detail-data="detailData" />
     </div>
@@ -228,28 +247,6 @@ watch(
 </template>
 
 <style scoped>
-.chart-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 30px;
-  text-align: center;
-}
-.insight-container {
-  padding: 30px;
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
-    Arial, sans-serif;
-  background-color: #ffffff;
-}
-
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-}
-
 .chart-nav {
   display: flex;
   justify-content: center;
@@ -257,7 +254,6 @@ watch(
   gap: 20px;
   margin-bottom: 30px;
   padding: 15px;
-  background: #f8f9fa;
   border-radius: 8px;
 }
 
@@ -292,6 +288,18 @@ watch(
   color: #333;
   min-width: 80px;
   text-align: center;
+}
+
+.issue-date {
+  align-self: flex-start; /* 왼쪽 정렬 */
+  font-size: 14px;
+  color: #888;
+  font-weight: 400;
+  white-space: nowrap;
+  user-select: none;
+  padding-left: 10px; /* 좌측 여백 살짝 */
+  width: 100%;
+  max-width: 350px; /* 좌측 사이드바 넓이와 맞춤 */
 }
 
 .currency-selector {
@@ -334,12 +342,6 @@ watch(
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.main-content {
-  display: flex;
-  gap: 40px;
-  min-height: 500px;
-}
-
 .products-sidebar {
   flex: 0 0 350px;
 }
@@ -366,8 +368,6 @@ watch(
 .product-item.active {
   background-color: #fff8e1;
   border-color: #ffd338;
-  border-left: 4px solid #ffd338;
-  font-weight: 500;
 }
 
 .product-number {
@@ -395,15 +395,6 @@ watch(
   line-height: 1.4;
 }
 
-.chart-area {
-  flex: 1;
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
-  padding: 30px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-}
-
 .chart-wrapper {
   height: 400px;
   position: relative;
@@ -426,10 +417,6 @@ watch(
 }
 
 @media (max-width: 1024px) {
-  .main-content {
-    flex-direction: column;
-    gap: 30px;
-  }
   .products-sidebar {
     flex: none;
   }
@@ -450,9 +437,6 @@ watch(
   }
   .round-text {
     font-size: 18px;
-  }
-  .chart-area {
-    padding: 20px;
   }
 }
 </style>

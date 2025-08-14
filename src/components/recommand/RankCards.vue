@@ -72,7 +72,7 @@ const productTypeConfig = {
       고위험상품 숨기기
     </p>
   </div>
-  <div class="ranking grid grid-rows-2 grid-cols-3 gap-6 tablet:gap-4">
+  <div class="ranking pb-20 grid grid-rows-2 grid-cols-3 gap-6 tablet:gap-4">
     <BaseCard
       v-if="topItem"
       @click="goToDetail(topItem.productId)"

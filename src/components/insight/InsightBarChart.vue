@@ -1,13 +1,13 @@
 <template>
   <div class="chart-container">
     <div class="chart-header">
-      <h3 class="chart-title">{{ chartTitle }}</h3>
+      <h3 class="title03">{{ chartTitle }}</h3>
       <div class="legend-container">
         <div class="legend-item">
-          <div class="legend-badge past-badge">과거 환율</div>
+          <div class="p-1">과거환율</div>
         </div>
         <div class="legend-item">
-          <div class="legend-badge current-badge">현재 환율</div>
+          <div class="legend-badge current-badge">현재환율</div>
         </div>
       </div>
     </div>
@@ -63,13 +63,10 @@ const chartTitle = computed(() => {
 function formatDate(dateString) {
   if (!dateString) return '';
   const date = new Date(dateString);
-  return date
-    .toLocaleDateString('ko-KR', {
-      year: '2-digit',
-      month: '2-digit',
-      day: '2-digit',
-    })
-    .replace(/\.$/, ''); // 마지막 점(.) 제거
+  const year = String(date.getFullYear()).slice(-2);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}년 ${month}월 ${day}일`;
 }
 
 // 차트 생성
@@ -114,7 +111,7 @@ const createChart = () => {
             'rgba(40, 126, 255, 0.8)', // #287EFF 파란색 (현재)
           ],
           borderColor: ['#F23F3F', '#287EFF'],
-          borderWidth: 2,
+          borderWidth: 0,
           borderRadius: 12,
           borderSkipped: false,
           barThickness: 80,
@@ -194,7 +191,8 @@ const createChart = () => {
           title: {
             display: false,
           },
-          min: minY - padding,
+          // min: minY - padding,
+          min: 0,
           max: maxY + padding,
           ticks: {
             callback: function (value) {
@@ -260,11 +258,6 @@ watch(
 
 <style scoped>
 .chart-container {
-  background: #ffffff;
-  border-radius: 24px;
-  padding: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(229, 231, 235, 0.8);
   height: 100%;
   width: 100%;
   display: flex;
@@ -280,16 +273,7 @@ watch(
   align-items: center;
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(229, 231, 235, 0.5);
   flex-shrink: 0;
-}
-
-.chart-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #111827;
-  margin: 0;
-  letter-spacing: -0.025em;
 }
 
 .legend-container {
@@ -306,12 +290,6 @@ watch(
 .legend-badge {
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #ffffff;
-  letter-spacing: -0.01em;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .past-badge {
@@ -323,9 +301,8 @@ watch(
 }
 
 .chart-wrapper {
-  flex: 1;
   width: 100%;
-  min-height: 0;
+  height: 100%;
   position: relative;
 }
 
@@ -343,11 +320,9 @@ watch(
   box-sizing: border-box;
 }
 
-.chart-content canvas {
+canvas {
   width: 100% !important;
   height: 100% !important;
-  max-width: 100%;
-  max-height: 100%;
 }
 
 /* 반응형 디자인 */
@@ -413,37 +388,5 @@ watch(
 /* 애니메이션 효과 */
 .chart-container {
   transition: all 0.3s ease;
-}
-
-.chart-container:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
-}
-
-.legend-badge {
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.legend-badge:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* 글래스모피즘 효과 */
-.chart-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.1),
-    rgba(255, 255, 255, 0.05)
-  );
-  border-radius: 24px;
-  pointer-events: none;
 }
 </style>

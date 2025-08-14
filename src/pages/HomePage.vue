@@ -105,7 +105,7 @@ onMounted(() => {
     <div class="mx-[10.8%] tablet:mx-5">
       <RankCards :ranking="dashboardData?.regretRanking" />
     </div>
-    <h2 class="title01 pb-12 pt-40 mx-[10.8%] tablet:mx-5" v-if="isLoggedIn">
+    <h2 class="title01 pb-12 pt-20 mx-[10.8%] tablet:mx-5" v-if="isLoggedIn">
       {{ dashboardData?.userName }} 님을 위한 추천 상품
     </h2>
     <RecommendCards

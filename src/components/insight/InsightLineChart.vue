@@ -1,10 +1,10 @@
 <template>
   <div class="chart-container">
     <div class="chart-header">
-      <h3 class="chart-title">자산 변동 및 손실금액 추이</h3>
+      <h3 class="title03">자산 변동 및 손실금액 추이</h3>
       <div class="legend-container">
         <div class="legend-item">
-          <div class="legend-badge asset-badge">자산 변동</div>
+          <div class="p-1">자산 변동</div>
         </div>
         <div class="legend-item">
           <div class="legend-badge loss-badge">손실 금액</div>
@@ -351,11 +351,6 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .chart-container {
-  background: #ffffff;
-  border-radius: 24px;
-  padding: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(229, 231, 235, 0.8);
   height: 100%;
   width: 100%;
   display: flex;
@@ -371,16 +366,7 @@ onBeforeUnmount(() => {
   align-items: center;
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(229, 231, 235, 0.5);
   flex-shrink: 0;
-}
-
-.chart-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #111827;
-  margin: 0;
-  letter-spacing: -0.025em;
 }
 
 .legend-container {
@@ -404,15 +390,6 @@ onBeforeUnmount(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   border: 2px solid rgba(255, 255, 255, 0.3);
 }
-
-/* 범례 색상 */
-/* .asset-badge {
-  background: linear-gradient(135deg, #FF6B9D, #FF8E9B);
-}
-
-.loss-badge {
-  background: linear-gradient(135deg, #4ECDC4, #44A08D);
-} */
 
 .asset-badge {
   background: linear-gradient(135deg, #287eff, #1e6fff);
