@@ -86,7 +86,10 @@ const fetchProducts = async () => {
 
   try {
     const params = {
-      types: currentFilters.value.types.join(',') || undefined,
+      types:
+        currentFilters.value.types.length > 0
+          ? currentFilters.value.types.join(',')
+          : undefined,
       sort: currentSort.value,
     };
 
