@@ -19,13 +19,25 @@
           {{ getProductTypeLabel(product.type) }}
         </span>
 
-        <!-- tag1 -->
-        <span
-          v-if="product.tag1"
-          class="text-[13px] bg-[#83BCFF] text-white px-2 py-[2px] rounded-full"
-        >
-          {{ formatTag1(product.tag1, product.type) }}
-        </span>
+        <template v-if="product.tag1">
+          <!-- Forex 상품일 경우 tag1을 쉼표 기준으로 분리하여 표시 -->
+          <template v-if="normalizeType(product.type) === 'forex'">
+            <span
+              v-for="currency in product.tag1.split(',')"
+              :key="currency"
+              class="text-[13px] bg-[#83BCFF] text-white px-2 py-[2px] rounded-full"
+            >
+              {{ currency.trim() }}
+            </span>
+          </template>
+          <!-- 그 외 상품의 tag1 -->
+          <span
+            v-else
+            class="text-[13px] bg-[#83BCFF] text-white px-2 py-[2px] rounded-full"
+          >
+            {{ formatTag1(product.tag1, product.type) }}
+          </span>
+        </template>
 
         <!-- tag2 -->
         <span
