@@ -51,6 +51,10 @@ const handleNext = () => {
   page.value++;
 };
 
+const handlePrev = () => {
+  page.value--;
+};
+
 const handleSubmit = async () => {
   console.log("===== 금융 이해도 설문 완료 핸들링 =====");
 
@@ -125,25 +129,36 @@ const handleSubmit = async () => {
       {{ page + 1 }} / {{ Math.ceil(questions.length / questionsPerPage) }}
     </div>
 
-    <BaseButton
-      v-if="start + questionsPerPage >= questions.length"
-      class="mt-auto mb-20 shrink-0"
-      size="lg"
-      variant="filled"
-      :disabled="!canNext"
-      :label="submitLabel"
-      @click="handleSubmit">
-    </BaseButton>
+    <div class="flex space-x-4 mt-auto mb-20 shrink-0">
+      <BaseButton
+        v-if="page > 0"
+        class="flex-1"
+        label="이전"
+        size="lg"
+        variant="filled"
+        @click="handlePrev"
+      />
 
-    <BaseButton
-      v-else
-      class="mt-auto mb-20 shrink-0"
-      size="lg"
-      variant="filled"
-      :disabled="!canNext"
-      :label="nextLabel"
-      @click="handleNext">
-    </BaseButton>
+      <BaseButton
+        v-if="start + questionsPerPage >= questions.length"
+        class="flex-1"
+        size="lg"
+        variant="filled"
+        :disabled="!canNext"
+        :label="submitLabel"
+        @click="handleSubmit"
+      />
+
+      <BaseButton
+        v-else
+        class="flex-1"
+        size="lg"
+        variant="filled"
+        :disabled="!canNext"
+        :label="nextLabel"
+        @click="handleNext"
+      />
+    </div>
   </div>
 </template>
 

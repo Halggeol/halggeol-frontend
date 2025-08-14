@@ -189,6 +189,10 @@ const handleNext = () => {
   page.value++;
 };
 
+const handlePrev = () => {
+  page.value--;
+};
+
 const handleSubmit = async () => {
   console.log("===== 투자 성향 설문 완료 핸들링 =====");
 
@@ -290,7 +294,6 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
 
 <template>
   <div class="h-full w-[500px] flex flex-col">
-    <!-- 일반 문항 -->
     <div v-for="q in currentQuestions" :key="q.number" class="mb-6">
       <p class="text-body02 text-fg-primary mb-4">
         <span>
@@ -316,7 +319,6 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
       </div>
     </div>
 
-    <!-- 투자 경험 문항 (8번) -->
     <div v-if="(page + 1) * questionsPerPage >= questions.length" class="mb-6">
       <p class="text-body02 text-fg-primary mb-2">
         {{ experiencesQuestion.number }}. {{ experiencesQuestion.question }}
@@ -333,7 +335,6 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
           :key="idx"
           class="space-y-1"
         >
-          <!-- 체크박스: 해당 투자 경험이 있는지 -->
           <label class="flex items-center space-x-2">
             <input
               type="checkbox"
@@ -348,7 +349,6 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
             </span>
           </label>
 
-          <!-- 라디오 버튼: 기간 선택 -->
           <div
             v-if="opt.period"
             class="ml-6 space-x-4 text-callout text-fg-primary"
@@ -372,7 +372,6 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
       </div>
     </div>
 
-    <!-- 투자 예정 기간 문항 (9번) -->
     <div v-if="(page + 1) * questionsPerPage >= questions.length" class="mb-6">
       <p class="text-body02 text-fg-primary mb-4">
         {{ investmentPeriodQuestion.number }}. {{ investmentPeriodQuestion.question }}
@@ -400,24 +399,35 @@ watch([clickedExperienceIdx, clickedExperienceValue], () => {
       {{ page + 1 }} / {{ Math.ceil(questions.length / questionsPerPage) }}
     </div>
 
-    <BaseButton
-      v-if="(page + 1) * questionsPerPage >= questions.length"
-      class="mt-auto mb-20 shrink-0"
-      :disabled="!canSubmit"
-      :label="submitLabel"
-      size="lg"
-      variant="filled"
-      @click="handleSubmit"
-    />
+    <div class="flex space-x-4 mt-auto mb-20 shrink-0">
+      <BaseButton
+        v-if="page > 0"
+        class="flex-1"
+        label="이전"
+        size="lg"
+        variant="filled"
+        @click="handlePrev"
+      />
 
-    <BaseButton
-      v-else
-      class="mt-auto mb-20 shrink-0"
-      :disabled="!canNext"
-      :label="nextLabel"
-      size="lg"
-      variant="filled"
-      @click="handleNext"
-    />
+      <BaseButton
+        v-if="(page + 1) * questionsPerPage >= questions.length"
+        class="flex-1"
+        :disabled="!canSubmit"
+        :label="submitLabel"
+        size="lg"
+        variant="filled"
+        @click="handleSubmit"
+      />
+
+      <BaseButton
+        v-else
+        class="flex-1"
+        :disabled="!canNext"
+        :label="nextLabel"
+        size="lg"
+        variant="filled"
+        @click="handleNext"
+      />
+    </div>
   </div>
 </template>
