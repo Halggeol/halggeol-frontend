@@ -101,7 +101,7 @@ const fetchProducts = async () => {
       params.append('minAmount', currentFilters.value.minAmount);
     if (currentSort.value) params.append('sort', currentSort.value);
 
-    const apiUrl = `http://54.175.115.255:8080/backend-1.0-SNAPSHOT/api/products?${params.toString()}`;
+    const apiUrl = `https://54.175.115.255:8080/backend-1.0-SNAPSHOT/api/products?${params.toString()}`;
     const [productsResponse, scrapedIdsResponse] = await Promise.all([
       api.get(apiUrl),
       getScrapedProductIds(),
