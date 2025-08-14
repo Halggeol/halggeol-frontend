@@ -312,8 +312,8 @@ const resetFilters = () => {
 const emitFilters = () => {
   const filters = {
     types:
-      selectedProductTypes.value.length > 0 ? selectedProductTypes.value : null,
-    fSectors: selectedBanks.value.length > 0 ? selectedBanks.value : null,
+      selectedProductTypes.value.length > 0 ? selectedProductTypes.value : [],
+    fSectors: selectedBanks.value.length > 0 ? selectedBanks.value : [],
     saveTerm: selectedSubscriptionPeriod.value,
     minAmount: selectedAmount.value ? selectedAmount.value : null,
   };

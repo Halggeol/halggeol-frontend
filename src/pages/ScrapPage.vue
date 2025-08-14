@@ -7,8 +7,11 @@
 
     <div class="flex-1 p-5 h-screen overflow-y-auto">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl font-bold text-gray-800">관심 상품 목록</h2>
-        <ProductSort @update:sort="handleSortChange" />
+        <h2 class="text-body01 font-bold text-gray-800">관심 상품 목록</h2>
+        <ProductSort
+          :modelValue="currentSort"
+          @update:sort="handleSortChange"
+        />
       </div>
 
       <div v-if="loading" class="text-center py-10">
@@ -35,9 +38,17 @@
         등록된 관심 상품이 없습니다.
       </div>
 
+      <div
+        v-else-if="filteredProducts.length === 0"
+        class="text-gray-600 text-center py-10"
+      >
+        선택하신 필터에 맞는 상품이 없습니다.
+      </div>
+
       <ScrapSection
         v-else
-        :scrapedProducts="products"
+        :key="currentSort"
+        :scrapedProducts="filteredProducts"
         :selectedFilters="currentFilters"
         @toggle-like="handleToggleLike"
         @product-click="handleProductClick"
@@ -47,13 +58,13 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import ProductSort from '@/components/products/ProductSort.vue';
 import ScrapFilter from '@/components/scrap/ScrapFilter.vue';
 import ScrapSection from '@/components/scrap/ScrapSection.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { delScrap } from '@/api/product-detail';
-import axios from 'axios';
+import api from '@/api';
 
 const route = useRoute();
 const router = useRouter();
@@ -64,7 +75,7 @@ const error = ref(null);
 
 // 필터 상태를 URL에서 관리
 const currentFilters = ref({
-  productTypes: [], // 빈 배열로 초기화
+  types: [], // 빈 배열로 초기화
 });
 const currentSort = ref('popularDesc');
 const isScrapLoading = ref(false);
@@ -73,58 +84,23 @@ const fetchProducts = async () => {
   loading.value = true;
   error.value = null;
 
-  // sessionStorage에서 토큰을 가져옵니다.
-  const token = sessionStorage.getItem('accessToken');
-  if (!token) {
-    error.value = '로그인이 필요합니다.';
-    loading.value = false;
-    // 로그인 페이지로 이동
-    router.push('/login');
-    return;
-  }
-
   try {
-    const params = new URLSearchParams();
+    const params = {
+      types:
+        currentFilters.value.types.length > 0
+          ? currentFilters.value.types.join(',')
+          : undefined,
+      sort: currentSort.value,
+    };
 
-    // 필터링 파라미터 (currentFilters의 productTypes 배열이 비어있지 않을 때만 추가)
-    if (
-      currentFilters.value.productTypes &&
-      currentFilters.value.productTypes.length > 0
-    ) {
-      params.append(
-        'productTypes',
-        currentFilters.value.productTypes.join(',')
-      );
-    }
+    console.log('API 호출 파라미터:', params);
 
-    // 정렬 파라미터
-    if (currentSort.value) {
-      params.append('sort', currentSort.value);
-    }
-
-    const apiUrl = `http://localhost:8080/api/scrap?${params.toString()}`; // 스크랩 API 엔드포인트
-    console.log('API 호출:', apiUrl);
-
-    const response = await axios.get(apiUrl, {
-      headers: {
-        Authorization: `Bearer ${token}`, // localStorage에서 가져온 토큰 사용
-      },
-    });
+    const response = await api.get('/api/scrap', { params });
+    console.log('API 응답 데이터:', response.data);
     products.value = response.data;
-    error.value = null;
   } catch (err) {
-    if (axios.isAxiosError(err) && err.response) {
-      if (err.response.status === 401) {
-        error.value = '로그인 세션이 만료되었습니다. 다시 로그인해주세요.';
-        // 로그인 페이지로 이동
-        router.push('/login');
-      } else {
-        error.value = `서버 오류: ${err.response.status}`;
-      }
-    } else {
-      error.value = '네트워크 연결 상태를 확인해주세요.';
-      console.error('API 호출 중 오류 발생:', err);
-    }
+    error.value = '관심 상품 목록을 불러오는 데 실패했습니다.';
+    console.error('API 호출 중 오류 발생:', err);
   } finally {
     loading.value = false;
   }
@@ -137,11 +113,26 @@ const handleFilterChange = filters => {
   router.push({
     query: {
       ...route.query,
-      productTypes:
-        filters.types.length > 0 ? filters.types.join(',') : undefined,
+      types: filters.types?.length > 0 ? filters.types.join(',') : undefined,
     },
   });
 };
+
+const filteredProducts = computed(() => {
+  const selectedTypes = currentFilters.value.types;
+
+  // 선택된 필터가 없으면 전체 상품 목록을 반환합니다.
+  if (!selectedTypes || selectedTypes.length === 0) {
+    return products.value;
+  }
+
+  // 선택된 필터가 있으면, 해당 'type'을 가진 상품만 필터링합니다.
+  return products.value.filter(product =>
+    // product 객체의 상품 유형 속성 이름이 'type'이라고 가정합니다.
+    // 만약 다른 이름(예: productType)이라면 이 부분을 수정해야 합니다.
+    selectedTypes.includes(product.type)
+  );
+});
 
 const handleSortChange = sort => {
   console.log('Sort changed:', sort);
@@ -204,9 +195,7 @@ watch(
   () => route.query,
   newQuery => {
     currentFilters.value = {
-      productTypes: newQuery.productTypes
-        ? newQuery.productTypes.split(',')
-        : [],
+      types: newQuery.types ? newQuery.types.split(',') : [],
     };
     currentSort.value = newQuery.sort || 'popularDesc';
     fetchProducts();
