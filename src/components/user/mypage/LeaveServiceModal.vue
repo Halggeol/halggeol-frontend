@@ -92,8 +92,8 @@ function inputStyleClass(error) {
 <template>
   <dialog v-if="isOpen" class="modal" open>
     <div class="modal-box max-w-sm">
-      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" @click="handleClose">✕</button>
-      <h3 class="text-lg font-bold mb-6">비밀번호 재확인</h3>
+      <button class="absolute right-4 top-4" @click="handleClose">✕</button>
+      <h3 class="text-body01 font-bold mb-6">비밀번호 재확인</h3>
 
       <!-- 비밀번호 재확인 폼 -->
       <form @submit.prevent novalidate>
@@ -137,7 +137,7 @@ function inputStyleClass(error) {
         <!-- 결과 메시지 -->
         <small
           v-if="result.message"
-          :class="result.success ? 'text-green-500' : 'text-red-500'"
+          :class="result.success ? 'text-status-blue' : 'text-status-red'"
           class="mt-2 block pt-2"
         >
           {{ result.message }}
