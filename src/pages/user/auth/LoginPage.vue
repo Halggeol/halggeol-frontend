@@ -110,7 +110,7 @@ function inputStyleClass(field) {
 
 <template>
   <div
-    class="h-screen flex items-center justify-center relative"
+    class="h-[calc(100vh-56px)] flex items-center justify-center relative"
     style="
       background-image: url('http://googleusercontent.com/image_generation_content/1');
       background-size: cover;
