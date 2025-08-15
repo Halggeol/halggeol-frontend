@@ -33,7 +33,7 @@ async function handleSyncMydata() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white flex flex-col items-center justify-center">
+  <div class="h-[calc(100vh-56px)] bg-white flex flex-col items-center justify-center">
     <!-- 과정 진행도 아이콘 -->
     <div class="w-full max-w-[500px] flex items-center justify-start my-14">
       <Check/>
@@ -46,11 +46,11 @@ async function handleSyncMydata() {
     <div class="w-full max-w-[500px] flex flex-col grow">
       <!-- 상단 설명 영역 -->
       <div>
-        <h1 class="text-title-lg mb-10">
+        <h1 class="text-title-lg mb-10 text-fg-primary">
           그때 할 걸에서 <span class="font-bold">마이데이터</span>를 <br />연동하세요
         </h1>
 
-        <p class="text-gray-600 mb-6">
+        <p class="text-fg-secondary mb-6">
           연동한 마이데이터로 나의 자산을<br />
           쉽고 빠르게 분석할 수 있어요
         </p>
@@ -60,7 +60,7 @@ async function handleSyncMydata() {
       <div v-if="isLoading" class="flex flex-col items-center justify-center grow">
         <!-- 스피너 -->
         <div class="w-12 h-12 border-4 border-gray-300 border-t-primary rounded-full animate-spin mb-6"></div>
-        <p class="text-gray-700">마이데이터를 연동 중입니다...</p>
+        <p class="text-fg-secondary">마이데이터를 연동 중입니다...</p>
       </div>
 
       <!-- 연동하기 버튼 -->

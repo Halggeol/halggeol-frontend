@@ -23,13 +23,13 @@ function onCancel() {
       <p class="text-body02 pt-2 pb-4">로그인 시간을 연장하시겠습니까?</p>
 
       <div class="modal-action">
-        <BaseButton size="sm" label="연장하기" @click="onConfirm" class=":" />
         <BaseButton
           size="sm"
           variant="outline"
           label="취소"
           @click="onCancel"
         />
+        <BaseButton size="sm" label="연장하기" @click="onConfirm" class=":" />
         <!-- <button class="btn bg-primary" @click="onConfirm">연장하기</button>
         <button class="btn" @click="onCancel">취소</button> -->
       </div>

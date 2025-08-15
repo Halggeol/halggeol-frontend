@@ -118,9 +118,10 @@ function inputStyleClass(field) {
     "
   >
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
-      <h2 class="text-center title02 font-bold mb-6">로그인</h2>
+      <h2 class="text-center title02 mb-6">로그인</h2>
 
       <form @submit.prevent novalidate>
+
         <div class="mb-3 relative">
           <div class="relative">
             <input
@@ -240,6 +241,7 @@ function inputStyleClass(field) {
             </button>
           </div>
 
+
           <small v-if="errors.password" class="text-red-500 mt-1 block">{{
             errors.password
           }}</small>
@@ -257,11 +259,12 @@ function inputStyleClass(field) {
 
         <small
           v-if="result.message"
-          :class="result.success ? 'text-green-500' : 'text-red-500'"
+          :class="result.success ? 'text-status-blue' : 'text-status-red'"
           class="mt-1 block pt-2"
         >
           {{ result.message }}
         </small>
+
 
         <div class="mt-6 text-center text-xs text-gray-500 space-x-3">
           <RouterLink to="/find" class="hover:underline"
