@@ -296,13 +296,6 @@ watch(
   },
   { deep: true }
 );
-watch(
-  () => props.regretInsightData,
-  () => {
-    createChart();
-  },
-  { deep: true }
-);
 
 onMounted(() => {
   createChart();
