@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getAccessToken } from './authUtil';
+import router from '@/router';
 
 const api = axios.create({
   baseURL: 'http://localhost:8080/api',
@@ -23,8 +24,15 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   response => response,
   error => {
-    if (error.response && error.response.status === 401) {
-      console.log('Unauthorized, redirecting to login...');
+    if (error.response) {
+      const status = error.response.status;
+      if (status == 401) {
+        console.log('Unauthorized, redirecting to login...');
+      }
+      if (status >= 500 && status < 600) {
+        console.error('Server Error:', error.response.data);
+        router.push('/500'); // /500 페이지로 리다이렉트
+      }
     }
     return Promise.reject(error);
   }

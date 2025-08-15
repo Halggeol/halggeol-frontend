@@ -58,10 +58,10 @@ const productTypeConfig = {
 <template>
   <div class="pb-12 pt-40 flex justify-between align-center">
     <h2 class="title01">
-      이때 살걸 금융상품 랭킹
+      그때 할걸 후회상품 랭킹
       <span
         class="inline-block relative group ml-1 tooltip"
-        data-tip="많은 사용자가 가입하지 않아 후회한 금융상품"
+        data-tip="사용자가 놓친 상품 중 가입하지 않아 가장 많이 후회하는 상품"
       >
         <Tooltiip class="text-fg-secondary" />
       </span>

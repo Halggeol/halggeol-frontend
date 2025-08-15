@@ -15,10 +15,7 @@ export const useInsightStore = defineStore('insight', () => {
 
     try {
       const data = await getInsightProducts();
-      if (!data || data.length === 0) {
-        throw new Error('표시할 상품 목록이 없습니다.');
-      }
-      products.value = data;
+      products.value = data || [];
       isInitialized.value = true;
     } catch (error) {
       console.error('상품 목록 초기화 실패:', error);
@@ -27,5 +24,10 @@ export const useInsightStore = defineStore('insight', () => {
     }
   }
 
-  return { products, isInitialized, initializeProducts };
+  function reset() {
+    products.value = [];
+    isInitialized.value = false;
+  }
+
+  return { products, isInitialized, initializeProducts, reset };
 });

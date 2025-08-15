@@ -12,6 +12,8 @@ const props = defineProps({
   regrettedReason: Number,
 });
 
+const emit = defineEmits(['survey-submitted']);
+
 const situation = ref(
   props.isSurveyed ? (props.isRegretted ? '후회해요' : '후회 안 해요') : null
 );
@@ -52,6 +54,7 @@ const submitFeedback = async () => {
   try {
     await submitRegretSurvey(payload.value);
     submitSuccess.value = true;
+    emit('survey-submitted', payload.value);
   } catch (err) {
     console.error('전송 실패:', err);
     submitSuccess.value = false;
@@ -61,13 +64,6 @@ const submitFeedback = async () => {
 };
 
 const readOnly = computed(() => props.isSurveyed || submitSuccess.value);
-const regrettedReasonText = computed(() => {
-  const reasonId = submitSuccess.value
-    ? selectedReason.value
-    : props.regrettedReason;
-  if (!reasonId) return '';
-  return regretReasons.find(r => r.id === reasonId)?.text || '';
-});
 </script>
 
 <template>
@@ -76,64 +72,111 @@ const regrettedReasonText = computed(() => {
       {{ props.userName }} 님의 의견을 알려주세요
     </h2>
     <h2 class="title01" v-else>{{ props.userName }} 님의 소중한 의견이에요</h2>
-    <div class="flex items-center gap-8 my-6 text-body02 text-fg-primary">
-      <span>지금 금융상품명을 가입하지 않은 걸</span>
-      <label class="flex items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          value="후회해요"
-          v-model="situation"
-          class="w-4 h-4"
-          :disabled="readOnly"
-        />
-        <span class="text-body02">후회해요</span>
-      </label>
-      <label class="flex items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          value="후회 안 해요"
-          v-model="situation"
-          class="w-4 h-4"
-          :disabled="readOnly"
-        />
-        <span class="text-body02">후회 안 해요</span>
-      </label>
+    <div class="my-6 space-y-4">
+      <p class="text-body01 font-medium text-fg-primary">
+        지금 금융상품명을 가입하지 않은 걸
+      </p>
+
+      <div class="grid grid-cols-2 gap-4">
+        <label>
+          <input
+            type="radio"
+            value="후회해요"
+            v-model="situation"
+            :disabled="readOnly"
+            class="sr-only peer"
+          />
+          <div
+            class="w-full rounded-lg border p-4 text-body02 text-center transition-all"
+            :class="{
+              'opacity-70': readOnly,
+              'cursor-pointer': !readOnly,
+              'cursor-default': readOnly,
+              'border-primary bg-white shadow font-semibold':
+                situation === '후회해요',
+              'border-gray-200 bg-white': situation !== '후회해요',
+              'hover:bg-primary-50 hover:border-primary-200':
+                !readOnly && situation !== '후회해요',
+            }"
+          >
+            후회해요
+          </div>
+        </label>
+        <label>
+          <input
+            type="radio"
+            value="후회 안 해요"
+            v-model="situation"
+            :disabled="readOnly"
+            class="sr-only peer"
+          />
+          <div
+            class="w-full rounded-lg border p-4 text-body02 text-center transition-all"
+            :class="{
+              'opacity-70': readOnly,
+              'cursor-pointer': !readOnly,
+              'cursor-default': readOnly,
+              'border-primary bg-white shadow font-semibold':
+                situation === '후회 안 해요',
+              'border-gray-200 bg-white': situation !== '후회 안 해요',
+              'hover:bg-primary-50 hover:border-primary-200':
+                !readOnly && situation !== '후회 안 해요',
+            }"
+          >
+            후회 안 해요
+          </div>
+        </label>
+      </div>
     </div>
 
-    <div v-if="situation === '후회해요'" class="py-6 text-body02">
-      <div class="flex gap-4">
-        <span class="whitespace-nowrap">그때는</span>
-        <div v-if="!readOnly" class="flex flex-col min-w-max">
-          <label
-            v-for="item in regretReasons"
-            :key="item.id"
-            class="flex items-center gap-2"
+    <div v-if="situation === '후회해요'" class="my-6 space-y-4">
+      <p class="text-body01 font-medium text-fg-primary">
+        그때 가입하지 않은 이유는
+      </p>
+      <div class="space-y-2">
+        <label v-for="item in regretReasons" :key="item.id">
+          <input
+            type="radio"
+            :value="item.id"
+            v-model="selectedReason"
+            :disabled="readOnly"
+            class="sr-only peer"
+          />
+          <div
+            class="flex items-center mb-3 rounded-lg border p-4 text-body02 transition-all"
+            :class="{
+              'opacity-70': readOnly,
+              'cursor-pointer': !readOnly,
+              'cursor-default': readOnly,
+              'border-primary bg-white shadow font-semibold':
+                selectedReason === item.id,
+              'border-gray-200 bg-white': selectedReason !== item.id,
+              'hover:bg-primary-50 hover:border-primary-200':
+                !readOnly && selectedReason !== item.id,
+            }"
           >
-            <input
-              type="radio"
-              :value="item.id"
-              v-model="selectedReason"
-              class="w-4 h-4"
-            />
-            <span>
-              {{ item.text }}
-            </span>
-          </label>
-        </div>
-        <span v-else>
-          {{ regrettedReasonText }}
-        </span>
-        <span>가입하지 않았어요</span>
+            <div
+              class="flex h-5 w-5 mr-2 items-center justify-center rounded-full border border-gray-300 peer-checked:border-primary"
+            >
+              <div
+                class="h-2.5 w-2.5 rounded-full bg-primary"
+                v-if="selectedReason === item.id"
+              ></div>
+            </div>
+            <span>{{ item.text }}</span>
+          </div>
+        </label>
       </div>
     </div>
 
     <BaseButton
+      v-if="!readOnly"
       @click="submitFeedback"
       size="sm"
       label="제출하기"
       :disabled="isSubmitting || (situation === '후회해요' && !selectedReason)"
       :loading="isSubmitting"
-      v-if="!readOnly"
+      class="mt-4"
     >
     </BaseButton>
   </BaseCard>

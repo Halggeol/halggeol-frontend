@@ -1,18 +1,20 @@
 <template>
-  <div class="chart-container">
-    <div class="chart-header">
-      <h3 class="title03">{{ chartTitle }}</h3>
-      <div class="legend-container">
-        <div class="legend-item">
-          <div class="p-1">과거환율</div>
+  <div class="w-full flex flex-col box-border overflow-hidden">
+    <div class="flex justify-between items-center mb-4 pb-3 shrink-0">
+      <h3 class="title03 text-fg-primary">{{ chartTitle }}</h3>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center">
+          <div class="w-4 h-4 rounded-full bg-gray-primary mr-2"></div>
+          <span class="text-callout">과거 환율</span>
         </div>
-        <div class="legend-item">
-          <div class="legend-badge current-badge">현재환율</div>
+        <div class="flex items-center">
+          <div class="w-4 h-4 rounded-full bg-secondary mr-2"></div>
+          <span class="text-callout">현재 환율</span>
         </div>
       </div>
     </div>
-    <div class="chart-wrapper">
-      <div class="chart-content">
+    <div class="w-full min-h-0 relative flex-1">
+      <div class="w-full h-full relative box-border">
         <canvas ref="chartCanvas"></canvas>
       </div>
     </div>
@@ -20,7 +22,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -41,15 +43,14 @@ ChartJS.register(
   Legend
 );
 
-// props 정의
 const props = defineProps({
   forexInfo: {
     type: Array,
-    required: true,
+    default: () => [],
   },
   selectedCurrency: {
     type: String,
-    required: true,
+    default: '',
   },
 });
 
@@ -60,20 +61,21 @@ const chartTitle = computed(() => {
   const selected = props.forexInfo?.find(
     item => item.curUnit === props.selectedCurrency
   );
-  return selected ? `${selected.curUnit} 환율 변화` : '환율 변화';
+  return selected ? `${selected.curUnit} 환율정보` : '환율정보';
 });
 
 function formatDate(dateString) {
   if (!dateString) return '';
   const date = new Date(dateString);
-  const year = String(date.getFullYear()).slice(-2);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}년 ${month}월 ${day}일`;
+
+  const year = date.getFullYear().toString().slice(-2);
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}.${month}.${day}`;
 }
 
 // 차트 생성
-const chartData = () => {
+const createChart = () => {
   if (!chartCanvas.value) return;
 
   const selected = props.forexInfo?.find(
@@ -88,8 +90,8 @@ const chartData = () => {
   const currentDateLabel = formatDate(selected.anlzDate);
 
   // 레이블을 "환율 타입 : 날짜" 형식으로 변경
-  const pastLabel = `과거 : ${pastDateLabel}`;
-  const currentLabel = `현재 : ${currentDateLabel}`;
+  const pastLabel = `${pastDateLabel}`;
+  const currentLabel = `${currentDateLabel}`;
 
   const minY = Math.min(selected.pastRate, selected.currentRate);
   const maxY = Math.max(selected.pastRate, selected.currentRate);
@@ -110,14 +112,13 @@ const chartData = () => {
           label: '환율',
           data: [selected.pastRate, selected.currentRate],
           backgroundColor: [
-            'rgba(242, 63, 63, 0.8)', // #F23F3F 빨간색 (과거)
-            'rgba(40, 126, 255, 0.8)', // #287EFF 파란색 (현재)
+            '#60584C', // 과거 환율
+            '#FFBC00', // 현재 환율
           ],
-          borderColor: ['#F23F3F', '#287EFF'],
           borderWidth: 0,
           borderRadius: 12,
           borderSkipped: false,
-          barThickness: 80,
+          barThickness: 100,
           maxBarThickness: 100,
         },
       ],
@@ -134,16 +135,14 @@ const chartData = () => {
           backgroundColor: 'rgba(17, 24, 39, 0.95)',
           titleColor: '#FFFFFF',
           bodyColor: '#FFFFFF',
-          borderColor: 'rgba(255, 255, 255, 0.1)',
-          borderWidth: 1,
           cornerRadius: 12,
           displayColors: false,
           titleFont: {
-            size: 14,
+            size: 16,
             weight: 'bold',
           },
           bodyFont: {
-            size: 13,
+            size: 14,
           },
           padding: 16,
           caretSize: 8,
@@ -162,7 +161,7 @@ const chartData = () => {
             afterLabel: function (context) {
               const isCurrentRate = context.dataIndex === 1;
               const date = isCurrentRate ? selected.anlzDate : selected.recDate;
-              return `(${formatDate(date)})`;
+              return `${formatDate(date)} 기준`;
             },
           },
         },
@@ -176,8 +175,8 @@ const chartData = () => {
           ticks: {
             color: '#6B7280',
             font: {
-              size: 12,
-              weight: '600',
+              size: 16,
+              weight: '500',
             },
             maxRotation: 0,
             minRotation: 0,
@@ -194,8 +193,7 @@ const chartData = () => {
           title: {
             display: false,
           },
-          // min: minY - padding,
-          min: 0,
+          min: minY - padding,
           max: maxY + padding,
           ticks: {
             callback: function (value) {
@@ -206,8 +204,8 @@ const chartData = () => {
             },
             color: '#6B7280',
             font: {
-              size: 11,
-              weight: '600',
+              size: 12,
+              weight: '400',
             },
             maxTicksLimit: 5,
           },
@@ -229,167 +227,29 @@ const chartData = () => {
   });
 };
 
-// 선택된 통화가 바뀔 때마다 차트 데이터 업데이트
+// 데이터 변경 감지
 watch(
   () => [props.forexInfo, props.selectedCurrency],
   () => {
-    const selected = props.forexInfo.find(
-      item => item.curUnit === props.selectedCurrency
-    );
-
-    if (!selected) {
-      chartData.value = null;
-      return;
-    }
-
-    chartData.value = {
-      labels: ['과거 환율', '현재 환율'],
-      datasets: [
-        {
-          label: `${selected.curUnit} 환율`,
-          backgroundColor: ['#ff6b35', '#4a90e2'],
-          data: [selected.pastRate, selected.currentRate],
-          barThickness: 100, // ✅ 슬림한 막대폭
-          borderRadius: 5, // ✅ 둥근 막대 (선택)
-        },
-      ],
-    };
+    createChart();
   },
-  { immediate: true }
+  { deep: true }
 );
+
+onMounted(() => {
+  createChart();
+});
+
+onBeforeUnmount(() => {
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
+});
 </script>
 
 <style scoped>
-.chart-container {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  backdrop-filter: blur(10px);
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  flex-shrink: 0;
-}
-
-.legend-container {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-}
-
-.legend-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-}
-
-.past-badge {
-  background: linear-gradient(135deg, #f23f3f, #ff6b6b);
-}
-
-.current-badge {
-  background: linear-gradient(135deg, #287eff, #5aa0ff);
-}
-
-.chart-wrapper {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.chart-content {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.9),
-    rgba(249, 250, 251, 0.5)
-  );
-  border-radius: 12px;
-  padding: 16px 12px 12px 12px;
-  box-sizing: border-box;
-}
-
-canvas {
+.chart-content canvas {
   width: 100% !important;
   height: 100% !important;
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-  .chart-container {
-    padding: 16px;
-    border-radius: 20px;
-  }
-
-  .chart-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-
-  .legend-container {
-    align-self: flex-end;
-    gap: 8px;
-  }
-
-  .chart-title {
-    font-size: 16px;
-  }
-
-  .legend-badge {
-    font-size: 11px;
-    padding: 3px 10px;
-  }
-
-  .chart-content {
-    padding: 12px 8px 8px 8px;
-  }
-}
-
-@media (max-width: 480px) {
-  .chart-container {
-    padding: 12px;
-    border-radius: 16px;
-  }
-
-  .legend-container {
-    flex-direction: column;
-    gap: 6px;
-    align-items: stretch;
-  }
-
-  .legend-badge {
-    text-align: center;
-    font-size: 10px;
-    padding: 2px 8px;
-  }
-
-  .chart-title {
-    font-size: 14px;
-  }
-
-  .chart-content {
-    padding: 8px 4px 4px 4px;
-  }
-}
-
-/* 애니메이션 효과 */
-.chart-container {
-  transition: all 0.3s ease;
 }
 </style>

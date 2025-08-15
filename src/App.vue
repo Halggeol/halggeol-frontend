@@ -32,8 +32,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <MobilePage v-if="isMobile" />
-  <RouterView v-else :key="$route.fullPath" />
+  <RouterView v-if="!isMobile" :key="$route.fullPath" />
+  <MobilePage v-else />
 </template>
 
 <style scoped></style>

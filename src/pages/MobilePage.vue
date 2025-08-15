@@ -1,6 +1,6 @@
 <script setup>
-import BaseButton from '@/components/common/BaseButton.vue';
 import BaseCard from '@/components/common/BaseCard.vue';
+import Logo from '@/components/icons/Logo.vue';
 </script>
 
 <template>
@@ -8,47 +8,129 @@ import BaseCard from '@/components/common/BaseCard.vue';
     <div
       class="h-full flex justify-start items-center gap-2 text-body02 font-semibold"
     >
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M0 4C0 1.79086 1.79086 0 4 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V4Z"
-          fill="#60584C"
-        />
-        <path
-          d="M16.4249 12.0938C17.552 11.8121 17.661 10.2532 16.5841 9.81731L5.82531 5.46255C4.84298 5.06494 3.86513 6.04279 4.26274 7.02512L8.6175 17.7839C9.05336 18.8608 10.6123 18.7518 10.894 17.6247L11.8256 13.8985C11.9331 13.4686 12.2688 13.1329 12.6987 13.0254L16.4249 12.0938Z"
-          fill="#FFD338"
-        />
-        <path
-          d="M14.6581 17.1834L12.8931 15.4184C12.5026 15.0279 12.5026 14.3947 12.8931 14.0042C13.2836 13.6137 13.9168 13.6137 14.3073 14.0042L16.0723 15.7692C16.3271 16.024 16.6623 16.1653 16.996 16.173C17.3274 16.1807 17.6286 16.0569 17.8428 15.8427C18.057 15.6285 18.1808 15.3273 18.1732 14.9958C18.1655 14.6622 18.0241 14.327 17.7694 14.0722C17.3788 13.6816 17.3788 13.0485 17.7694 12.658C18.1599 12.2674 18.7931 12.2674 19.1836 12.658C19.7929 13.2673 20.1525 14.0886 20.1724 14.9494C20.1924 15.8125 19.868 16.646 19.2571 17.2569C18.6461 17.8678 17.8126 18.1922 16.9496 18.1723C16.0888 18.1524 15.2674 17.7927 14.6581 17.1834Z"
-          fill="#FFD338"
-        />
-      </svg>
-
-      그때 할 걸
+      <Logo />
+      그때 할걸
     </div>
   </div>
-  <div class="flex flex-col items-center justify-center my-12 px-6">
-    <p class="text-callout pb-2">후회 없는 금융상품 추천 서비스</p>
-    <h2 class="title02">그때 할 걸</h2>
-  </div>
-  <div>img</div>
-  <div class="px-6">"그때 할 걸" 더이상의 후회?</div>
-  <div class="mx-6 pb-28">
-    <BaseCard size="lg" ratio="lg" variant="tinted">
-      <h3 class="title03">놓친 상품도 다시 보자</h3>
-    </BaseCard>
-  </div>
-  <div class="mx-6">
-    <BaseCard size="lg" ratio="lg" variant="tinted">
-      <h3 class="title03">오직 PC에서만</h3>
-    </BaseCard>
-  </div>
-  <div class="bg-white w-full fixed bottom-0 p-6">
-    <BaseButton size="lg" label="PC 링크 복사하기" />
+  <section class="py-16 text-center px-6">
+    <Logo class="w-20 h-20 mx-auto mb-6" />
+    <h1 class="title01 mb-4">
+      더 넓은 화면에서<br />놓친 기회를 제대로 확인하세요
+    </h1>
+    <p class="text-body01 text-fg-secondary">
+      그때 할걸은 PC 환경에 최적화됐어요.
+    </p>
+    <div class="flex flex-col items-center text-center px-6 py-20">
+      <div class="bg-slate-50 rounded-xl p-6 w-full max-w-md">
+        <h2 class="title03 mb-6">혹시, 이런 순간이 있었나요?</h2>
+        <div class="space-y-2 text-body02 text-fg-secondary">
+          <p>📈 전에 봤던 상품 수익률이 '훌쩍' 올랐을 때</p>
+          <p>📉 가지고 있는 상품 수익률만 '뚝' 떨어졌을 때</p>
+          <p>💸 환전 타이밍을 놓쳐 '아차' 싶었을 때</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <h2 class="title02 text-center mb-4">
+      과거의 후회와 미래의 기회를<br />데이터로 연결합니다
+    </h2>
+    <p class="text-body02 text-fg-secondary text-center mb-10">
+      추천과 회고의 선순환 구조를 경험해 보세요
+    </p>
+
+    <div class="space-y-6 max-w-md mx-auto">
+      <BaseCard size="lg" :shadow="true">
+        <h3 class="title03 mb-2">📈 데이터로 되짚는 나의 선택</h3>
+        <p class="text-body02 text-fg-secondary">
+          가입을 망설였던 상품들의 현재 수익률을 추적하고, <br />'만약' 내
+          자산이 어떻게 변했을지 시뮬레이션해요.
+        </p>
+      </BaseCard>
+
+      <div class="flex justify-center">
+        <svg
+          class="w-6 h-6 text-gray-300"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M16 17l-4 4m0 0l-4-4m4 4V3"
+          />
+        </svg>
+      </div>
+
+      <BaseCard size="lg" :shadow="true">
+        <h3 class="title03 mb-2">💡 데이터가 찾아주는 나의 상품</h3>
+        <p class="text-body02 text-fg-secondary">
+          나의 후회 패턴과 성향을 분석하고, <br />지금 나에게 꼭 맞는 새로운
+          기회를 추천해요.
+        </p>
+      </BaseCard>
+    </div>
+  </section>
+  <div class="mt-16 bg-slate-50">
+    <section class="px-6 py-16">
+      <h2 class="title02 text-center mb-8">
+        그때 할걸에서는<br />이런 기능들을 모두 쓸 수 있어요
+      </h2>
+
+      <!-- 회고인사이트 관련 -->
+      <div class="space-y-4 max-w-md mx-auto">
+        <div class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-5">
+          <div
+            class="w-12 h-12 bg-red-100 rounded-lg flex-shrink-0 flex justify-center items-center text-title-lg"
+          >
+            📈
+          </div>
+          <div>
+            <h3 class="font-bold text-fg-primary">데이터 시뮬레이션</h3>
+            <p class="text-body02 text-fg-secondary mt-1">
+              놓친 상품의 수익률을 추적하고, ‘만약’의 자산 변화를 확인해요.
+            </p>
+          </div>
+        </div>
+        <!-- 추천 관련 -->
+        <div class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-5">
+          <div
+            class="w-12 h-12 bg-yellow-100 rounded-lg flex-shrink-0 flex justify-center items-center text-title-lg"
+          >
+            💡
+          </div>
+          <div>
+            <h3 class="font-bold text-fg-primary">개인 맞춤 추천</h3>
+            <p class="text-body02 text-fg-secondary mt-1">
+              나의 과거 선택을 분석해, 후회 없는 금융상품을 제안해요.
+            </p>
+          </div>
+        </div>
+        <!-- 탐색 범위 관련 -->
+        <div class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-5">
+          <div
+            class="w-12 h-12 bg-blue-100 rounded-lg flex-shrink-0 flex justify-center items-center text-title-lg"
+          >
+            🔍
+          </div>
+          <div>
+            <h3 class="font-bold text-fg-primary">폭넓은 탐색</h3>
+            <p class="text-body02 text-fg-secondary mt-1">
+              예적금부터 펀드까지 다양한 카테고리에서 새로운 기회를 탐색해요
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="px-6 pt-8 pb-32 text-center">
+      <h2 class="title02 mb-4">이 모든 분석, PC에서 한눈에.</h2>
+      <p class="text-body01 text-fg-secondary">
+        복잡한 금융 데이터를 가장 명확하게 보여드리기 위해<br />PC 환경에
+        최적화했어요.
+      </p>
+    </section>
   </div>
 </template>

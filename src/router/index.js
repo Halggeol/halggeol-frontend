@@ -178,7 +178,7 @@ const commonRoutes = [
   {
     path: '/500',
     name: '500',
-    components: Error500,
+    component: Error500,
   },
 ];
 

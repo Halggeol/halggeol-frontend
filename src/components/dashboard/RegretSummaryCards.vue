@@ -21,7 +21,7 @@ const props = defineProps({
 const regretScoreDisplay = computed(() => {
   if (props.regretScore == null) {
     return {
-      value: '없음',
+      value: '아직 후회하지 않았어요',
       colorClass: 'text-fg-primary',
       bgColor: 'bg-[#DDE1E4]',
     };
@@ -47,7 +47,7 @@ const regretScoreDisplay = computed(() => {
 const feedbackRatioDisplay = computed(() => {
   if (props.feedbackRatio == null) {
     return {
-      value: '후회 전',
+      value: '인사이트 발행 전이에요',
       colorClass: 'text-fg-primary',
       bgColor: 'bg-[#DDE1E4]',
     };
@@ -72,7 +72,7 @@ const assetAnalysisDisplay = computed(() => {
   const portfolio = props.portfolio;
   if (!portfolio || portfolio.length === 0) {
     return {
-      value: '텅',
+      value: '자산을 연동하세요',
       colorClass: 'text-fg-primary',
       bgColor: 'bg-[#DDE1E4]',
     };
@@ -91,6 +91,12 @@ const assetAnalysisDisplay = computed(() => {
       colorClass: 'text-status-red',
       bgColor: 'bg-[#FCD9D9]',
     };
+  } else if (aggressiveRatio == 0.5) {
+    return {
+      value: '혼합형',
+      colorClass: 'text-primary',
+      bgColor: 'bg-[#FFFAE5]',
+    };
   } else {
     return {
       value: '안정형',
@@ -107,11 +113,11 @@ const assetAnalysisDisplay = computed(() => {
       variant="transparent"
       :class="regretScoreDisplay.bgColor"
     >
-      <p class="text-body02 pb-1">
-        후회지수
+      <p class="text-body03 pb-1">
+        그때 할걸 후회지수
         <span
           class="inline-block relative group ml-1 align-top tooltip"
-          data-tip="내 자산 대비 놓친 기회를 반영한 점수"
+          data-tip="내 자산 대비 놓친 기회를 반영한 점수. 내가 투자할 거라고 예측한 투자금 대비 놓친 수익률을 점수화"
         >
           <Tooltiip class="w-5 h-5 text-fg-secondary" />
         </span>
@@ -125,11 +131,11 @@ const assetAnalysisDisplay = computed(() => {
       variant="transparent"
       :class="feedbackRatioDisplay.bgColor"
     >
-      <p class="text-body02 pb-1">
+      <p class="text-body03 pb-1">
         후회상품비율
         <span
           class="inline-block relative group ml-1 align-top tooltip"
-          data-tip="추천 상품 중 ‘후회해요’라고 응답한 상품의 비율"
+          data-tip="놓친 상품 중 피드백에서 ‘후회해요’라고 응답한 상품의 비율"
         >
           <Tooltiip class="w-5 h-5 text-fg-secondary" />
         </span>
@@ -143,7 +149,7 @@ const assetAnalysisDisplay = computed(() => {
       variant="transparent"
       :class="assetAnalysisDisplay.bgColor"
     >
-      <p class="text-body02 pb-1">
+      <p class="text-body03 pb-1">
         자산유형
         <span
           class="inline-block relative group ml-1 align-top tooltip"

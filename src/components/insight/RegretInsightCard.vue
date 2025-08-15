@@ -1,254 +1,134 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
-import BaseCard from '../common/BaseCard.vue';
+import { computed } from 'vue';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from 'chart.js';
 
-const props = defineProps({
-  prefix: { type: String, required: true },
-  asset: Number,
-  isCompound: Boolean,
-  interestRate: Number,
-  saveTerm: Number,
-  minLimit: Number,
-  maxLimit: Number,
-});
+import BaseCard from '@/components/common/BaseCard.vue';
+import Sunny from '../icons/regretWeather/Sunny.vue';
+import MostlySunny from '../icons/regretWeather/MostlySunny.vue';
+import SunWithCloud from '../icons/regretWeather/SunWithCloud.vue';
+import Cloudy from '../icons/regretWeather/Cloudy.vue';
+import Rain from '../icons/regretWeather/Rain.vue';
+import RainHeavy from '../icons/regretWeather/RainHeavy.vue';
 
-// 투자금 설정
-const priceOptions = computed(() => {
-  const min = props.minLimit;
-  // asset 값과 maxLimit 중 더 작은 값을 최대값으로 설정
-  const max = Math.min(props.maxLimit, props.asset);
+import InsightLineChart from '@/components/insight/InsightLineChart.vue';
+import ForexBarChart from '@/components/insight/InsightBarChart.vue';
 
-  const niceSteps = [1, 2, 2.5, 5, 10];
-  const range = max - min;
-  if (range <= 0) {
-    return [{ value: min, label: `${(min / 10000).toLocaleString()}만원` }];
-  }
-
-  const step = Math.pow(10, Math.floor(Math.log10(range / 4)));
-  const niceStep = niceSteps.find(s => s * step >= range / 4) * step;
-
-  const options = new Set();
-  let current = Math.floor(min / niceStep) * niceStep;
-
-  while (current <= max) {
-    if (current >= min) {
-      options.add(current);
-    }
-    current += niceStep;
-  }
-  const roundedMax = Math.round(max / 10000) * 10000;
-  options.add(roundedMax); // 최대값 항상 포함
-
-  return Array.from(options)
-    .sort((a, b) => a - b)
-    .map(value => ({
-      value,
-      label: `${(value / 10000).toLocaleString()}만원`,
-    }));
-});
-
-const selectedPrincipal = ref(0);
-
-watch(
-  priceOptions,
-  newOptions => {
-    if (newOptions.length > 1) {
-      selectedPrincipal.value = newOptions[1].value;
-    } else if (newOptions.length === 1) {
-      selectedPrincipal.value = newOptions[0].value;
-    } else {
-      selectedPrincipal.value = props.minLimit;
-    }
-  },
-  { immediate: true }
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
 );
 
-// 놓친 금액 계산
-const missAmount = computed(() => {
-  const principal = selectedPrincipal.value;
-  const prefix = props.prefix;
-
-  if (['D', 'S', 'C', 'X'].includes(prefix)) {
-    const rate = props.interestRate / 100;
-    return props.isCompound === true
-      ? Math.round(principal * Math.pow(1 + rate, 1) - principal) // 복리
-      : Math.round(principal * rate); // 단리
-  }
-
-  if (['A', 'F'].includes(prefix)) {
-    const rate = props.interestRate / 100;
-    return Math.round(principal * rate);
-  }
-
-  return 0;
+const props = defineProps({
+  regretScore: Number,
+  missAmount: Number,
+  regretInsightData: Array,
+  isForexProduct: Boolean,
+  forexInfo: Array,
+  currencyOptions: Array,
+  detailData: Object,
+  selectedCurrency: String,
 });
 
-// 놓친 금액 매칭
-const regretTable = [
-  {
-    threshold: 3000000,
-    text: '유럽 여행을 갈 수 있었어요',
-    video: {
-      webm: '/video/europe.webm',
-      poster: '/video/poster/europe.jpg',
-    },
-  },
-  {
-    threshold: 2500000,
-    text: '월급을 한 번 더 받을 수 있었어요',
-    video: {
-      webm: '/video/salary.webm',
-      poster: '/video/poster/salary.jpg',
-    },
-  },
-  {
-    threshold: 2000000,
-    text: '노트북을 바꿀 수 있었어요',
-    video: {
-      webm: '/video/laptop.webm',
-      poster: '/video/poster/laptop.jpg',
-    },
-  },
-  {
-    threshold: 1500000,
-    text: 'DSLR 카메라를 살 수 있었어요',
-    video: {
-      webm: '/video/dslr.webm',
-      poster: '/video/poster/dslr.jpg',
-    },
-  },
-  {
-    threshold: 1200000,
-    text: '가전제품을 살 수 있었어요',
-    video: {
-      webm: '/video/washing.webm',
-      poster: '/video/poster/washing.jpg',
-    },
-  },
-  {
-    threshold: 1000000,
-    text: '핸드폰을 바꿀 수 있었어요',
-    video: {
-      webm: '/video/phone.webm',
-      poster: '/video/poster/phone.jpg',
-    },
-  },
-  {
-    threshold: 700000,
-    text: '게임기기를 살 수 있었어요',
-    video: {
-      webm: '/video/game.webm',
-      poster: '/video/poster/game.jpg',
-    },
-  },
-  {
-    threshold: 500000,
-    text: '제주도를 갈 수 있었어요',
-    video: {
-      webm: '/video/jeju.webm',
-      poster: '/video/poster/jeju.jpg',
-    },
-  },
-  {
-    threshold: 300000,
-    text: '로봇 청소기를 살 수 있었어요',
-    video: {
-      webm: '/video/robot.webm',
-      poster: '/video/poster/robot.jpg',
-    },
-  },
-  {
-    threshold: 200000,
-    text: '신발을 살 수 있었어요',
-    video: {
-      webm: '/video/shoes.webm',
-      poster: '/video/poster/shoes.jpg',
-    },
-  },
-  {
-    threshold: 150000,
-    text: '레스토랑에서 외식을 할 수 있었어요',
-    video: {
-      webm: '/video/out.webm',
-      poster: '/video/poster/out.jpg',
-    },
-  },
-  {
-    threshold: 100000,
-    text: '기차 여행을 할 수 있었어요',
-    video: {
-      webm: '/video/train.webm',
-      poster: '/video/poster/train.jpg',
-    },
-  },
-  {
-    threshold: 50000,
-    text: '카페에서 디저트를 먹을 수 있었어요',
-    video: {
-      webm: '/video/desert.webm',
-      poster: '/video/poster/desert.jpg',
-    },
-  },
-  {
-    threshold: 20000,
-    text: '친구와 커피를 마실 수 있었어요',
-    video: {
-      webm: '/video/coffee.webm',
-      poster: '/video/poster/coffee.jpg',
-    },
-  },
-  {
-    threshold: 0,
-    text: '작은 기쁨을 누릴 수 있었어요',
-    video: {
-      webm: '/video/small.webm',
-      poster: '/video/poster/small.jpg',
-    },
-  },
-];
+const emit = defineEmits(['update:selectedCurrency']);
 
-const regretContent = computed(() => {
-  return (
-    regretTable.find(item => missAmount.value >= item.threshold) ??
-    regretTable.at(-1)
-  );
+const colorClass = computed(() => {
+  if (props.regretScore >= 70) return 'text-status-red';
+  if (props.regretScore >= 40) return 'text-primary';
+  return 'text-status-blue';
 });
+
+function getWeatherLevel(score) {
+  if (score == 0) return 'Sunny';
+  if (score < 20) return 'MostlySunny';
+  if (score < 40) return 'SunWithCloud';
+  if (score < 60) return 'Cloudy';
+  if (score < 80) return 'Rain';
+  return 'RainHeavy';
+}
 </script>
 
 <template>
-  <BaseCard :shadow="true" class="flex-[2] relative overflow-hidden">
-    <div class="absolute inset-0 z-0">
-      <video
-        :key="regretContent.video.webm"
-        autoplay
-        muted
-        loop
-        playsinline
-        :poster="regretContent.video.poster"
-        class="w-full h-full object-cover"
-      >
-        <source :src="regretContent.video.webm" type="video/webm" />
-      </video>
+  <div class="flex items-center gap-6 mb-12">
+    <div class="flex flex-col justify-start">
+      <p class="text-body02 mr-4">그때 가입하지 않아서 놓친 금액</p>
+      <span :class="colorClass" class="title03">
+        {{ Math.floor(props.missAmount / 10000).toLocaleString() }}만원
+      </span>
     </div>
-    <div class="absolute inset-0 bg-black/30 z-10"></div>
-    <div class="relative z-20 h-full flex flex-col justify-end p-8 text-white">
-      <p class="text-body02 text-fg-primary">
-        <span>그때 </span>
-        <select
-          v-model="selectedPrincipal"
-          class="inline-block bg-transparent text-fg-primary px-2 py-1 mx-1 appearance-none focus:outline-none focus:ring-0"
+    <div class="flex justify-end items-center">
+      <div>
+        <p class="mr-6 text-body">예상 후회지수</p>
+        <p :class="colorClass" class="items-end title03">
+          {{ props.regretScore }}
+        </p>
+      </div>
+      <span>
+        <Sunny
+          v-if="getWeatherLevel(props.regretScore) === 'Sunny'"
+          class="w-10 h-10"
+        />
+        <MostlySunny
+          v-else-if="getWeatherLevel(props.regretScore) === 'MostlySunny'"
+          class="w-10 h-10"
+        />
+        <SunWithCloud
+          v-else-if="getWeatherLevel(props.regretScore) === 'SunWithCloud'"
+          class="w-10 h-10"
+        />
+        <Cloudy
+          v-else-if="getWeatherLevel(props.regretScore) === 'Cloudy'"
+          class="w-10 h-10"
+        />
+        <Rain
+          v-else-if="getWeatherLevel(props.regretScore) === 'Rain'"
+          class="w-10 h-10"
+        />
+        <RainHeavy v-else />
+      </span>
+    </div>
+  </div>
+  <BaseCard size="lg" variant="outline" class="mb-20">
+    <div v-if="isForexProduct" class="flex justify-start mb-6">
+      <div class="flex items-center">
+        <button
+          v-for="currency in currencyOptions"
+          :key="currency"
+          @click="emit('update:selectedCurrency', currency)"
+          :class="[
+            'px-4 py-1 mr-2 rounded-full text-callout',
+            props.selectedCurrency === currency
+              ? 'bg-primary text-white font-medium'
+              : 'text-fg-secondary hover:bg-[#DDE1E4]',
+          ]"
         >
-          <option
-            v-for="opt in priceOptions"
-            :key="opt.value"
-            :value="opt.value"
-          >
-            {{ (opt.value / 10000).toLocaleString() }}만원
-          </option>
-        </select>
-        <span> 가입했다면</span>
-      </p>
-      <p class="title01">{{ regretContent.text }}</p>
+          {{ currency }}
+        </button>
+      </div>
+    </div>
+    <div v-if="isForexProduct" class="relative">
+      <ForexBarChart
+        :forexInfo="detailData.forexInfo"
+        :selectedCurrency="props.selectedCurrency"
+      />
+    </div>
+    <div v-else class="relative">
+      <InsightLineChart :regretInsightData="regretInsightData" />
     </div>
   </BaseCard>
 </template>

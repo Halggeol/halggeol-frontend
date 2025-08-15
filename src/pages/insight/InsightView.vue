@@ -4,15 +4,14 @@ import { useRoute, useRouter } from 'vue-router';
 import { useInsightStore } from '@/stores/insightStore';
 import {
   getInsightDetail,
-  mapRegretInsightResponse,
+  mapRegretFeedbackResponse,
 } from '@/api/insight-detail';
 
-import InsightLineChart from '@/components/insight/InsightLineChart.vue';
-import ForexBarChart from '@/components/insight/InsightBarChart.vue';
 import InsightDetailPage from '@/pages/insight/InsightDetailPage.vue';
 import LoadingPage from '@/pages/LoadingPage.vue';
-import BaseCard from '@/components/common/BaseCard.vue';
 import PagenationsButton from '@/components/icons/insight/PagenationsButton.vue';
+import Error500Page from '../Error500Page.vue';
+import EmptyPage from '../EmptyPage.vue';
 
 const props = defineProps({
   filterType: {
@@ -21,13 +20,17 @@ const props = defineProps({
   },
 });
 
+// 설문 제출 시 캐싱 처리
+const detailDataCache = ref(new Map());
+
 const route = useRoute();
 const router = useRouter();
 const insightStore = useInsightStore();
 
 const detailData = ref(null);
-const isLoading = ref(false);
+const isLoading = ref(true);
 const error = ref(null);
+const isEmpty = ref(false);
 const selectedCurrency = ref('USD');
 const filteredProductsData = computed(() => {
   const originalData = insightStore.products;
@@ -60,52 +63,93 @@ const currentProducts = computed(() => {
   );
 });
 const currentRecDate = computed(() => {
-  return (
-    filteredProductsData.value.find(p => p.round === currentRound.value)
-      ?.recDate ?? null
-  );
-  // - split 해서 년/월/일 붙이기
+  const date = filteredProductsData.value.find(
+    p => p.round === currentRound.value
+  )?.recDate;
+
+  if (!date) return null;
+  const [year, month, day] = date.split('T')[0].split('-');
+  return `${year}년 ${month}월 ${day}일`;
 });
 const currentProductId = computed(() => route.query.productId || null);
 
-// 현재 선택된 상품이 외환 상품인지 확인
-const isForexProduct = computed(() => detailData.value?.forexInfo?.length > 0);
-
-// 통화 선택 옵션
-const currencyOptions = computed(() => {
-  if (isForexProduct.value && detailData.value?.currency) {
-    return detailData.value.currency.split(',');
-  }
-  return ['USD'];
-});
-
-// 후회 인사이트 데이터
-const regretInsightData = computed(() => {
-  if (!detailData.value) return [];
-  return mapRegretInsightResponse(detailData.value);
+const selectedProductData = computed(() => {
+  if (!currentProductId.value) return null;
+  return currentProducts.value.find(
+    p => p.productId === currentProductId.value
+  );
 });
 
 async function loadDetail(round, productId) {
-  if (!round || !productId) {
-    detailData.value = null;
+  if (detailDataCache.value.has(productId)) {
+    detailData.value = detailDataCache.value.get(productId);
     return;
   }
   isLoading.value = true;
+  detailData.value = null;
   error.value = null;
   try {
     const dData = await getInsightDetail(round, productId);
     detailData.value = dData;
+
+    // 캐싱 처리
+    detailDataCache.value.set(productId, dData);
+
     // 통화 자동 선택
     if (dData?.forexInfo?.length > 0 && dData.currency) {
       selectedCurrency.value = dData.currency.split(',')[0];
     }
   } catch (e) {
     console.error('상세 정보 로드 실패:', e);
-    error.value = '상세 정보를 불러오는 데 실패했습니다.';
+    error.value = e;
   } finally {
     isLoading.value = false;
   }
 }
+
+// 후회 피드백 여부 뱃지
+const getRegretStatusInfo = product => {
+  const cachedData = detailDataCache.value.get(product.productId);
+
+  if (cachedData) {
+    const status = mapRegretFeedbackResponse(cachedData);
+    if (!status.isSurveyed) {
+      return {
+        text: '설문하기',
+        class: 'bg-gray-100 text-gray-800 hover:bg-gray-200',
+      };
+    }
+    return {
+      text: status.isRegretted ? '후회함' : '후회안함',
+      class: status.isRegretted
+        ? 'bg-red-100 text-red-800'
+        : 'bg-blue-100 text-blue-800',
+    };
+  }
+
+  return {
+    text: '상태 확인',
+    class: 'bg-gray-100 text-gray-500',
+  };
+};
+
+// 캐시 업데이트(fetch feedback)
+const handleSurveyUpdate = feedbackPayload => {
+  const { productId, isRegretted } = feedbackPayload;
+
+  const cachedData = detailDataCache.value.get(productId);
+  if (!cachedData) return;
+
+  cachedData.isSurveyed = true;
+  cachedData.isRegretted = isRegretted;
+
+  detailDataCache.value.set(productId, cachedData);
+
+  if (detailData.value && detailData.value.productId === productId) {
+    detailData.value.isSurveyed = true;
+    detailData.value.isRegretted = isRegretted;
+  }
+};
 
 // 회차 변경
 function changeRound(next = true) {
@@ -135,308 +179,107 @@ function handleProductClick(pid) {
 }
 
 onMounted(async () => {
-  isLoading.value = true;
-  await insightStore.initializeProducts();
-  isLoading.value = false;
+  try {
+    await insightStore.initializeProducts();
 
-  if (!route.query.round || !route.query.productId) {
-    if (filteredProductsData.value.length > 0) {
-      const latestRound = filteredProductsData.value[0];
-      const firstProduct = latestRound.products?.[0];
-      if (latestRound && firstProduct) {
-        router.replace({
-          query: {
-            round: latestRound.round,
-            productId: firstProduct.productId,
-          },
-        });
+    if (filteredProductsData.value.length === 0) {
+      isEmpty.value = true;
+    } else {
+      if (!route.query.round || !route.query.productId) {
+        const latestRound = [...filteredProductsData.value].sort(
+          (a, b) => b.round - a.round
+        )[0];
+        const firstProduct = latestRound.products?.[0];
+        if (latestRound && firstProduct) {
+          router.replace({
+            query: {
+              round: latestRound.round,
+              productId: firstProduct.productId,
+            },
+          });
+        }
       }
     }
+  } catch (e) {
+    console.error('onMounted 초기화 실패:', e);
+    error.value = e;
+  } finally {
+    isLoading.value = false;
   }
 });
 
 watch(
   () => route.query,
   newQuery => {
-    loadDetail(Number(newQuery.round), newQuery.productId);
+    if (newQuery.round && newQuery.productId) {
+      loadDetail(Number(newQuery.round), newQuery.productId);
+    }
   },
   { immediate: true, deep: true }
 );
 </script>
 
 <template>
-  <div>
-    <LoadingPage v-if="isLoading && !detailData" />
-    <div v-else>
-      <div class="chart-nav round-navigation">
-        <!-- <button
-          @click="changeRound(false)"
-          :disabled="availableRounds.indexOf(currentRound) === 0"
-        >
-          ❮
-        </button> -->
-        <PagenationsButton
-          @click="changeRound(false)"
-          :disabled="availableRounds.indexOf(currentRound) === 0"
-          class="hover:shadow-card rounded-full"
-        />
-        <span>{{ currentRound }}회차</span>
-        <PagenationsButton
-          @click="changeRound(true)"
-          :disabled="
-            availableRounds.indexOf(currentRound) === availableRounds.length - 1
-          "
-          class="hover:shadow-card rounded-full scale-x-[-1]"
-        />
-      </div>
-
-      <div class="issue-date">발행일 {{ currentRecDate }}</div>
-
-      <div class="flex min-h-full gap-10 tablet:flex-col tablet:gap-7">
-        <div>
-          <div v-if="currentProducts.length === 0" class="no-products">
-            <p>텅 화면으로 변경</p>
-          </div>
-          <div v-else>
-            <div
-              class="product-item"
-              :class="{ active: product.productId === currentProductId }"
-              v-for="(product, idx) in currentProducts"
-              :key="product.productId"
-              @click="handleProductClick(product.productId)"
-            >
-              <span class="text-body02 font-semibold text-fg-primary">{{
-                idx + 1
-              }}</span>
-              <span class="product-name">{{ product.name }}</span>
-            </div>
-          </div>
-        </div>
-
-        <BaseCard size="lg" variant="outline">
-          <LoadingPage v-if="!detailData" />
-          <div v-else>
-            <div v-if="isForexProduct" class="currency-selector">
-              <select v-model="selectedCurrency">
-                <option v-for="c in currencyOptions" :key="c" :value="c">
-                  {{ c }}
-                </option>
-              </select>
-            </div>
-            <div v-if="isForexProduct" class="chart-wrapper">
-              <ForexBarChart
-                :forexInfo="detailData.forexInfo"
-                :selectedCurrency="selectedCurrency"
-              />
-            </div>
-            <div v-else class="chart-wrapper">
-              <InsightLineChart
-                :regretInsightData="regretInsightData"
-                v-if="regretInsightData.length > 0"
-              />
-              <div v-else class="no-data-message">
-                <p>표시할 차트 데이터가 없습니다.</p>
-              </div>
-            </div>
-          </div>
-        </BaseCard>
-      </div>
-      <InsightDetailPage :detail-data="detailData" />
+  <LoadingPage v-if="isLoading" />
+  <Error500Page v-else-if="error" />
+  <EmptyPage v-else-if="isEmpty" />
+  <div v-else-if="!currentRound" class="flex justify-center items-center h-64">
+    <p class="text-fg-secondary">표시할 인사이트가 없습니다.</p>
+  </div>
+  <div v-else>
+    <div class="flex justify-center items-center gap-5 mt-7 pb-4">
+      <PagenationsButton
+        @click="changeRound(false)"
+        :disabled="availableRounds.indexOf(currentRound) === 0"
+        class="hover:shadow-card rounded-full"
+      />
+      <span class="text-body02 font">{{ currentRound }}회차</span>
+      <PagenationsButton
+        @click="changeRound(true)"
+        :disabled="
+          availableRounds.indexOf(currentRound) === availableRounds.length - 1
+        "
+        class="hover:shadow-card rounded-full scale-x-[-1]"
+      />
     </div>
+
+    <div class="text-footnote text-fg-secondary pb-10">
+      <span class="font-bold">발행일 </span> {{ currentRecDate }}
+    </div>
+    <div class="mb-8 border-b border-gray-200">
+      <div class="-mb-px flex space-x-6 px-4">
+        <button
+          v-for="product in currentProducts"
+          :key="product.productId"
+          @click="handleProductClick(product.productId)"
+          class="whitespace-nowrap border-b-2 py-3 text-sm font-semibold transition-colors duration-200 ease-in-out"
+          :class="[
+            product.productId === currentProductId
+              ? 'border-primary text-secondary'
+              : 'border-transparent text-gray-500 hover:text-gray-800 hover:border-gray-300', // 비활성 탭 스타일
+          ]"
+        >
+          {{ product.name }}
+        </button>
+      </div>
+    </div>
+
+    <div v-if="selectedProductData" class="flex items-center mb-12">
+      <h3 class="title01 text-fg-primary mr-4">
+        {{ selectedProductData.name }}
+      </h3>
+      <span
+        v-if="getRegretStatusInfo(selectedProductData)"
+        :class="getRegretStatusInfo(selectedProductData).class"
+        class="text-sm font-medium px-3 py-1 rounded-full"
+      >
+        {{ getRegretStatusInfo(selectedProductData).text }}
+      </span>
+    </div>
+    <InsightDetailPage
+      :is-loading="isLoading"
+      :detail-data="detailData"
+      @survey-submitted="handleSurveyUpdate"
+    />
   </div>
 </template>
-
-<style scoped>
-.chart-nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 30px;
-  padding: 15px;
-  border-radius: 8px;
-}
-
-.round-navigation button {
-  width: 40px;
-  height: 40px;
-  border: 2px solid #e0e0e0;
-  background: #fff;
-  cursor: pointer;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: #666;
-  transition: all 0.2s ease;
-}
-
-.round-navigation button:hover:not(:disabled) {
-  background: #f8f9fa;
-  border-color: #ccc;
-}
-
-.round-navigation button:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.round-text {
-  font-size: 20px;
-  font-weight: 600;
-  color: #333;
-  min-width: 80px;
-  text-align: center;
-}
-
-.issue-date {
-  align-self: flex-start; /* 왼쪽 정렬 */
-  font-size: 14px;
-  color: #888;
-  font-weight: 400;
-  white-space: nowrap;
-  user-select: none;
-  padding-left: 10px; /* 좌측 여백 살짝 */
-  width: 100%;
-  max-width: 350px; /* 좌측 사이드바 넓이와 맞춤 */
-}
-
-.currency-selector {
-  margin-bottom: 24px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 12px;
-}
-
-.currency-selector select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background: white
-    url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")
-    no-repeat right 12px center;
-  background-size: 16px;
-  border: 2px solid #e0e6ed;
-  border-radius: 10px;
-  padding: 12px 40px 12px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 120px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.currency-selector select:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23667eea' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-}
-
-.currency-selector select:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.products-sidebar {
-  flex: 0 0 350px;
-}
-
-.product-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 18px 20px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: #f8f9fa;
-  border-radius: 12px;
-  border: 1px solid transparent;
-}
-
-.product-item:hover {
-  background-color: #fffbf0;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(255, 211, 56, 0.2);
-}
-
-.product-item.active {
-  background-color: #fff8e1;
-  border-color: #ffd338;
-}
-
-.product-number {
-  flex: 0 0 28px;
-  text-align: center;
-  background: #666;
-  color: white;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  line-height: 28px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.product-item.active .product-number {
-  background: #ffd338;
-  color: #60584c;
-}
-
-.product-name {
-  flex: 1;
-  font-size: 15px;
-  color: #333;
-  line-height: 1.4;
-}
-
-.chart-wrapper {
-  height: 400px;
-  position: relative;
-}
-
-.no-data-message,
-.no-products {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-  color: #999;
-  font-size: 16px;
-}
-
-.no-products {
-  background: #f8f9fa;
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
-}
-
-@media (max-width: 1024px) {
-  .products-sidebar {
-    flex: none;
-  }
-  .product-item {
-    padding: 15px 18px;
-  }
-}
-
-@media (max-width: 768px) {
-  .currency-selector {
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  .round-navigation button {
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
-  }
-  .round-text {
-    font-size: 18px;
-  }
-}
-</style>

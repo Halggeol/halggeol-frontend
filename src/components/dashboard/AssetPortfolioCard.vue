@@ -9,6 +9,8 @@ const props = defineProps({
   },
 });
 
+const hasAssets = computed(() => props.portfolio && props.portfolio.length > 0);
+
 // 자산 비율 합계 1 유지
 const normalizedPortfolio = computed(() => {
   if (!props.portfolio || props.portfolio.length === 0) return [];
@@ -52,7 +54,10 @@ const detailedPortfolio = computed(() => {
 <template>
   <div>
     <p class="title03 mb-4">자산 포트폴리오</p>
-    <p class="text-body02 mb-4">{{ type }} 자산 비율이 높아요</p>
+    <p v-if="hasAssets" class="text-body02 mb-4">
+      {{ type }} 자산 비율이 높아요
+    </p>
+    <p v-else class="text-body02 mb-4">아직 자산 연동을 안했어요</p>
     <div class="flex w-full h-8 rounded-full overflow-hidden mb-4">
       <div
         v-for="item in detailedPortfolio"

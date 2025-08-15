@@ -276,7 +276,15 @@ const chartOptions = {
 
 <template>
   <div>
-    <h2 class="title03 mb-4">나의 순자산</h2>
+    <h2 class="title03 mb-4">
+      나의 순자산
+      <span
+        class="inline-block relative group ml-1 tooltip"
+        data-tip="전체 자산"
+      >
+        <Tooltiip class="w-5 h-5 text-fg-secondary" />
+      </span>
+    </h2>
     <span v-if="assetDiff.value === 0" class="text-body02">
       {{ assetDiff.prefix }}과 동일해요
     </span>
