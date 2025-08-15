@@ -36,22 +36,20 @@ const user = reactive({
 });
 
 const renewDate = computed(() => {
-  if (surveyType.value === 'knowledge')
-    return user.knowledgeRenewDate;
-  else if (surveyType.value === 'tendency')
-    return user.investmentTypeRenewDate;
+  if (surveyType.value === 'knowledge') return user.knowledgeRenewDate;
+  else if (surveyType.value === 'tendency') return user.investmentTypeRenewDate;
   return '';
-})
+});
 
 const result = ref({
   message: '',
-  success: false
+  success: false,
 });
 
 // 버튼 핸들러
 const changePassword = () => {
   isResetPasswordModalOpen.value = true;
-}
+};
 
 const retakeKnowledgeTest = () => {
   surveyType.value = 'knowledge';
@@ -72,8 +70,8 @@ const changeInsightCycle = () => {
 };
 
 onMounted(() => {
- setUserInfo();
-})
+  setUserInfo();
+});
 
 function convertCycleString(cycle) {
   if (cycle === 'WEEKLY_1') return '1주';
@@ -84,7 +82,7 @@ function convertCycleString(cycle) {
 
 function handleRetakeSurveyConfirm() {
   isRetakeSurveyModalOpen.value = false;
-  router.push(`/mypage/survey/${surveyType.value}`);
+  router.push(`/signup/survey/${surveyType.value}`);
 }
 
 async function setUserInfo() {
@@ -97,7 +95,7 @@ async function setUserInfo() {
     if (!response.data || !response.data.profile) {
       result.value = {
         message: '사용자 정보가 없습니다.',
-        success: false
+        success: false,
       };
     }
 
@@ -112,11 +110,10 @@ async function setUserInfo() {
     user.investmentType = profile.risk;
     user.investmentTypeRenewDate = profile.riskRenewDate;
     user.insightCycle = profile.insightCycle;
-
   } catch (error) {
     result.value = {
       message: '사용자 정보 조회에 실패했습니다.',
-      success: false
+      success: false,
     };
   }
 }
@@ -124,7 +121,6 @@ async function setUserInfo() {
 function handleCycleChanged(newCycle) {
   user.insightCycle = newCycle;
 }
-
 </script>
 
 <template>
@@ -209,6 +205,7 @@ function handleCycleChanged(newCycle) {
       <div class="flex items-center justify-between w-full">
         <div class="w-1/3 text-body02 text-fg-secondary">인사이트 제공 주기</div>
         <div class="w-1/2 text-fg-primary">{{ convertCycleString(user.insightCycle) }}</div>
+
         <div class="w-1/3 text-right">
           <button
             class="text-fg-gray text-body02 hover:text-fg-secondary hover:underline"

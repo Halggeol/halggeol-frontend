@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
 import * as authUtil from '@/utils/authUtil';
+import { useInsightStore } from '@/stores/insightStore';
 
-export const useAuthStore = defineStore('auth',  {
+export const useAuthStore = defineStore('auth', {
   state: () => ({
     isLoggedIn: false,
     username: null,
@@ -17,14 +18,12 @@ export const useAuthStore = defineStore('auth',  {
           if (authUtil.isValidToken(parsedToken)) {
             this.isLoggedIn = true;
             this.username = authUtil.getUsername();
-          }
-          else {
+          } else {
             console.error('만료된 토큰');
             authUtil.clearAccessToken();
             this.isLoggedIn = false;
             this.username = null;
           }
-
         } catch (e) {
           console.error('토큰 형식 오류: ', e);
           authUtil.clearAccessToken();
@@ -47,9 +46,11 @@ export const useAuthStore = defineStore('auth',  {
       this.username = null;
       authUtil.clearAccessToken();
       authUtil.clearUsername();
+      const insightStore = useInsightStore();
+      insightStore.reset();
     },
     updateTokenRemainingSeconds() {
       this.tokenRemainingSeconds = authUtil.getTokenRemainingSeconds();
-    }
-  }
-})
+    },
+  },
+});
