@@ -84,11 +84,11 @@ const missAmount = computed(() => {
 
   if (prefix === 'X') {
     const interestAmount = props.isCompound
-      ? Math.round(principal * Math.pow(1 + rate, 1) - principal)
-      : Math.round(principal * rate);
+      ? Math.round(principal * Math.pow(1 + props.interestRate, 1) - principal)
+      : Math.round(principal * props.interestRate);
 
     const targetForex = props.forexInfo?.find(
-      info => info.currency === props.selectedCurrency
+      info => info.curUnit === props.selectedCurrency
     );
 
     if (!targetForex) return interestAmount;
