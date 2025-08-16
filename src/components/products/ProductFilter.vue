@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-64 p-5 border-r border-gray-200 bg-gray-50 flex-shrink-0 sticky top-0 h-screen"
+    class="w-64 px-10 py-5 border-r border-gray-200 bg-gray-50 flex-shrink-0 sticky top-0 h-screen"
   >
     <!-- 상품 유형 필터 -->
     <div class="mb-6 relative">
