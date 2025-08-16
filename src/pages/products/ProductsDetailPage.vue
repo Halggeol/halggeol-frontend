@@ -34,7 +34,6 @@ const navigationStore = useNavigationStore();
 const productStatus = ref(null);
 const isStatusLoading = ref(false);
 
-// ✅ 추가: AI 요약 데이터와 로딩 상태를 별도로 관리할 변수
 const geminiData = ref({ advantage: null, disadvantage: null });
 const isGeminiLoading = ref(false);
 const geminiError = ref(null);
@@ -196,7 +195,7 @@ onUnmounted(() => {
         @navigate="navigateToLink"
       />
 
-      <div class="px-6 mobile:px-4 tablet:px-12 wide:px-[10.8%] space-y-6 py-8">
+      <div class="px-6 mobile:px-4 tablet:px-12 wide:px-12 space-y-6 py-8">
         <ProductSummaryCard :productDetail="productDetail">
           <AISummaryCard
             v-if="authStore.isLoggedIn"
