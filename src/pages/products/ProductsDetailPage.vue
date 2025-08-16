@@ -187,7 +187,7 @@ onUnmounted(() => {
         @navigate="navigateToLink"
       />
 
-      <div class="px-6 mobile:px-4 tablet:px-12 wide:px-[10.8%] space-y-6 py-8">
+      <div class="px-6 mobile:px-4 tablet:px-12 wide:px-12 space-y-6 py-8">
         <ProductSummaryCard :productDetail="productDetail">
           <AISummaryCard
             v-if="authStore.isLoggedIn"
