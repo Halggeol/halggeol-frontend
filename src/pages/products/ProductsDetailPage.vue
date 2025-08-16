@@ -91,7 +91,16 @@ const checkScreenSize = () => {
     window.addEventListener('scroll', handleScroll);
   } else if (!isDesktop.value && wasDesktop) {
     // Resized from desktop to mobile
-    window.removeEventListener('scroll', handleScroll);
+    if (!isScrollListenerAdded) {
+      window.addEventListener('scroll', handleScroll);
+      isScrollListenerAdded = true;
+    }
+  } else if (!isDesktop.value && wasDesktop) {
+    // Resized from desktop to mobile
+    if (isScrollListenerAdded) {
+      window.removeEventListener('scroll', handleScroll);
+      isScrollListenerAdded = false;
+    }
     isScrolled.value = false; // Reset scroll state on mobile
   }
 };
