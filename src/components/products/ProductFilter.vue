@@ -1,211 +1,184 @@
 <template>
+  <!-- 태블릿용 모달 -->
   <div
-    class="w-64 px-10 py-5 border-r border-gray-200 bg-gray-50 flex-shrink-0 sticky top-0 h-screen"
+    v-if="isOpen"
+    class="fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity hidden tablet:block"
+    @click="$emit('close')"
+  ></div>
+
+  <aside
+    :class="[
+      'bg-white w-64 h-screen sticky top-14 flex-shrink-0',
+      'tablet:fixed tablet:top-14 tablet:left-0 tablet:h-full tablet:z-50 tablet:transition-transform tablet:duration-300 tablet:ease-in-out',
+      isOpen ? 'tablet:translate-x-0' : 'tablet:-translate-x-full',
+    ]"
   >
-    <!-- 상품 유형 필터 -->
-    <div class="mb-6 relative">
-      <h3 class="text-lg font-semibold mb-3 text-gray-800">상품 유형</h3>
-      <button
-        @click="resetFilters"
-        class="absolute top-0 right-0 text-sm text-gray-500 hover:text-gray-700 underline focus:outline-none focus:ring-0"
-      >
-        초기화
-      </button>
-      <ul>
-        <li class="mb-2 flex items-center">
-          <input
-            type="checkbox"
-            id="typeAll"
-            value="all"
-            v-model="isAllSelected"
-            class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-          />
-          <label for="typeAll" class="ml-2 text-sm text-gray-700 cursor-pointer"
-            >전체</label
-          >
-        </li>
-        <li
-          v-for="type in productTypes"
-          :key="type.value"
-          class="mb-2 flex items-center"
-        >
-          <input
-            type="checkbox"
-            :id="'type' + type.value"
-            :value="type.value"
-            v-model="selectedProductTypes"
-            class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-          />
-          <label
-            :for="'type' + type.value"
-            class="ml-2 text-sm text-gray-700 cursor-pointer"
-            >{{ type.label }}</label
-          >
-        </li>
-      </ul>
-    </div>
-
-    <!-- 은행 필터 -->
-    <div class="mb-6">
-      <h3 class="text-lg font-semibold mb-3 text-gray-800">은행/판매사</h3>
-      <ul>
-        <li class="mb-2 flex items-center">
-          <input
-            type="checkbox"
-            id="bankAll"
-            value="all"
-            v-model="isAllBanksSelected"
-            class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-          />
-          <label for="bankAll" class="ml-2 text-sm text-gray-700 cursor-pointer"
-            >전체</label
-          >
-        </li>
-        <li
-          v-for="bank in banks"
-          :key="bank.value"
-          class="mb-2 flex items-center"
-        >
-          <input
-            type="checkbox"
-            :id="'bank' + bank.value"
-            :value="bank.value"
-            v-model="selectedBanks"
-            class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-          />
-          <label
-            :for="'bank' + bank.value"
-            class="ml-2 text-sm text-gray-700 cursor-pointer"
-            >{{ bank.label }}</label
-          >
-        </li>
-      </ul>
-    </div>
-
-    <!-- 가입 기간 필터 -->
-    <div class="mb-6">
-      <h3 class="text-lg font-semibold mb-3 text-gray-800">최소 가입 기간</h3>
-      <ul>
-        <li class="mb-2 flex items-center">
-          <input
-            type="radio"
-            id="periodFree"
-            :value="null"
-            v-model="selectedSubscriptionPeriod"
-            class="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-          />
-          <label
-            for="periodFree"
-            class="ml-2 text-sm text-gray-700 cursor-pointer"
-            >전체</label
-          >
-        </li>
-        <li class="mb-2 flex items-center">
-          <input
-            type="radio"
-            id="period6M"
-            :value="6"
-            v-model="selectedSubscriptionPeriod"
-            class="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-          />
-          <label
-            for="period6M"
-            class="ml-2 text-sm text-gray-700 cursor-pointer"
-            >6개월 이상</label
-          >
-        </li>
-        <li class="mb-2 flex items-center">
-          <input
-            type="radio"
-            id="period12M"
-            :value="12"
-            v-model="selectedSubscriptionPeriod"
-            class="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-          />
-          <label
-            for="period12M"
-            class="ml-2 text-sm text-gray-700 cursor-pointer"
-            >12개월 이상</label
-          >
-        </li>
-        <li class="mb-2 flex items-center">
-          <input
-            type="radio"
-            id="period24M"
-            :value="24"
-            v-model="selectedSubscriptionPeriod"
-            class="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-          />
-          <label
-            for="period24M"
-            class="ml-2 text-sm text-gray-700 cursor-pointer"
-            >24개월 이상</label
-          >
-        </li>
-        <li class="mb-2 flex items-center">
-          <input
-            type="radio"
-            id="period36M"
-            :value="36"
-            v-model="selectedSubscriptionPeriod"
-            class="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-          />
-          <label
-            for="period36M"
-            class="ml-2 text-sm text-gray-700 cursor-pointer"
-            >36개월 이상</label
-          >
-        </li>
-      </ul>
-    </div>
-
-    <!-- 가입 금액 필터 -->
-    <div class="mb-6">
-      <h3 class="text-lg font-semibold mb-3 text-gray-800">최소 가입 금액</h3>
-      <div class="flex items-center space-x-2">
-        <div class="relative flex-grow">
-          <input
-            type="number"
-            v-model.number="inputAmount"
-            placeholder="금액을 입력해 주세요"
-            class="w-full p-2 pr-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-callout"
-            @keyup.enter="handleAmountInput"
-          />
-          <button
-            v-if="inputAmount !== null && inputAmount !== ''"
-            @click="clearInputAmount"
-            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
-          >
-            <svg
-              class="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
-          </button>
-        </div>
-
+    <div
+      class="px-5 pt-5 pb-20 border-r border-gray-200 h-full overflow-y-auto"
+    >
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-body02 font-bold text-fg-primary">필터</h2>
         <button
-          @click="handleAmountInput"
-          class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md font-semibold text-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent whitespace-nowrap min-w-[60px]"
+          @click="$emit('close')"
+          class="hidden tablet:block text-gray-500 hover:text-gray-800"
         >
-          확인
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+        <button
+          @click="resetFilters"
+          class="tablet:hidden text-callout text-fg-gray hover:text-fg-secondary hover:underline focus:outline-none"
+        >
+          초기화
         </button>
       </div>
-      <p class="mt-2 text-xs text-gray-500">10만원 이상부터 가능해요</p>
-      <p v-if="errorMessage" class="mt-1 text-xs text-red-500">
-        {{ errorMessage }}
-      </p>
+
+      <!-- 상품 유형 필터 -->
+      <div class="mb-6 border-b border-gray-200 pb-6">
+        <h3 class="title03 mb-4 text-fg-primary">상품 유형</h3>
+        <ul class="space-y-3">
+          <li>
+            <label
+              for="type-all"
+              class="flex items-center cursor-pointer text-callout text-fg-primary"
+            >
+              <input
+                id="type-all"
+                type="checkbox"
+                v-model="isAllSelected"
+                class="form-checkbox h-4 w-4 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
+              />
+              <span class="ml-2">전체</span>
+            </label>
+          </li>
+          <li v-for="type in productTypes" :key="type.value">
+            <label
+              :for="`type-${type.value}`"
+              class="flex items-center cursor-pointer text-callout text-fg-primary"
+            >
+              <input
+                :id="`type-${type.value}`"
+                type="checkbox"
+                :value="type.value"
+                v-model="selectedProductTypes"
+                class="form-checkbox h-4 w-4 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
+              />
+              <span class="ml-2">{{ type.label }}</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 은행 필터 -->
+      <div class="mb-6 border-b border-gray-200 pb-6">
+        <h3 class="title03 mb-4 text-fg-primary">은행/판매사</h3>
+        <ul class="space-y-3">
+          <li>
+            <label
+              for="bank-all"
+              class="flex items-center cursor-pointer text-callout text-fg-primary"
+            >
+              <input
+                id="bank-all"
+                type="checkbox"
+                v-model="isAllBanksSelected"
+                class="form-checkbox h-4 w-4 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
+              />
+              <span class="ml-2">전체</span>
+            </label>
+          </li>
+          <li v-for="bank in banks" :key="bank.value">
+            <label
+              :for="`bank-${bank.value}`"
+              class="flex items-center cursor-pointer text-callout text-fg-primary"
+            >
+              <input
+                :id="`bank-${bank.value}`"
+                type="checkbox"
+                :value="bank.value"
+                v-model="selectedBanks"
+                class="form-checkbox h-4 w-4 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
+              />
+              <span class="ml-2">{{ bank.label }}</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 가입 기간 필터 -->
+      <div class="mb-6 border-b border-gray-200 pb-6">
+        <h3 class="title03 mb-4 text-fg-primary">최소 가입 기간</h3>
+        <ul class="space-y-3">
+          <li v-for="period in subscriptionPeriods" :key="period.label">
+            <label
+              :for="`period-${period.value}`"
+              class="flex items-center cursor-pointer text-callout text-fg-primary"
+            >
+              <input
+                type="radio"
+                :id="`period-${period.value}`"
+                :value="period.value"
+                v-model="selectedSubscriptionPeriod"
+                class="form-radio h-4 w-4 text-primary-500 border-gray-300 focus:ring-primary-500"
+              />
+              <span class="ml-2">{{ period.label }}</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 가입 금액 필터 -->
+      <div class="mb-6">
+        <h3 class="title03 mb-4 text-fg-primary">최소 가입 금액</h3>
+        <div class="flex items-center space-x-2">
+          <div class="relative flex-grow">
+            <input
+              type="text"
+              v-model="inputAmount"
+              placeholder="금액 입력"
+              class="w-full p-2 pr-8 border border-gray-300 rounded-md focus:outline-none focus:border-primary text-callout"
+              @input="formatAmountOnInput"
+              @keyup.enter="handleAmountInput"
+            />
+            <button
+              v-if="inputAmount"
+              @click="clearInputAmount"
+              class="absolute inset-y-0 right-0 pr-2 flex items-center text-gray-400 hover:text-gray-600"
+            >
+              <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+          </div>
+          <button
+            @click="handleAmountInput"
+            class="bg-gray-200 text-fg-primary px-4 py-2 rounded-md font-semibold text-body02 hover:bg-gray-300 whitespace-nowrap"
+          >
+            확인
+          </button>
+        </div>
+        <p class="mt-2 text-caption text-gray-500">10만원 이상부터 가능해요</p>
+        <p v-if="errorMessage" class="mt-1 text-caption text-red-500">
+          {{ errorMessage }}
+        </p>
+      </div>
     </div>
-  </div>
+  </aside>
 </template>
 
 <script setup>
@@ -220,6 +193,10 @@ const props = defineProps({
       saveTerm: null,
       minAmount: null,
     }),
+  },
+  isOpen: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -243,11 +220,18 @@ const banks = [
 const bankValues = banks.map(b => b.value);
 const selectedBanks = ref([]);
 
+const subscriptionPeriods = [
+  { label: '전체', value: null },
+  { label: '6개월 이상', value: 6 },
+  { label: '12개월 이상', value: 12 },
+  { label: '24개월 이상', value: 24 },
+  { label: '36개월 이상', value: 36 },
+];
 const selectedSubscriptionPeriod = ref(null);
 const inputAmount = ref(null);
 const selectedAmount = ref(null);
 
-const emit = defineEmits(['filtersChanged']);
+const emit = defineEmits(['filtersChanged', 'close']);
 
 const isAllSelected = computed({
   get() {
@@ -351,24 +335,3 @@ watch(
   { deep: true, immediate: true }
 );
 </script>
-
-<style scoped>
-/* Tailwind CSS 위주라 별도 스타일 거의 필요 없음 */
-/* 크롬, 사파리, 엣지 */
-input[type='number']::-webkit-inner-spin-button,
-input[type='number']::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* 파이어폭스 */
-input[type='number'] {
-  -moz-appearance: textfield;
-}
-
-/* placeholder 폰트 크기 및 색상 조정 */
-input::placeholder {
-  font-size: 1rem; /* 80% 크기 */
-  color: #a0aec0; /* gray-400 */
-}
-</style>

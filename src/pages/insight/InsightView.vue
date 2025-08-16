@@ -8,10 +8,10 @@ import {
 } from '@/api/insight-detail';
 
 import InsightDetailPage from '@/pages/insight/InsightDetailPage.vue';
-import LoadingPage from '@/pages/LoadingPage.vue';
+import LoadingPage from '@/pages/common/LoadingPage.vue';
 import PagenationsButton from '@/components/icons/insight/PagenationsButton.vue';
-import Error500Page from '../Error500Page.vue';
-import EmptyPage from '../EmptyPage.vue';
+import Error500Page from '../common/Error500Page.vue';
+import EmptyPage from '../common/EmptyPage.vue';
 
 const props = defineProps({
   filterType: {

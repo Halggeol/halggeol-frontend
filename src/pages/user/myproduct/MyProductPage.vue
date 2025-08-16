@@ -1,16 +1,47 @@
 <template>
-  <div class="flex">
-    <MyProductFilter @update:filters="handleFilterChange" />
-
-    <div class="flex-1 p-5">
-      <h2 class="text-2xl font-bold mb-6 text-gray-800">가입한 상품</h2>
-
-      <div v-if="loading" class="text-center py-10">
-        <div
-          class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"
-        ></div>
-        <p class="mt-4 text-gray-600">상품을 불러오는 중...</p>
+  <div class="flex mr-[10.8%] tablet:mr-5">
+    <MyProductFilter
+      :isOpen="isFilterOpen"
+      @update:filters="handleFilterChange"
+      @close="isFilterOpen = false"
+    />
+    <div class="flex-1 py-5 pl-5">
+      <div class="flex items-center gap-4">
+        <!-- 모바일/태블릿용 필터 열기 버튼 -->
+        <button
+          @click="isFilterOpen = true"
+          class="hidden tablet:block p-2 border rounded-md hover:bg-gray-100"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            data-seed-icon="true"
+            data-seed-icon-version="0.0.23"
+            width="18"
+            height="18"
+          >
+            <g>
+              <g>
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M9.99331 7.24609H3C2.44772 7.24609 2 6.79838 2 6.24609C2 5.69381 2.44772 5.24609 3 5.24609H9.99331C10.443 3.38141 12.1222 1.99609 14.125 1.99609C16.1278 1.99609 17.807 3.38141 18.2567 5.24609H21C21.5523 5.24609 22 5.69381 22 6.24609C22 6.79838 21.5523 7.24609 21 7.24609H18.2567C17.807 9.11078 16.1278 10.4961 14.125 10.4961C12.1222 10.4961 10.443 9.11078 9.99331 7.24609ZM11.875 6.24609C11.875 5.00345 12.8824 3.99609 14.125 3.99609C15.3676 3.99609 16.375 5.00345 16.375 6.24609C16.375 7.48873 15.3676 8.49609 14.125 8.49609C12.8824 8.49609 11.875 7.48873 11.875 6.24609Z"
+                  fill="currentColor"
+                ></path>
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M6.25 13.4956C3.90279 13.4956 2 15.3984 2 17.7456C2 20.0928 3.90279 21.9956 6.25 21.9956C8.25016 21.9956 9.92761 20.6139 10.3799 18.7529L20.9996 18.7456C21.5518 18.7452 21.9993 18.2972 21.9989 17.7449C21.9985 17.1926 21.5505 16.7452 20.9982 16.7456L10.3834 16.7529C9.93635 14.8845 8.25537 13.4956 6.25 13.4956ZM4 17.7456C4 16.503 5.00736 15.4956 6.25 15.4956C7.49264 15.4956 8.5 16.503 8.5 17.7456C8.5 18.9882 7.49264 19.9956 6.25 19.9956C5.00736 19.9956 4 18.9882 4 17.7456Z"
+                  fill="currentColor"
+                ></path>
+              </g>
+            </g>
+          </svg>
+        </button>
+        <h2 class="title02 text-fg-primary">상품 목록</h2>
       </div>
+      <LoadingPage v-if="loading" :loading-text="'가입한 상품 불러오는 중'" />
 
       <div v-else-if="error" class="text-center py-10 text-red-600">
         <p>{{ error }}</p>
@@ -50,12 +81,14 @@ import MyProductFilter from '@/components/products/MyProductFilter.vue';
 import { getUserProductsList } from '@/api/list';
 import { addScrap, delScrap } from '@/api/product-detail';
 import { useRouter } from 'vue-router';
+import LoadingPage from '@/pages/common/LoadingPage.vue';
 
 const router = useRouter();
 
 const myProducts = ref([]);
 const loading = ref(false);
 const error = ref(null);
+const isFilterOpen = ref(false);
 
 const currentFilters = ref({
   productTypes: [],

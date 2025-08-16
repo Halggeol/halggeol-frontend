@@ -35,6 +35,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  hasIconLst: {
+    type: Boolean,
+    default: false,
+  },
   label: {
     type: String,
     default: '시작하기',

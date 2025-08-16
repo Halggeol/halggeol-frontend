@@ -38,11 +38,11 @@ function hideHighRisk() {
 
 const productTypeConfig = {
   D: { name: '예금', bgColor: 'bg-savings', textColor: 'text-fg-savings' },
-  S: { name: '적금', bgColor: 'bg-cash', textColor: 'text-fg-cash' },
+  S: { name: '적금', bgColor: 'bg-deposit', textColor: 'text-fg-deposit' },
   A: {
     name: '연금',
-    bgColor: 'bg-aggressive',
-    textColor: 'text-fg-aggressive',
+    bgColor: 'bg-pension',
+    textColor: 'text-fg-pension',
   },
   C: { name: '연금', bgColor: 'bg-pension', textColor: 'text-fg-pension' },
   F: { name: '펀드', bgColor: 'bg-fund', textColor: 'text-fg-fund' },

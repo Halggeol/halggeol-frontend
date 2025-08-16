@@ -4,7 +4,7 @@
       v-for="type in types"
       :key="type"
       v-show="isTypeVisible(type)"
-      class="bg-white rounded-xl shadow-md overflow-hidden mb-8"
+      class="bg-white rounded-xl shadow-card overflow-hidden mb-8"
     >
       <div class="px-6 py-4 bg-primary border-b border-secondary">
         <h2 class="text-title03 text-white">

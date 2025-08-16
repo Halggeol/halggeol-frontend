@@ -13,7 +13,7 @@ import {
   mapRegretFeedbackResponse,
   mapSimilarProductsResponse,
 } from '@/api/insight-detail';
-import LoadingPage from '../LoadingPage.vue';
+import LoadingPage from '../common/LoadingPage.vue';
 
 const props = defineProps({
   isLoading: {
