@@ -25,6 +25,7 @@ const isLoading = ref(true);
 const error = ref(null);
 const renewDate = '25.06.20';
 const isScrolled = ref(false);
+const isDesktop = ref(true);
 
 const route = useRoute();
 const navigationStore = useNavigationStore();
@@ -82,6 +83,28 @@ const handleScroll = () => {
   }
 };
 
+const checkScreenSize = () => {
+  const wasDesktop = isDesktop.value;
+  isDesktop.value = window.innerWidth >= 768;
+  if (isDesktop.value && !wasDesktop) {
+    // Resized from mobile to desktop
+    window.addEventListener('scroll', handleScroll);
+  } else if (!isDesktop.value && wasDesktop) {
+    // Resized from desktop to mobile
+    if (!isScrollListenerAdded) {
+      window.addEventListener('scroll', handleScroll);
+      isScrollListenerAdded = true;
+    }
+  } else if (!isDesktop.value && wasDesktop) {
+    // Resized from desktop to mobile
+    if (isScrollListenerAdded) {
+      window.removeEventListener('scroll', handleScroll);
+      isScrollListenerAdded = false;
+    }
+    isScrolled.value = false; // Reset scroll state on mobile
+  }
+};
+
 const fetchGeminiData = async product => {
   isGeminiLoading.value = true;
   geminiError.value = null;
@@ -130,13 +153,18 @@ onMounted(async () => {
     isLoading.value = false;
   }
 
-  // 스크롤 이벤트 리스너 추가
-  window.addEventListener('scroll', handleScroll);
+  // Screen size and scroll handling
+  checkScreenSize(); // Initial check
+  if (isDesktop.value) {
+    window.addEventListener('scroll', handleScroll);
+  }
+  window.addEventListener('resize', checkScreenSize);
 });
 
 onUnmounted(() => {
   navigationStore.resetNavigation();
   window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener('resize', checkScreenSize);
 });
 </script>
 
@@ -163,11 +191,12 @@ onUnmounted(() => {
         :productDetail="productDetail"
         :renewDate="renewDate"
         :isScrolled="isScrolled"
+        :isScrollEffectEnabled="isDesktop"
         @addScrap="handleAddScrap"
         @navigate="navigateToLink"
       />
 
-      <div class="px-[10.8%] space-y-6 py-8">
+      <div class="px-6 mobile:px-4 tablet:px-12 wide:px-[10.8%] space-y-6 py-8">
         <ProductSummaryCard :productDetail="productDetail">
           <AISummaryCard
             v-if="authStore.isLoggedIn"

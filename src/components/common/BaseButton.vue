@@ -35,10 +35,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  hasIconLst: {
-    type: Boolean,
-    default: false,
-  },
   label: {
     type: String,
     default: '시작하기',
@@ -55,7 +51,6 @@ const baseClass = computed(() => {
     .filter(Boolean)
     .join(' ');
 });
-
 // 버튼 사이즈
 const sizeClass = computed(() => {
   switch (props.size) {
@@ -73,20 +68,22 @@ const variantClass = computed(() => {
   if (props.disabled) {
     switch (props.variant) {
       case 'outline':
-        return 'border border-fg-gray bg-transparent text-fg-gray cursor-not-allowed';
+        return 'border border-gray-300 bg-transparent text-gray-300 cursor-not-allowed';
       case 'ghost':
-        return 'bg-transparent text-fg-gray cursor-not-allowed';
+        return 'bg-transparent text-gray-300 cursor-not-allowed';
       default:
-        return 'bg-[#EBEEF0] text-fg-gray cursor-not-allowed';
+        return 'bg-gray-100 text-gray-300 cursor-not-allowed';
     }
   }
   switch (props.variant) {
     case 'outline':
-      return 'border border-fg-secondary bg-transparent text-fg-primary hover:bg-[#EBEEF0]';
+      return 'border border-gray-400 bg-transparent text-fg-primary';
     case 'ghost':
       return 'bg-transparent text-primary';
+    case 'basic':
+      return 'bg-gray-100 border-gray-400';
     default:
-      return 'bg-primary text-white';
+      return 'bg-primary text-white text-fg-primary';
   }
 });
 

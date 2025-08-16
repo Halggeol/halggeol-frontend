@@ -304,7 +304,9 @@ export const updateProductStatus = async (productId, status) => {
 
 export const analyzeProductWithGemini = async productDetail => {
   try {
-    const response = await api.post('/gemini/analyze', productDetail);
+    const response = await api.post('/gemini/analyze', productDetail, {
+      timeout: 30000,
+    });
     return response.data;
   } catch (error) {
     console.error('Gemini Product Analysis API Error:', error);
