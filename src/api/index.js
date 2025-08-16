@@ -3,6 +3,7 @@ import axios from 'axios';
 // 1. axios 인스턴스 생성
 const api = axios.create({
   baseURL: 'https://54.175.115.255:8080/backend-1.0-SNAPSHOT', // 기본 백엔드 서버 주소
+  // baseURL: 'http://localhost:8080',
 });
 
 // 2. 요청 인터셉터 추가 (모든 요청에 토큰을 자동으로 포함)

@@ -1,10 +1,10 @@
 <script setup>
-import { ref, onMounted, computed, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import {
   getProductDetail,
   addScrap,
-  delScrap,
+  // delScrap,
   checkRecommendProductStatus,
   analyzeProductWithGemini,
 } from '@/api/product-detail';
@@ -19,6 +19,7 @@ import ProductInfo from '@/components/products/ProductInfo.vue';
 import ProfitCalculator from '@/components/products/ProfitCalculator.vue';
 import AISummaryCard from '@/components/common/AISummaryCard.vue';
 import ProductSurveyCard from '@/components/products/ProductSurveyCard.vue';
+import LoadingPage from '../common/LoadingPage.vue';
 
 const productDetail = ref(null);
 const isLoading = ref(true);
@@ -32,7 +33,7 @@ const navigationStore = useNavigationStore();
 
 // 상품 상태 확인
 const productStatus = ref(null);
-const isStatusLoading = ref(false);
+// const isStatusLoading = ref(false);
 
 const geminiData = ref({ advantage: null, disadvantage: null });
 const isGeminiLoading = ref(false);
@@ -160,15 +161,7 @@ onUnmounted(() => {
 
 <template>
   <div class="product-detail-page">
-    <div
-      v-if="isLoading"
-      class="flex flex-col items-center justify-center min-h-[400px] space-y-4"
-    >
-      <span class="loading loading-spinner loading-lg"></span>
-      <p class="text-callout text-fg-secondary">
-        상품 상세 정보를 불러오는 중...
-      </p>
-    </div>
+    <LoadingPage v-if="isLoading" :loading-text="'상품 불러오는 중'" />
     <div
       v-else-if="error"
       class="flex flex-col items-center justify-center min-h-[400px] space-y-4"
@@ -186,7 +179,7 @@ onUnmounted(() => {
         @navigate="navigateToLink"
       />
 
-      <div class="px-6 mobile:px-4 tablet:px-12 wide:px-12 space-y-6 py-8">
+      <div class="tablet:px-5 px-[10.8%] py-20">
         <ProductSummaryCard :productDetail="productDetail">
           <AISummaryCard
             v-if="authStore.isLoggedIn"

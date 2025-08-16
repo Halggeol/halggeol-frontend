@@ -1,5 +1,6 @@
 <script setup>
 import BaseCard from '@/components/common/BaseCard.vue';
+import LoadingPage from '@/pages/common/LoadingPage.vue';
 import { ref, watch, onUnmounted } from 'vue';
 
 const props = defineProps({
@@ -61,17 +62,12 @@ onUnmounted(() => {
 
 <template>
   <BaseCard size="lg" variant="outline">
-    <div
+    <LoadingPage
       v-if="props.isLoading && !timeoutError"
-      class="flex flex-col items-center justify-center p-8"
-    >
-      <span class="loading loading-spinner loading-lg"></span>
-      <p
-        class="text-footnote tablet:text-callout wide:text-callout text-fg-secondary"
-      >
-        AI 요약 정보 생성중..
-      </p>
-    </div>
+      :fullscreen="false"
+      :loading-text="'AI 요약 정보 생성중'"
+    />
+
     <!-- 타임아웃 에러가 발생했거나, 부모로부터 에러 prop을 받았을 때 에러 메시지를 보여줍니다. -->
     <div
       v-else-if="timeoutError || props.error"
@@ -82,15 +78,13 @@ onUnmounted(() => {
       </p>
     </div>
     <div v-else>
-      <span class="text-body02 tablet:text-body01 wide:text-body01 font-bold">{{
-        props.summary
-      }}</span>
-      <p class="text-footnote tablet:text-body02 wide:text-body02 py-6">
-        <span class="font-semibold text-status-red-400">장점 </span
+      <span class="text-body01 font-bold">{{ props.summary }}</span>
+      <p class="text-body02 py-6">
+        <span class="font-semibold text-status-red-400 mr-3">장점</span
         >{{ props.good }}
       </p>
-      <p class="text-footnote tablet:text-body02 wide:text-body02">
-        <span class="font-semibold text-status-blue-400">단점 </span
+      <p class="text-body02">
+        <span class="font-semibold text-status-blue-400 mr-3">단점</span
         >{{ props.bad }}
       </p>
     </div>

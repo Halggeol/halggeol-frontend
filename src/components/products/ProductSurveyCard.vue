@@ -1,55 +1,41 @@
 <template>
-  <!-- 이미 피드백을 남긴 경우 블러 처리 -->
-  <div v-if="isCompleted" class="relative">
+  <!-- Already completed survey -->
+  <div v-if="isCompleted" class="relative mt-20">
     <div class="filter blur-sm pointer-events-none select-none">
-      <BaseCard size="lg" variant="outline" class="bg-slate-50">
-        <div class="space-y-6">
-          <h3
-            class="text-body01 tablet:text-title-sm wide:text-title-sm font-semibold text-fg-primary"
-          >
-            금융상품은 어떠셨나요?
-          </h3>
-
-          <div
-            class="flex flex-col tablet:flex-row wide:flex-row items-stretch tablet:items-center wide:items-center justify-between"
-          >
-            <!-- 라디오 버튼 그룹 -->
-            <div class="flex flex-wrap gap-4">
-              <label
-                v-for="option in statusOptions"
-                :key="option.value"
-                class="flex items-center cursor-pointer"
-              >
-                <input
-                  type="radio"
-                  :value="option.value"
-                  class="mr-2 w-4 h-4 text-status-red bg-base-100 border-border-primary focus:ring-status-red focus:ring-2"
-                />
-                <span
-                  class="text-footnote tablet:text-callout wide:text-callout text-fg-primary"
-                  >{{ option.label }}</span
-                >
-              </label>
-            </div>
-
-            <!-- 제출 버튼 -->
-            <BaseButton
-              variant="primary"
-              size="sm"
-              class="px-6 mt-4 tablet:mt-0 wide:mt-0"
+      <BaseCard size="lg" variant="tinted">
+        <h3 class="text-body01 font-semibold text-fg-primary mb-4">
+          금융상품은 어떠셨나요?
+        </h3>
+        <div
+          class="flex flex-col tablet:flex-row items-start tablet:items-center justify-between gap-4"
+        >
+          <div class="flex flex-wrap gap-x-6 gap-y-3">
+            <div
+              v-for="option in statusOptions"
+              :key="option.value"
+              class="flex items-center"
             >
-              제출
-            </BaseButton>
+              <div
+                class="w-5 h-5 rounded-full border-2 border-gray-300 mr-2"
+              ></div>
+              <span class="text-body02 text-gray-400">{{ option.label }}</span>
+            </div>
           </div>
+          <BaseButton
+            variant="primary"
+            size="sm"
+            class="px-6 w-full tablet:w-auto self-end tablet:self-center"
+            disabled
+          >
+            제출
+          </BaseButton>
         </div>
       </BaseCard>
     </div>
     <div
-      class="absolute inset-0 flex flex-col items-center justify-center bg-base-100/50 p-4"
+      class="absolute inset-0 flex flex-col items-center justify-center bg-base-100/50 p-4 rounded-lg"
     >
-      <h4
-        class="text-body01 tablet:text-title-sm wide:text-title-sm font-semibold text-fg-primary mb-2 text-center"
-      >
+      <h4 class="text-body01 font-semibold text-fg-primary mb-2 text-center">
         이 상품에 대한 피드백을 이미
         <span class="text-primary font-bold">{{
           getStatusLabel(productStatus)
@@ -59,59 +45,60 @@
     </div>
   </div>
 
-  <!-- 정상 설문 카드 -->
-  <BaseCard v-else size="lg" variant="outline" class="bg-slate-50">
-    <div class="space-y-6">
-      <h3
-        class="text-body01 tablet:text-title-sm wide:text-title-sm font-semibold text-fg-primary"
-      >
+  <!-- Active survey card -->
+  <BaseCard v-else size="lg" variant="tinted" class="mt-20">
+    <div class="space-y-4">
+      <h3 class="text-body01 font-semibold text-fg-primary">
         금융상품은 어떠셨나요?
       </h3>
-
-      <div class="space-y-1">
-        <div class="relative">
-          <div
-            class="flex flex-col tablet:flex-row wide:flex-row items-stretch tablet:items-center wide:items-center justify-between"
-          >
-            <!-- 라디오 버튼 그룹 -->
-            <div class="flex flex-wrap gap-4">
-              <label
-                v-for="option in statusOptions"
-                :key="option.value"
-                class="relative flex items-center cursor-pointer"
-              >
-                <input
-                  type="radio"
-                  :value="option.value"
-                  v-model="selectedStatus"
-                  class="mr-2 w-4 h-4 text-status-red bg-base-100 border-border-primary focus:ring-status-red focus:ring-2"
-                />
-                <span
-                  class="text-footnote tablet:text-callout wide:text-callout text-fg-primary"
-                  >{{ option.label }}</span
-                >
-                <!-- 각 선택지별 설명 텍스트 -->
-                <div
-                  v-if="selectedStatus === option.value"
-                  class="absolute top-full left-0 tablet:left-6 wide:left-6 mt-1 text-footnote tablet:text-callout wide:text-callout text-fg-secondary whitespace-nowrap z-10"
-                >
-                  {{ getStatusDescription(option.value) }}
-                </div>
-              </label>
-            </div>
-
-            <!-- 제출 버튼 -->
-            <BaseButton
-              variant="primary"
-              size="sm"
-              @click="submitSurvey"
-              :disabled="!selectedStatus"
-              class="px-6 w-full tablet:w-auto wide:w-auto mt-4 tablet:mt-0 wide:mt-0"
-              label="제출"
+      <div
+        class="flex flex-col tablet:flex-row items-start tablet:items-center justify-between gap-4"
+      >
+        <div class="flex-grow">
+          <div class="flex flex-wrap gap-x-6 gap-y-3">
+            <label
+              v-for="option in statusOptions"
+              :key="option.value"
+              class="flex items-center cursor-pointer"
             >
-            </BaseButton>
+              <input
+                type="radio"
+                :value="option.value"
+                v-model="selectedStatus"
+                class="sr-only peer"
+              />
+              <div
+                class="flex h-5 w-5 mr-2 items-center justify-center rounded-full border border-gray-300 peer-checked:border-primary"
+              >
+                <div
+                  class="h-2.5 w-2.5 rounded-full bg-primary"
+                  v-if="selectedStatus === option.value"
+                ></div>
+              </div>
+              <span class="text-body02 text-fg-primary">{{
+                option.label
+              }}</span>
+            </label>
+          </div>
+          <div class="pt-2 min-h-[24px]">
+            <p
+              v-if="selectedStatus"
+              class="text-body02 text-fg-secondary transition-opacity duration-300"
+            >
+              {{ getStatusDescription(selectedStatus) }}
+            </p>
           </div>
         </div>
+
+        <BaseButton
+          variant="primary"
+          size="sm"
+          @click="submitSurvey"
+          :disabled="!selectedStatus"
+          class="px-6 w-full tablet:w-auto self-end tablet:self-center flex-shrink-0"
+          label="제출"
+        >
+        </BaseButton>
       </div>
     </div>
   </BaseCard>
@@ -121,10 +108,10 @@
 import { ref, computed } from 'vue';
 import BaseCard from '@/components/common/BaseCard.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
-import { useNavigationStore } from '@/stores/navigation';
+// import { useNavigationStore } from '@/stores/navigation';
 import { updateProductStatus, addScrap } from '@/api/product-detail';
 
-const navigationStore = useNavigationStore();
+// const navigationStore = useNavigationStore();
 
 // 설문 응답 데이터
 const selectedStatus = ref(null);

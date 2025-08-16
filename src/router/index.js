@@ -9,8 +9,8 @@ import UserLayout from '@/layouts/UserLayout.vue';
 
 // 미리 로딩할 페이지
 import HomePage from '@/pages/HomePage.vue';
-import NotFound from '@/pages/NotFoundPage.vue';
-import Error500 from '@/pages/Error500Page.vue';
+import NotFound from '@/pages/common/NotFoundPage.vue';
+import Error500 from '@/pages/common/Error500Page.vue';
 import LoginPage from '@/pages/user/auth/LoginPage.vue';
 import SignupPage from '@/pages/user/auth/SignupPage.vue';
 
@@ -96,7 +96,7 @@ const commonRoutes = [
       {
         path: '',
         name: 'scrap',
-        component: () => import('@/pages/ScrapPage.vue'),
+        component: () => import('@/pages/user/mypage/ScrapPage.vue'),
       },
     ],
   },

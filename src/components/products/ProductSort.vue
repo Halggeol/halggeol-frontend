@@ -37,10 +37,4 @@ function onSortChange() {
 }
 </script>
 
-<style scoped>
-/*
-  Tailwind CSS를 주로 사용하기 때문에 style 태그는 비어있는 경우가 많지만,
-  만약 특정 브라우저에서 appearance-none이 완벽히 작동하지 않거나
-  더 미세한 조정이 필요하다면 여기에 커스텀 CSS를 추가할 수 있습니다.
-*/
-</style>
+<style scoped></style>

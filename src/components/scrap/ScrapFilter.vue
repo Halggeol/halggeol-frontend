@@ -2,53 +2,76 @@
   <div
     class="w-64 px-10 py-5 border-r border-gray-200 bg-gray-50 flex-shrink-0 sticky top-0 h-screen"
   >
-    <!-- 상품 유형 필터 -->
-    <div class="mb-6 relative">
-      <h3 class="text-lg font-semibold mb-3 text-gray-800">상품 유형</h3>
-      <button
-        @click="resetFilters"
-        class="absolute top-0 right-0 text-sm text-gray-500 hover:text-gray-700 underline focus:outline-none focus:ring-0"
-      >
-        초기화
-      </button>
-      <ul>
-        <li class="mb-2 flex items-center">
-          <input
-            type="checkbox"
-            id="typeAll"
-            value="all"
-            v-model="isAllSelected"
-            class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-          />
-          <label
-            for="typeAll"
-            class="ml-2 text-sm text-gray-700 cursor-pointer"
+    <div class="p-5 border-r border-gray-200 h-full overflow-y-auto">
+      <!-- 상품 유형 필터 -->
+      <div class="relative">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-body02 font-bold text-fg-primary">필터</h2>
+          <!-- 모바일/태블릿용 닫기 버튼 -->
+          <button
+            @click="$emit('close')"
+            class="hidden tablet:block text-gray-500 hover:text-gray-800"
           >
-            전체
-          </label>
-        </li>
-        <li
-          v-for="type in productTypes"
-          :key="type.value"
-          class="mb-2 flex items-center"
-        >
-          <input
-            type="checkbox"
-            :id="'type' + type.value"
-            :value="type.value"
-            v-model="selectedProductTypes"
-            class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-          />
-          <label
-            :for="'type' + type.value"
-            class="ml-2 text-sm text-gray-700 cursor-pointer"
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <!-- 데스크톱용 초기화 버튼 -->
+          <button
+            @click="resetFilters"
+            class="tablet:hidden text-callout text-fg-gray hover:text-fg-secondary hover:underline focus:outline-none"
           >
-            {{ type.label }}
-          </label>
-        </li>
-      </ul>
+            초기화
+          </button>
+        </div>
+        <ul>
+          <li class="mb-2 flex items-center">
+            <input
+              type="checkbox"
+              id="typeAll"
+              v-model="isAllSelected"
+              class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+            />
+            <label
+              for="typeAll"
+              class="ml-2 text-sm text-gray-700 cursor-pointer"
+            >
+              전체
+            </label>
+          </li>
+          <li
+            v-for="type in productTypes"
+            :key="type.value"
+            class="mb-2 flex items-center"
+          >
+            <input
+              type="checkbox"
+              :id="'type' + type.value"
+              :value="type.value"
+              v-model="selectedProductTypes"
+              class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+            />
+            <label
+              :for="'type' + type.value"
+              class="ml-2 text-sm text-gray-700 cursor-pointer"
+            >
+              {{ type.label }}
+            </label>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
+  </aside>
 </template>
 
 <script setup>
@@ -60,6 +83,10 @@ const props = defineProps({
     default: () => ({
       types: [],
     }),
+  },
+  isOpen: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -73,7 +100,7 @@ const productTypes = [
 const productTypeValues = productTypes.map(t => t.value);
 
 const selectedProductTypes = ref([]);
-const emit = defineEmits(['filtersChanged']);
+const emit = defineEmits(['filtersChanged', 'close']);
 
 const isAllSelected = computed({
   get() {

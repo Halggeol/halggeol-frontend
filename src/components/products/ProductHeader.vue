@@ -3,20 +3,18 @@
     :style="productTypeHeaderStyle"
     :class="[
       'transition-colors duration-300',
-      isScrolled
-        ? 'py-4 sticky top-0 z-50 shadow-lg'
-        : 'py-8 tablet:py-12 wide:py-16',
+      isScrolled ? 'py-4 sticky top-0 z-50 shadow-card' : 'tablet:py-8 py-16',
     ]"
   >
     <!-- Default Header -->
     <div
       v-if="!isScrolled"
-      class="px-4 tablet:px-[10.8%] wide:px-[10.8%] flex flex-col tablet:flex-row wide:flex-row justify-between items-start gap-6"
+      class="tablet:px-5 px-[10.8%] flex tablet:flex-col flex-row justify-between items-start gap-6"
     >
       <!-- Left Content -->
-      <div class="flex-1 min-w-0">
+      <div class="min-w-0">
         <div
-          class="flex flex-wrap items-center gap-2 mb-4 tablet:gap-3 wide:gap-3 tablet:mb-6 wide:mb-6"
+          class="flex flex-wrap items-center tablet:gap-2 tablet:mb-4 gap-3 mb-6"
         >
           <span
             :style="productTypeBadgeStyle"
@@ -35,20 +33,20 @@
           >
         </div>
         <h1
-          class="text-title-md tablet:text-title-lg wide:text-title-xl text-fg-primary font-bold mb-4 tablet:mb-6 wide:mb-6"
+          class="text-title-md tablet:text-title-lg wide:text-title-xl text-fg-primary font-bold tablet:mb-4 mb-6"
         >
           {{ productDetail.name }}
         </h1>
-        <div class="flex items-center gap-2 mb-6 tablet:mb-8 wide:mb-8">
+        <div class="flex items-center gap-2 tablet:mb-6 mb-8">
           <span class="text-status-red"
             ><Heart :class="['w-4 h-4 text-red-500']" /></span
-          ><span class="text-footnote text-fg-secondary">
+          ><span class="text-body02 text-fg-secondary">
             <strong class="text-fg-primary">{{ productDetail.scrapCnt }}</strong
             >명이 관심갖고있음
           </span>
         </div>
         <div
-          class="text-caption tablet:text-footnote wide:text-footnote text-fg-secondary leading-relaxed max-w-2xl overflow-hidden"
+          class="text-footnote text-fg-secondary leading-relaxed max-w-2xl overflow-hidden"
         >
           제공되는 정보는 금융감독원
           <strong class="text-fg-primary">{{ renewDate }}</strong
@@ -59,7 +57,7 @@
       </div>
       <!-- Right Buttons -->
       <div
-        class="flex-shrink-0 w-full tablet:w-auto wide:w-auto flex gap-3 mt-6 tablet:mt-auto wide:mt-auto tablet:flex-col wide:flex-col"
+        class="tablet:flex-shrink-0 w-1/3 flex gap-3 tablet:mt-6 mt-auto flex-col tablet:flex-row"
       >
         <div
           v-if="authStore.isLoggedIn"
@@ -68,10 +66,10 @@
           <BaseButton
             label="관심상품"
             size="sm"
-            variant="basic"
+            variant="outline"
             :disabled="isScrapLoading || !authStore.isLoggedIn"
             :hasIconFst="true"
-            class="!w-full tablet:!w-auto wide:!w-auto !whitespace-nowrap hover:bg-gray-50 !px-4 !text-caption tablet:!px-8 wide:!px-10 tablet:!text-footnote wide:!text-callout"
+            class="!w-full tablet:!w-auto wide:!w-auto !whitespace-nowrap !bg-white/60 hover:!bg-gray-50 !px-4 tablet:!px-8 wide:!px-10"
             @click="handleAddScrap"
           >
             <template #icon_fst>
@@ -88,9 +86,9 @@
         <BaseButton
           label="가입하기"
           size="sm"
-          variant="filled"
+          variant="tinted"
           :style="productTypeBadgeStyle"
-          class="flex-1 tablet:!flex-initial wide:!flex-initial !w-full tablet:!w-auto wide:!w-auto !whitespace-nowrap !px-4 !text-caption tablet:!px-8 wide:!px-10 tablet:!text-footnote wide:!text-callout"
+          class="flex-1 tablet:!flex-initial wide:!flex-initial !w-full tablet:!w-auto wide:!w-auto !whitespace-nowrap !px-4 tablet:!px-8 wide:!px-10"
           @click="handleNavigate"
         />
       </div>
@@ -99,10 +97,10 @@
     <!-- Scrolled Header -->
     <div
       v-else
-      class="h-full px-4 tablet:px-[10.8%] wide:px-[10.8%] flex justify-between items-center gap-6"
+      class="h-full tablet:px-5 px-[10.8%] flex justify-between items-center gap-6"
     >
       <!-- Left Content (Scrolled) -->
-      <div class="flex-1 min-w-0">
+      <div class="min-w-0">
         <h1 class="text-title-sm font-bold text-fg-primary truncate pr-4">
           {{ productDetail.name }}
         </h1>
@@ -111,12 +109,12 @@
       <div class="flex-shrink-0 flex gap-3 items-center">
         <div v-if="authStore.isLoggedIn">
           <BaseButton
-            label=""
-            size="xs"
-            variant="basic"
+            label="관심상품"
+            size="lg"
+            variant="outline"
             :disabled="isScrapLoading || !authStore.isLoggedIn"
             :hasIconFst="true"
-            class="!w-auto !whitespace-nowrap hover:bg-gray-50 !px-6 !text-caption"
+            class="!whitespace-nowrap !bg-white/60 hover:!bg-gray-50 !px-6"
             @click="handleAddScrap"
           >
             <template #icon_fst>
@@ -132,10 +130,10 @@
         </div>
         <BaseButton
           label="가입하기"
-          size="xs"
-          variant="filled"
+          size="lg"
+          variant="tinted"
           :style="productTypeBadgeStyle"
-          class="!w-auto !whitespace-nowrap !px-4 !text-caption"
+          class="!whitespace-nowrap !px-4"
           @click="handleNavigate"
         />
       </div>
@@ -171,7 +169,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['navigate']);
+const emit = defineEmits(['navigate', 'update:scrapStatus']);
 
 const isScrapLoading = ref(false);
 const isScraped = ref(props.productDetail.isScraped || false);
@@ -202,10 +200,10 @@ const productTypeName = computed(() => {
 const productTypeHeaderStyle = computed(() => {
   const prefix = idPrefix.value;
   const colorMap = {
-    D: '#FFEFEE', // cash
+    D: '#FFEFEE', // deposit
     S: '#FFF4DF', // savings
-    A: '#F9EFFA', // aggressive
-    C: '#B9FBC0', // Light pension
+    A: '#F9EFFA', // pension
+    C: '#F9EFFA', // pension
     F: '#ECF0FF', // fund
     X: '#F9EFE3', // forex
   };
@@ -219,10 +217,10 @@ const productTypeHeaderStyle = computed(() => {
 const productTypeBadgeStyle = computed(() => {
   const prefix = idPrefix.value;
   const colorMap = {
-    D: '#FB0000', // fg-cash
+    D: '#FB0000', // fg-deposit
     S: '#F95A00', // fg-savings
-    A: '#CC0CCC', // fg-aggressive
-    C: '#2ECC71', // Lighter fg-pension
+    A: '#CC0CCC', // fg-pension
+    C: '#CC0CCC', // fg-pension
     F: '#1544BC', // fg-fund
     X: '#995C14', // fg-forex
   };
@@ -238,23 +236,24 @@ const handleAddScrap = async () => {
 
   console.log('버튼 클릭 - 현재 isScraped:', isScraped.value);
   isScrapLoading.value = true;
-
+  const originalScrapStatus = isScraped.value;
+  isScraped.value = !originalScrapStatus;
   try {
     if (isScraped.value) {
-      // 이미 관심상품이면 삭제
-      console.log('delScrap 호출');
-      await delScrap(props.productDetail.id);
-      isScraped.value = false;
-      console.log('삭제 완료, isScraped:', isScraped.value);
-    } else {
-      // 관심상품이 아니면 추가
+      // 관심상품이먄 추가
       console.log('addScrap 호출');
       await addScrap(props.productDetail.id);
-      isScraped.value = true;
       console.log('추가 완료, isScraped:', isScraped.value);
+    } else {
+      // 관심상품 아니면 삭제
+      console.log('delScrap 호출');
+      await delScrap(props.productDetail.id);
+      console.log('삭제 완료, isScraped:', isScraped.value);
     }
+    emit('update:scrapStatus', isScraped.value);
   } catch (error) {
     console.error('관심상품 처리 실패:', error);
+    isScraped.value = originalScrapStatus;
   } finally {
     isScrapLoading.value = false;
   }

@@ -4,6 +4,7 @@ import router from '@/router';
 
 const api = axios.create({
   baseURL: 'https://54.175.115.255:8080/backend-1.0-SNAPSHOT/api',
+  // baseURL: 'http://localhost:8080/api',
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',

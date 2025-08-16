@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex justify-between items-center border-b py-4 px-2 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 hover:bg-gray-50 transition cursor-pointer h-[140px]"
+    class="flex justify-between items-center border-b p-5 hover:bg-gray-50 transition cursor-pointer h-[140px]"
     @click="handleProductClick"
   >
     <!-- 왼쪽 정보 영역 -->
