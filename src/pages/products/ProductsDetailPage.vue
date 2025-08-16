@@ -34,7 +34,6 @@ const navigationStore = useNavigationStore();
 const productStatus = ref(null);
 const isStatusLoading = ref(false);
 
-// ✅ 추가: AI 요약 데이터와 로딩 상태를 별도로 관리할 변수
 const geminiData = ref({ advantage: null, disadvantage: null });
 const isGeminiLoading = ref(false);
 const geminiError = ref(null);
@@ -91,7 +90,16 @@ const checkScreenSize = () => {
     window.addEventListener('scroll', handleScroll);
   } else if (!isDesktop.value && wasDesktop) {
     // Resized from desktop to mobile
-    window.removeEventListener('scroll', handleScroll);
+    if (!isScrollListenerAdded) {
+      window.addEventListener('scroll', handleScroll);
+      isScrollListenerAdded = true;
+    }
+  } else if (!isDesktop.value && wasDesktop) {
+    // Resized from desktop to mobile
+    if (isScrollListenerAdded) {
+      window.removeEventListener('scroll', handleScroll);
+      isScrollListenerAdded = false;
+    }
     isScrolled.value = false; // Reset scroll state on mobile
   }
 };
