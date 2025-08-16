@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-64 p-5 border-r border-gray-200 bg-gray-50 flex-shrink-0 sticky top-0 h-screen"
+    class="w-64 px-10 py-5 border-r border-gray-200 bg-gray-50 flex-shrink-0 sticky top-0 h-screen"
   >
     <!-- 상품 유형 필터 -->
     <div class="mb-6 relative">
@@ -168,7 +168,7 @@
             type="number"
             v-model.number="inputAmount"
             placeholder="금액을 입력해 주세요"
-            class="w-full p-2 pr-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+            class="w-full p-2 pr-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-callout"
             @keyup.enter="handleAmountInput"
           />
           <button
@@ -368,7 +368,7 @@ input[type='number'] {
 
 /* placeholder 폰트 크기 및 색상 조정 */
 input::placeholder {
-  font-size: 0.8rem; /* 80% 크기 */
+  font-size: 1rem; /* 80% 크기 */
   color: #a0aec0; /* gray-400 */
 }
 </style>

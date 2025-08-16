@@ -1,17 +1,17 @@
 <template>
   <div
-    class="flex justify-between items-center border-b py-4 px-2 hover:bg-gray-50 transition cursor-pointer h-[140px]"
+    class="flex justify-between items-center border-b py-4 px-2 mx-4 sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 hover:bg-gray-50 transition cursor-pointer h-[140px]"
     @click="handleProductClick"
   >
     <!-- 왼쪽 정보 영역 -->
-    <div class="flex-1">
+    <div class="flex-1 max-w-[60%]">
       <p class="text-footnote text-fg-secondary">{{ product.company }}</p>
-      <h3 class="text-body02 font-bold text-fg-primary mt-1">
+      <h3 class="text-body02 font-bold text-fg-primary mt-2">
         {{ product.name }}
       </h3>
 
       <!-- 태그들 -->
-      <div class="mt-2 flex flex-wrap gap-2">
+      <div class="mt-3 flex flex-wrap gap-2">
         <span
           class="text-footnote px-2 py-[2px] rounded-full"
           :style="getProductTypeStyles(product.type)"
@@ -60,7 +60,7 @@
       </div>
 
       <!-- 추가 정보 -->
-      <div class="mt-2 text-xs text-gray-500 space-y-1">
+      <div class="mt-3 text-xs text-gray-500 space-y-1">
         <div
           v-if="product.amount"
           class="text-footnote font-semibold text-status-blue"
@@ -71,15 +71,17 @@
     </div>
 
     <!-- 오른쪽 금리/수익률 정보 -->
-    <div class="flex flex-col items-end space-y-2 ml-4">
+    <div
+      class="flex flex-col items-end justify-center space-y-3 ml-4 min-w-[35%]"
+    >
       <div class="text-right">
         <p class="text-title01 font-bold text-fg-primary">
           {{ formatTitle(product.title, product.type) }}
         </p>
-        <p v-if="product.subTitle" class="text-callout text-fg-secondary mt-1">
+        <p v-if="product.subTitle" class="text-callout text-fg-secondary mt-2">
           {{ formatSubTitle(product.subTitle, product.type) }}
         </p>
-        <p class="text-callout text-fg-secondary mt-1">
+        <p class="text-callout text-fg-secondary mt-2">
           {{ getBaseText(product.type) }}
         </p>
       </div>

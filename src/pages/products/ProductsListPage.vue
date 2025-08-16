@@ -1,17 +1,19 @@
 <template>
   <div class="flex items-start">
     <ProductFilter
+      class="flex-shrink-0 w-64 wide:w-80 transition-all duration-300"
       :initialFilters="currentFilters"
       @filtersChanged="handleFilterChange"
     />
     <div class="flex-1 p-5 h-screen overflow-y-auto">
-      <div class="flex justify-end mb-4">
+      <div class="flex justify-between items-baseline mb-6 px-4">
+        <h2 class="text-body01 font-bold text-gray-800">상품 목록</h2>
         <ProductSort
+          class="mt-6"
           :modelValue="currentSort"
           @update:sort="handleSortChange"
         />
       </div>
-      <h2 class="text-body01 font-bold mb-6 text-gray-800">상품 목록</h2>
 
       <div v-if="searchQuery" class="mb-4 text-gray-600">
         <span class="font-bold">"{{ searchQuery }}"</span>에 대한 검색
