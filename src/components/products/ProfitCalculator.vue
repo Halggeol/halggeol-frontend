@@ -16,7 +16,7 @@
       </div>
     </h3>
 
-    <div class="bg-secondary-50 rounded-lg p-6">
+    <div class="rounded-lg p-6">
       <div
         class="flex flex-col tablet:flex-row wide:flex-row items-center justify-center flex-wrap gap-x-2 gap-y-3 text-footnote tablet:text-body01 wide:text-body01 text-fg-secondary"
       >

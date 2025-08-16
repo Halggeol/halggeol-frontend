@@ -35,18 +35,12 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  hasIconLst: {
-    type: Boolean,
-    default: false,
-  },
   label: {
     type: String,
     default: '시작하기',
   },
 });
-});
 
-import { computed } from 'vue';
 import { computed } from 'vue';
 // 기본 레이아웃
 const baseClass = computed(() => {
@@ -57,23 +51,16 @@ const baseClass = computed(() => {
     .filter(Boolean)
     .join(' ');
 });
-    .join(' ');
-});
-
 // 버튼 사이즈
 const sizeClass = computed(() => {
   switch (props.size) {
     case 'sm':
       return 'px-6 py-4';
-      return 'px-6 py-4';
     case 'lg':
-      return 'w-full py-3';
       return 'w-full py-3';
     default:
       return 'w-1/4 py-4';
-      return 'w-1/4 py-4';
   }
-});
 });
 
 // 버튼 스타일+비활성화 여부
@@ -99,20 +86,13 @@ const variantClass = computed(() => {
       return 'bg-primary text-white text-fg-primary';
   }
 });
-});
 
 // 클릭 이벤트
-const emit = defineEmits(['click']);
 const emit = defineEmits(['click']);
 </script>
 
 <template>
   <!-- 버튼 영역 -->
-  <button
-    :class="[baseClass, sizeClass, variantClass]"
-    :disabled="disabled"
-    @click="emit('click')"
-  >
   <button
     :class="[baseClass, sizeClass, variantClass]"
     :disabled="disabled"

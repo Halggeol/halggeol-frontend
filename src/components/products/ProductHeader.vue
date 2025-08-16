@@ -1,15 +1,12 @@
 <template>
   <div
+    :style="productTypeHeaderStyle"
     :class="[
-      productTypeHeaderBgClass,
+      'transition-colors duration-300',
       isScrolled
         ? 'py-4 sticky top-0 z-50 shadow-lg'
         : 'py-8 tablet:py-12 wide:py-16',
     ]"
-    :style="{
-      height: isScrolled ? '80px' : 'auto',
-      minHeight: isScrolled ? '80px' : isScrollEffectEnabled ? '360px' : 'auto',
-    }"
   >
     <!-- Default Header -->
     <div
@@ -22,11 +19,8 @@
           class="flex flex-wrap items-center gap-2 mb-4 tablet:gap-3 wide:gap-3 tablet:mb-6 wide:mb-6"
         >
           <span
-            :class="[
-              'inline-flex items-center px-3 py-1 rounded-full text-caption font-medium',
-              productTypeBadgeClasses.bg,
-              productTypeBadgeClasses.text,
-            ]"
+            :style="productTypeBadgeStyle"
+            class="inline-flex items-center px-3 py-1 rounded-full text-caption font-medium"
             >{{ productTypeName }}</span
           >
           <span
@@ -95,6 +89,7 @@
           label="가입하기"
           size="sm"
           variant="filled"
+          :style="productTypeBadgeStyle"
           class="flex-1 tablet:!flex-initial wide:!flex-initial !w-full tablet:!w-auto wide:!w-auto !whitespace-nowrap !px-4 !text-caption tablet:!px-8 wide:!px-10 tablet:!text-footnote wide:!text-callout"
           @click="handleNavigate"
         />
@@ -139,6 +134,7 @@
           label="가입하기"
           size="xs"
           variant="filled"
+          :style="productTypeBadgeStyle"
           class="!w-auto !whitespace-nowrap !px-4 !text-caption"
           @click="handleNavigate"
         />
@@ -203,44 +199,38 @@ const productTypeName = computed(() => {
   return typeMapping[idPrefix.value] || '금융상품';
 });
 
-const productTypeHeaderBgClass = computed(() => {
+const productTypeHeaderStyle = computed(() => {
   const prefix = idPrefix.value;
-  switch (prefix) {
-    case 'D':
-      return 'bg-cash';
-    case 'S':
-      return 'bg-savings';
-    case 'A':
-      return 'bg-aggressive';
-    case 'C':
-      return 'bg-pension';
-    case 'F':
-      return 'bg-fund';
-    case 'X':
-      return 'bg-forex';
-    default:
-      return 'bg-gray-secondary-200';
+  const colorMap = {
+    D: '#FFEFEE', // cash
+    S: '#FFF4DF', // savings
+    A: '#F9EFFA', // aggressive
+    C: '#B9FBC0', // Light pension
+    F: '#ECF0FF', // fund
+    X: '#F9EFE3', // forex
+  };
+  const bgColor = colorMap[prefix];
+  if (bgColor) {
+    return { backgroundColor: bgColor };
   }
+  return { backgroundColor: '#e2e8f0' }; // fallback to slate-200
 });
 
-const productTypeBadgeClasses = computed(() => {
+const productTypeBadgeStyle = computed(() => {
   const prefix = idPrefix.value;
-  switch (prefix) {
-    case 'D':
-      return { bg: 'bg-fg-cash', text: 'text-white' };
-    case 'S':
-      return { bg: 'bg-fg-savings', text: 'text-white' };
-    case 'A':
-      return { bg: 'bg-fg-aggressive', text: 'text-white' };
-    case 'C':
-      return { bg: 'bg-fg-pension', text: 'text-white' };
-    case 'F':
-      return { bg: 'bg-fg-fund', text: 'text-white' };
-    case 'X':
-      return { bg: 'bg-fg-forex', text: 'text-white' };
-    default:
-      return { bg: 'bg-gray-primary', text: 'text-white' };
+  const colorMap = {
+    D: '#FB0000', // fg-cash
+    S: '#F95A00', // fg-savings
+    A: '#CC0CCC', // fg-aggressive
+    C: '#2ECC71', // Lighter fg-pension
+    F: '#1544BC', // fg-fund
+    X: '#995C14', // fg-forex
+  };
+  const bgColor = colorMap[prefix];
+  if (bgColor) {
+    return { backgroundColor: bgColor, color: 'white' };
   }
+  return { backgroundColor: '#60584C', color: 'white' }; // Fallback to gray-primary
 });
 
 const handleAddScrap = async () => {
