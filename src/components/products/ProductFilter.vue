@@ -368,7 +368,7 @@ input[type='number'] {
 
 /* placeholder 폰트 크기 및 색상 조정 */
 input::placeholder {
-  font-size: 0.8rem; /* 80% 크기 */
+  font-size: 1rem; /* 80% 크기 */
   color: #a0aec0; /* gray-400 */
 }
 </style>
