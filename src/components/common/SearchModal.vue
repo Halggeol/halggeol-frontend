@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="isOpen"
-    class="fixed inset-0 z-50 flex items-start justify-center pt-20 bg-black bg-opacity-50"
+    class="fixed inset-0 z-50 flex items-start justify-center pt-4 bg-fg-primary bg-opacity-50 mobile:hidden"
     @click.self="closeModal"
   >
     <div class="bg-white rounded-lg w-full max-w-xl p-6 shadow-xl">
@@ -18,19 +18,33 @@
         <button
           v-if="searchQuery"
           @click="clearSearch"
-          class="absolute right-12 p-1 text-gray-400"
+          class="absolute right-12 p-1"
         >
           <svg
-            class="h-5 w-5"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
             fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
           >
+            <ellipse
+              cx="10.0007"
+              cy="10.0006"
+              rx="9.16669"
+              ry="9.16664"
+              fill="#8C949E"
+            />
             <path
+              d="M6.66602 13.333L13.3326 6.66622"
+              stroke="white"
+              stroke-width="1.5"
               stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
+            />
+            <path
+              d="M6.66602 6.66699L13.3326 13.3337"
+              stroke="white"
+              stroke-width="1.5"
+              stroke-linecap="round"
             />
           </svg>
         </button>
@@ -41,19 +55,7 @@
           class="absolute right-2 p-2 text-fg-primary disabled:cursor-not-allowed"
           title="검색"
         >
-          <svg
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
+          <Search class="text-fg-primary" />
         </button>
       </div>
 
@@ -145,6 +147,7 @@ import {
   deleteRecentSearch,
   deleteAllRecentSearches,
 } from '@/api/search';
+import Search from '../icons/Search.vue';
 
 const props = defineProps({
   isOpen: {
@@ -223,7 +226,6 @@ const searchFromList = keyword => {
   searchQuery.value = keyword;
   performSearch();
 };
-
 const clearSearch = () => {
   searchQuery.value = '';
   searchInput.value?.focus();

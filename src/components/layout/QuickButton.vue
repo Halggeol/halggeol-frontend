@@ -6,12 +6,14 @@ function scrollToTop() {
 
 <template>
   <!-- 우측 하단 퀵 버튼 영역 -->
-  <div class="fixed flex justify-end w-auto bottom-[20%] right-[5%] z-30">
+  <div
+    class="fixed flex justify-end w-auto bottom-[20%] tablet:bottom-[10%] right-[5%] tablet:right-[3%] z-30"
+  >
     <div class="flex flex-col flex-wrap gap-2">
       <!-- 관심상품 이동 버튼 -->
       <RouterLink
         to="/scrap"
-        class="w-10 h-10 bg-fg-primary rounded-full flex items-center justify-center"
+        class="w-10 h-10 bg-gray-primary rounded-full flex items-center justify-center"
         aria-label="관심상품 목록으로 이동"
       >
         <svg
@@ -31,7 +33,7 @@ function scrollToTop() {
       </RouterLink>
       <!-- Scroll to Top 버튼 -->
       <button
-        class="w-10 h-10 bg-fg-primary rounded-full flex items-center justify-center"
+        class="w-10 h-10 bg-gray-primary rounded-full flex items-center justify-center"
         @click="scrollToTop()"
         aria-label="맨 위로 이동"
       >

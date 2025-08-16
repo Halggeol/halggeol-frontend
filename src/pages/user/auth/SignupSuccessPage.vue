@@ -20,7 +20,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white flex flex-col items-center justify-center">
+  <div class="h-[calc(100vh-56px)] bg-white flex flex-col items-center justify-center">
     <!-- 과정 진행도 아이콘 -->
     <div class="w-full max-w-[500px] flex items-center justify-start my-14">
       <Check/>
@@ -33,11 +33,11 @@ onMounted(() => {
     <div class="w-full max-w-[500px] flex flex-col grow">
       <!-- 상단 설명 영역 -->
       <div>
-        <h1 class="text-title-lg mb-10">
+        <h1 class="text-title-lg mb-10 text-fg-primary">
           <span class="font-bold">회원가입</span>을 축하합니다
         </h1>
 
-        <p class="text-gray-600 mb-6">
+        <p class="text-fg-secondary mb-6">
           회원가입과 마이데이터 연동이 완료되었어요<br />
           연동된 자산 정보를 기반으로 적합한 금융상품을 추천해드릴게요
         </p>

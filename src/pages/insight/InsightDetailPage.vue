@@ -1,67 +1,72 @@
 <script setup>
+import RegretSimulationCard from '@/components/insight/RegretSimulationCard.vue';
 import RegretInsightCard from '@/components/insight/RegretInsightCard.vue';
-import RegretWeatherCard from '@/components/insight/RegretWeatherCard.vue';
 import AISummaryCard from '@/components/common/AISummaryCard.vue';
 import RegretFeedbackCard from '@/components/insight/RegretFeedbackCard.vue';
 import RecommendCards from '@/components/recommand/RecommendCards.vue';
 import { ref, computed, watch } from 'vue';
-import { useRoute } from 'vue-router';
 import {
-  getInsightDetail,
   mapRegretSimulationResponse,
   mapRegretWeatherResponse,
+  mapRegretInsightResponse,
   mapAISummaryResponse,
   mapRegretFeedbackResponse,
   mapSimilarProductsResponse,
 } from '@/api/insight-detail';
+import LoadingPage from '../LoadingPage.vue';
 
-const route = useRoute();
-const round = computed(() => Number(route.query.round));
-const productId = computed(() => route.query.productId);
+const props = defineProps({
+  isLoading: {
+    type: Boolean,
+    default: false,
+  },
+  detailData: {
+    type: Object,
+    default: () => null,
+  },
+});
 
-const isLoading = ref(true);
-const error = ref(null);
-const detailData = ref(null);
+const selectedCurrency = ref('USD');
+function handleCurrencyUpdate(newCurrency) {
+  selectedCurrency.value = newCurrency;
+}
 
-const regretSimulation = computed(() =>
-  mapRegretSimulationResponse(detailData.value)
-);
-const regretWeather = computed(() =>
-  mapRegretWeatherResponse(detailData.value)
-);
-const aiSummary = computed(() => mapAISummaryResponse(detailData.value));
-const regretFeedback = computed(() =>
-  mapRegretFeedbackResponse(detailData.value)
-);
-const similarProducts = computed(() =>
-  mapSimilarProductsResponse(detailData.value)
-);
+const emit = defineEmits(['survey-submitted']);
 
-const loadDetailData = async () => {
-  isLoading.value = true;
-  error.value = null;
-  detailData.value = null; // 이전 데이터 초기화
-
-  try {
-    const response = await getInsightDetail(round.value, productId.value);
-    if (!response) {
-      throw new Error('API 응답이 없습니다.');
-    }
-    detailData.value = response;
-  } catch (e) {
-    console.error('getInsightDetail 실패:', e);
-    error.value = e.message;
-  } finally {
-    isLoading.value = false;
-  }
+const onSurveySubmitted = payload => {
+  emit('survey-submitted', payload);
 };
 
+const regretWeather = computed(() =>
+  mapRegretWeatherResponse(props.detailData)
+);
+const regretInsightData = computed(() =>
+  mapRegretInsightResponse(props.detailData)
+);
+const isForexProduct = computed(() => props.detailData?.forexInfo?.length > 0);
+const currencyOptions = computed(() => {
+  if (isForexProduct.value && props.detailData?.currency) {
+    return props.detailData.currency.split(',');
+  }
+  return [];
+});
+
+const regretSimulation = computed(() =>
+  mapRegretSimulationResponse(props.detailData)
+);
+const aiSummary = computed(() => mapAISummaryResponse(props.detailData));
+const regretFeedback = computed(() =>
+  mapRegretFeedbackResponse(props.detailData)
+);
+const similarProducts = computed(() =>
+  mapSimilarProductsResponse(props.detailData)
+);
+
 watch(
-  [round, productId],
-  newVal => {
-    const [newRound, newProductId] = newVal;
-    if (newRound && newProductId) {
-      loadDetailData();
+  () => props.currencyOptions,
+  newOptions => {
+    if (newOptions && newOptions.length > 0) {
+      selectedCurrency.value = newOptions[0];
     }
   },
   { immediate: true }
@@ -69,25 +74,34 @@ watch(
 </script>
 
 <template>
-  <div v-if="isLoading" class="mt-40 text-center">
-    <span class="loading loading-spinner loading-sm"></span>
-    <p class="text-callout">회고를 분석하고 있어요</p>
-  </div>
+  <LoadingPage
+    v-if="isLoading || !detailData"
+    :loading-text="'인사이트 발행중'"
+  />
+  <div v-else-if="props.detailData" class="px-1">
+    <RegretInsightCard
+      :regretScore="regretWeather.regretScore"
+      :missAmount="regretWeather.missAmount"
+      :regretInsightData="regretInsightData"
+      :isForexProduct="isForexProduct"
+      :forexInfo="detailData.forexInfo"
+      :currencyOptions="currencyOptions"
+      :detailData="props.detailData"
+      :selectedCurrency="selectedCurrency"
+      @update:selectedCurrency="handleCurrencyUpdate"
+    />
+    <RegretSimulationCard
+      v-bind="regretSimulation"
+      :selectedCurrency="selectedCurrency"
+    />
 
-  <div v-else-if="error" class="title03 mt-40 text-center">
-    회고 분석을 실패했어요
-  </div>
-
-  <div v-else-if="detailData">
-    <div class="mt-40 flex gap-6">
-      <RegretInsightCard v-bind="regretSimulation" />
-      <RegretWeatherCard v-bind="regretWeather" />
-    </div>
-
-    <h2 class="title02 mt-40 pb-12">AI 요약</h2>
+    <h2 class="title02 mt-20 pb-12">AI 요약</h2>
     <AISummaryCard v-bind="aiSummary" />
 
-    <RegretFeedbackCard v-bind="regretFeedback" />
+    <RegretFeedbackCard
+      v-bind="regretFeedback"
+      @survey-submitted="onSurveySubmitted"
+    />
 
     <h2 class="title01 pt-40 pb-12">놓친 상품과 유사한 상품</h2>
     <RecommendCards

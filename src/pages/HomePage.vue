@@ -1,15 +1,15 @@
 <script setup>
 import BaseButton from '@/components/common/BaseButton.vue';
 import AssetCard from '@/components/dashboard/AssetCard.vue';
-import AssetPortfolioCard from '@/components/dashboard/AssetPortfolioCard.vue';
-import RegretScoreCard from '@/components/dashboard/RegretScoreCard.vue';
 import RankCards from '@/components/recommand/RankCards.vue';
 import RecommendCards from '@/components/recommand/RecommendCards.vue';
 import router from '@/router';
 import { ref, onMounted, provide } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
-
 import { getDashboardMain } from '@/api/dashboard';
+import LoadingPage from './LoadingPage.vue';
+import RegretSummaryCards from '@/components/dashboard/RegretSummaryCards.vue';
+import AssetPortfolioCard from '@/components/dashboard/AssetPortfolioCard.vue';
 
 const authStore = useAuthStore();
 const isLoggedIn = authStore.isLoggedIn;
@@ -21,36 +21,33 @@ function onLoginClick() {
 const dashboardData = ref(null);
 const isLoading = ref(true);
 const isError = ref(false);
-const retryCount = ref(0); // New: Track retry attempts
-const maxRetries = 3; // New: Maximum number of retries
-const retryDelay = 1000; // New: Delay in milliseconds between retries
 
 const fetchDashboard = async () => {
-  try {
-    isLoading.value = true;
-    isError.value = false;
-    // Reset retryCount only on the initial call, not on retries
-    if (retryCount.value === 0) {
-      retryCount.value = 0;
-    }
+  isLoading.value = true;
+  isError.value = false;
 
-    // API 호출
-    const response = await getDashboardMain();
-    dashboardData.value = response.data;
-    retryCount.value = 0; // Reset retry count on success
-  } catch (error) {
-    console.error('대시보드 로딩 실패:', error);
-    if (retryCount.value < maxRetries) {
-      retryCount.value++;
-      console.log(`Retrying... Attempt ${retryCount.value} of ${maxRetries}`);
+  const maxRetries = 3;
+  const retryDelay = 1000;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await getDashboardMain();
+      dashboardData.value = response.data;
+      isError.value = false;
+      isLoading.value = false;
+      return;
+    } catch (error) {
+      console.error(
+        `대시보드 로딩 실패 (시도 ${attempt}/${maxRetries}):`,
+        error
+      );
+      if (attempt === maxRetries) {
+        isError.value = true;
+        isLoading.value = false;
+        return;
+      }
       await new Promise(resolve => setTimeout(resolve, retryDelay));
-      await fetchDashboard(); // Retry the fetch
-    } else {
-      isError.value = true; // Set error state after max retries
-      retryCount.value = 0; // Reset retry count
     }
-  } finally {
-    isLoading.value = false;
   }
 };
 
@@ -63,42 +60,24 @@ onMounted(() => {
 
 <template>
   <!-- 로딩 상태 -->
-  <div
-    v-if="isLoading"
-    class="flex flex-col items-center justify-center min-h-screen space-y-6"
-  >
-    <span class="loading loading-spinner loading-xl"></span>
-    <p class="text-callout text-fg-primary">자산을 확인하고 있어요</p>
-  </div>
+  <LoadingPage v-if="isLoading" />
 
-  <!-- 에러 상태 -->
-  <div
-    v-else-if="isError"
-    class="flex flex-col items-center justify-center min-h-screen space-y-6"
-  >
-    <p class="text-callout text-fg-primary">데이터를 불러오는 데 실패했습니다.</p>
-    <BaseButton @click="fetchDashboard">다시 시도</BaseButton>
-  </div>
-
-  <!-- {{ dashboardData }} -->
   <!-- 대시보드 영역 -->
   <div v-else>
-    <div class="dashboard w-full bg-base-200 px-[10.8%]">
-      <div
-        :class="[
-          { 'filter blur pointer-events-none select-none': !isLoggedIn },
-        ]"
-      >
-        <h2 class="title01 pb-12 pt-20">
+    <div class="dashboard relative w-full px-[10.8%] tablet:px-5">
+      <div>
+        <h2 class="title01 pb-8 pt-20">
           {{ dashboardData?.userName }} 님, 안녕하세요
         </h2>
-        <div class="pb-40 grid grid-rows-2 grid-cols-3 gap-6">
-          <RegretScoreCard
-            :regret-score="dashboardData?.avgRegretScore"
-            :feedback-ratio="dashboardData?.feedbackRatio"
-          />
+        <!-- <AvgRegretScore :regret-score="dashboardData?.avgRegretScore" /> -->
+        <RegretSummaryCards
+          :regret-score="dashboardData?.avgRegretScore"
+          :feedback-ratio="dashboardData?.feedbackRatio"
+          :portfolio="dashboardData?.portfolio"
+        />
+        <div class="grid tablet:grid-cols-1 grid-cols-3">
           <AssetCard
-            class="row-span-2 col-span-2"
+            class="col-span-2 mr-6 tablet:mr-0 tablet:mb-10"
             :assets="dashboardData?.assets"
           />
           <AssetPortfolioCard :portfolio="dashboardData?.portfolio" />
@@ -107,27 +86,38 @@ onMounted(() => {
       <!-- 블러 영역 -->
       <div
         v-if="!isLoggedIn"
-        class="absolute inset-0 flex flex-col justify-center items-center"
+        class="absolute inset-0 flex flex-col justify-center items-center bg-white/70 backdrop-blur-sm"
       >
-        <p class="mb-4 title01 text-fg-primary">그때 할 걸</p>
-        <p class="mb-6 text-body01 text-fg-primary text-center">
-          늦었다고 생각했을 때가 빠르다.
-          <br />
-          회고형 금융상품 추천 서비스
+        <p class="mb-4 title01 text-center text-fg-primary">
+          <span class="text-gray-primary">그때 할걸</span>이 <br /><span
+            class="text-secondary"
+            >하길 잘했다</span
+          >가 되도록
         </p>
-        <BaseButton @click="onLoginClick"></BaseButton>
+        <p class="mb-6 text-body01 text-fg-primary text-center">
+          과거의 후회와 미래의 기회를 데이터로 연결해
+          <br />
+          나에게 꼭 맞는 <span class="font-semibold">새로운 기회</span>를
+          찾아드려요
+        </p>
+        <BaseButton
+          @click="onLoginClick"
+          :label="'그때 할걸 시작하기'"
+        ></BaseButton>
       </div>
     </div>
     <!-- 추천상품 영역 -->
-    <div class="mx-[10.8%]">
+    <div class="mx-[10.8%] tablet:mx-5">
       <RankCards :ranking="dashboardData?.regretRanking" />
     </div>
-    <h2 class="title01 pb-12 pt-40 mx-[10.8%]" v-if="isLoggedIn">
+    <h2
+      class="title01 pb-12 pt-20 mx-[10.8%] tablet:mx-5"
+      v-if="isLoggedIn && dashboardData?.recommendItems?.length"
+    >
       {{ dashboardData?.userName }} 님을 위한 추천 상품
     </h2>
     <RecommendCards
       v-if="isLoggedIn"
-      :user-name="dashboardData?.userName"
       :items="dashboardData?.recommendItems"
       :has-padding="true"
     />

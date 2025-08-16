@@ -1,5 +1,5 @@
 <!-- 사용 방법
-props: 
+props:
 - size: 카드 크기 [md(default)|lg]
 - ratio: 카드 비율 [lg|sm|default(default)]
 - variant: 카드 스타일 [outline|filled(default)|tinted]
@@ -60,12 +60,14 @@ const ratioClass = computed(() => {
 // 카드 스타일
 const variantClass = computed(() => {
   switch (props.variant) {
+    case 'transparent':
+      return [props.shadow && 'shadow-card'].filter(Boolean).join(' ');
     case 'outline':
       return props.shadow
         ? 'shadow-card border border-[#EDEDED]'
-        : 'border border-gray-400';
+        : 'border border-fg-secondary';
     case 'tinted':
-      return ['bg-secondary', props.shadow && 'shadow-card']
+      return ['bg-[#F7F7F8]', props.shadow && 'shadow-card']
         .filter(Boolean)
         .join(' ');
     default:

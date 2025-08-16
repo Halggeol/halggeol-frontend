@@ -5,7 +5,9 @@
     variant="outline"
     class="profit-calculator"
   >
-    <h3 class="text-title-sm text-fg-primary">
+    <h3
+      class="text-body01 tablet:text-title-sm wide:text-title-sm text-fg-primary mb-6"
+    >
       <div
         class="tooltip"
         data-tip="금융정보로 기록된 기본 금리/최고 금리를 기준으로 저축 금액에 따른 단순한 수익 금액을 산출합니다."
@@ -14,92 +16,100 @@
       </div>
     </h3>
 
-    <div class="space-y-2">
-      <!-- 금액 입력 영역 -->
-      <div>
-        <div class="bg-secondary-50 rounded-lg p-6">
-          <div
-            class="text-fg-secondary text-body01 leading-relaxed text-center"
-          >
-            <div class="relative inline-block">
-              <button
-                type="button"
-                @click="dropdownOpen = !dropdownOpen"
-                class="font-semibold text-status-blue cursor-pointer border-b-2 border-status-blue hover:border-status-blue transition-colors duration-200 inline-flex items-center"
+    <div class="rounded-lg p-6">
+      <div
+        class="flex flex-col tablet:flex-row wide:flex-row items-center justify-center flex-wrap gap-x-2 gap-y-3 text-footnote tablet:text-body01 wide:text-body01 text-fg-secondary"
+      >
+        <!-- Part 1: Rate -->
+        <div class="flex items-center gap-1">
+          <div class="relative inline-block">
+            <button
+              type="button"
+              @click="dropdownOpen = !dropdownOpen"
+              class="font-semibold text-status-blue cursor-pointer border-b-2 border-status-blue hover:border-status-blue transition-colors duration-200 inline-flex items-center"
+            >
+              {{
+                (rateOptions &&
+                  rateOptions[selectedRateIndex] &&
+                  rateOptions[selectedRateIndex].label) ||
+                '금리'
+              }}
+              ({{ currentInterestRate }}%)
+              <svg
+                class="ml-1 w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                {{
-                  (rateOptions &&
-                    rateOptions[selectedRateIndex] &&
-                    rateOptions[selectedRateIndex].label) ||
-                  '금리'
-                }}
-                ({{ currentInterestRate }}%)
-                <svg
-                  class="ml-1 w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 9l-7 7-7-7"
-                  ></path>
-                </svg>
-              </button>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </button>
 
-              <div
-                v-if="dropdownOpen"
-                class="absolute z-10 mt-2 w-52 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-              >
-                <ul class="py-1">
-                  <li
-                    v-for="(option, index) in calculatorProps.rateOptions || []"
-                    :key="index"
+            <div
+              v-if="dropdownOpen"
+              class="absolute z-10 mt-2 w-52 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+            >
+              <ul class="py-1">
+                <li
+                  v-for="(option, index) in calculatorProps.rateOptions || []"
+                  :key="index"
+                >
+                  <a
+                    @click="
+                      selectRate(index);
+                      dropdownOpen = false;
+                    "
+                    :class="[
+                      'block px-3 py-2 text-left hover:bg-secondary-50 transition-colors rounded-md cursor-pointer text-callout',
+                      selectedRateIndex === index
+                        ? 'bg-status-blue/10 text-status-blue font-semibold'
+                        : 'text-fg-primary',
+                    ]"
                   >
-                    <a
-                      @click="
-                        selectRate(index);
-                        dropdownOpen = false;
-                      "
-                      :class="[
-                        'block px-3 py-2 text-left hover:bg-secondary-50 transition-colors rounded-md cursor-pointer text-[16px]', // 테일윈드 설정이 없어서 임의 px 지정
-                        selectedRateIndex === index
-                          ? 'bg-status-blue/10 text-status-blue font-semibold'
-                          : 'text-fg-primary',
-                      ]"
+                    <span class="font-medium">{{ option.label }}</span>
+                    <span class="text-fg-secondary ml-2"
+                      >({{ option.value }}%)</span
                     >
-                      <span class="font-medium">{{ option.label }}</span>
-                      <span class="text-fg-secondary ml-2"
-                        >({{ option.value }}%)</span
-                      >
-                    </a>
-                  </li>
-                </ul>
-              </div>
+                  </a>
+                </li>
+              </ul>
             </div>
-            로
-            <div class="inline-flex items-center mx-1">
-              <input
-                v-model="displayAmountInput"
-                @input="updateFromInput"
-                @blur="formatAmount"
-                @focus="selectAllText"
-                @keydown.enter="formatAmount"
-                class="inline-block text-status-blue font-bold bg-transparent border-b-2 border-status-blue/50 focus:border-status-blue hover:border-status-blue transition-colors duration-200 outline-none px-2 py-1 text-center min-w-[100px] max-w-[140px] rounded-sm"
-                type="text"
-                placeholder="0"
-              />
-              <span class="font-semibold text-status-blue ml-1">원</span>
-            </div>
-            만큼 저축했다면 예상수익액은
-            <span
-              class="font-bold text-title-sm text-status-blue inline-block min-w-[120px] text-right"
-              >{{ formattedProfit }}원</span
-            >입니다.
           </div>
+          <span>로</span>
+        </div>
+
+        <!-- Part 2: Amount -->
+        <div class="flex items-center gap-1">
+          <div class="inline-flex items-center">
+            <input
+              v-model="displayAmountInput"
+              @input="updateFromInput"
+              @blur="formatAmount"
+              @focus="selectAllText"
+              @keydown.enter="formatAmount"
+              class="inline-block text-status-blue font-bold bg-transparent border-b-2 border-status-blue/50 focus:border-status-blue hover:border-status-blue transition-colors duration-200 outline-none px-2 py-1 text-center min-w-[100px] max-w-[140px] rounded-sm text-footnote tablet:text-body01 wide:text-body01"
+              type="text"
+              placeholder="0"
+            />
+            <span class="font-semibold text-status-blue ml-1">원</span>
+          </div>
+          <span>만큼 저축했다면</span>
+        </div>
+
+        <!-- Part 3: Result -->
+        <div class="flex items-center gap-1">
+          <span>예상수익액은</span>
+          <span
+            class="font-bold text-body01 tablet:text-title-sm wide:text-title-sm text-status-blue inline-block min-w-[100px] tablet:min-w-[120px] wide:min-w-[120px] text-right"
+            >{{ formattedProfit }}원</span
+          >
+          <span>입니다.</span>
         </div>
       </div>
     </div>

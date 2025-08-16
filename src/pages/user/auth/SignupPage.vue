@@ -213,7 +213,7 @@ function inputPhone(phone) {
 function inputStyleClass(error) {
   return [
     'w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors',
-    error ? 'border-red-500 bg-red-100 placeholder-red-500' : 'border-gray-300 focus:border-blue-500',
+    error ? 'border-status-red bg-red-100 placeholder-status-red' : 'border-gray-300 focus:border-status-blue',
   ];
 }
 
@@ -224,9 +224,9 @@ function openPolicyModal() {
 </script>
 
 <template>
-  <div class="h-screen flex items-center justify-center bg-gray-50 relative">
+  <div class="h-[calc(100vh-56px)] flex items-center justify-center bg-base-200 relative">
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
-      <h2 class="text-center title02 font-bold mb-6">회원가입</h2>
+      <h2 class="text-center title02 mb-6">회원가입</h2>
 
       <!-- 회원가입 폼 -->
       <form @submit.prevent novalidate>
@@ -240,7 +240,7 @@ function openPolicyModal() {
             placeholder="이름"
             :disabled="result.success"
           />
-          <small v-if="errors.name" class="text-red-500 mt-1 block">{{ errors.name }}</small>
+          <small v-if="errors.name" class="text-status-red mt-1 block">{{ errors.name }}</small>
         </div>
 
         <!-- 생년월일 -->
@@ -254,7 +254,7 @@ function openPolicyModal() {
             placeholder="생년월일"
             :disabled="result.success"
           />
-          <small v-if="errors.birth" class="text-red-500 mt-1 block">{{ errors.birth }}</small>
+          <small v-if="errors.birth" class="text-status-red mt-1 block">{{ errors.birth }}</small>
         </div>
 
         <!-- 전화번호 -->
@@ -268,7 +268,7 @@ function openPolicyModal() {
             placeholder="전화번호"
             :disabled="result.success"
           />
-          <small v-if="errors.phone" class="text-red-500 mt-1 block">{{ errors.phone }}</small>
+          <small v-if="errors.phone" class="text-status-red mt-1 block">{{ errors.phone }}</small>
         </div>
 
         <hr class="mt-6 mb-7">
@@ -306,7 +306,7 @@ function openPolicyModal() {
             </button>
           </div>
 
-          <small v-if="errors.password" class="text-red-500 mt-1 block">{{ errors.password }}</small>
+          <small v-if="errors.password" class="text-status-red mt-1 block">{{ errors.password }}</small>
         </div>
 
         <!-- 비밀번호 재입력 -->
@@ -332,7 +332,7 @@ function openPolicyModal() {
             </button>
 
           </div>
-          <small v-if="errors.confirmPassword" class="text-red-500 mt-1 block">{{ errors.confirmPassword }}</small>
+          <small v-if="errors.confirmPassword" class="text-status-red mt-1 block">{{ errors.confirmPassword }}</small>
         </div>
 
         <!-- 약관 동의 -->
@@ -341,15 +341,15 @@ function openPolicyModal() {
             type="checkbox"
             v-model="form.agree"
             @change="validateField('agree')"
-            class="scale-150 accent-gray-300 bg-white border-gray-300 rounded w-3 h-3"
+            class="scale-150 bg-white border-gray-300 rounded w-3 h-3"
             :disabled="result.success"
             />
           <span class="leading-snug text-xs">
-            <span class="underline cursor-pointer hover:text-black" @click="openPolicyModal">
+            <span class="underline cursor-pointer hover:text-fg-primary" @click="openPolicyModal">
               개인정보 처리방침
             </span>
             에 따라 개인정보를 수집, 사용, 타사에 대한 제공 및 처리하는 데 동의합니다.
-            <small v-if="errors.agree" class="text-red-500 mt-1 block">{{ errors.agree }}</small>
+            <small v-if="errors.agree" class="text-status-red mt-1 block">{{ errors.agree }}</small>
           </span>
         </div>
 
@@ -367,7 +367,7 @@ function openPolicyModal() {
         <!-- 결과 메세지 -->
         <small
           v-if="result.message"
-          :class="result.success ? 'text-green-500' : 'text-red-500'"
+          :class="result.success ? 'text-status-blue' : 'text-status-red'"
           class="mt-1 block pt-2"
         >
           {{ result.message }}

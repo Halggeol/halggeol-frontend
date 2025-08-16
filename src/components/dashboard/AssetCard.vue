@@ -1,5 +1,4 @@
 <script setup>
-import BaseCard from '../common/BaseCard.vue';
 import { ref, computed } from 'vue';
 
 const props = defineProps({
@@ -47,19 +46,37 @@ const pastAsset = computed(() => {
   return foundEntry ? parseInt(foundEntry.asset) : asset.value;
 });
 
+const upColor = '#F23F3F';
+const downColor = '#287EFF';
+const neutralColor = '#60584C';
+
 // 자산 추이 워딩
 const assetDiff = computed(() => {
   const diff = asset.value - pastAsset.value;
+  const periodText = {
+    '1M': '지난달',
+    '3M': '3개월 전',
+    '6M': '6개월 전',
+    '1Y': '1년 전',
+  }[selectedPeriodKey.value];
+  if (diff === 0) {
+    return {
+      value: 0,
+      prefix: periodText,
+      change: null,
+      suffix: '과 동일해요',
+      color: 'text-fg-primary',
+    };
+  }
   const formatted = Math.abs(diff).toLocaleString();
+  const isPositive = diff > 0;
+
   return {
     value: diff,
-    message: `${diff === 0 ? '과 동일해요' : diff > 0 ? `+${formatted}원` : `-${formatted}원`}`,
-    color:
-      diff === 0
-        ? 'text-fg-primary'
-        : diff > 0
-          ? 'text-status-red'
-          : 'text-status-blue',
+    prefix: periodText,
+    change: `${isPositive ? '+' : '-'}${formatted}원`,
+    suffix: isPositive ? '증가했어요' : '감소했어요',
+    color: isPositive ? 'text-status-red' : 'text-status-blue',
   };
 });
 
@@ -74,6 +91,7 @@ import {
   Filler,
   Tooltip,
 } from 'chart.js';
+import Tooltiip from '../icons/Tooltiip.vue';
 
 Chart.register(
   LineElement,
@@ -179,12 +197,15 @@ const chartData = computed(() => {
   const smoothedAssets =
     selectedPeriodKey.value === '1M' ? movingAverage(rawAssets) : rawAssets;
 
+  const diff = assetDiff.value.value;
+  const mainColor = diff > 0 ? upColor : diff < 0 ? downColor : neutralColor;
+
   return {
     labels: grouped.map(entry => entry.date),
     datasets: [
       {
         data: smoothedAssets,
-        borderColor: '#3b82f6',
+        borderColor: mainColor,
         tension: 0.3,
         fill: true,
         backgroundColor: context => {
@@ -199,8 +220,8 @@ const chartData = computed(() => {
             0,
             chartArea.bottom
           );
-          gradientFill.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
-          gradientFill.addColorStop(1, 'rgba(59, 130, 246, 0)');
+          gradientFill.addColorStop(0, hexToRgba(mainColor, 0.2));
+          gradientFill.addColorStop(1, hexToRgba(mainColor, 0));
           return gradientFill;
         },
         borderWidth: 2,
@@ -210,6 +231,13 @@ const chartData = computed(() => {
     ],
   };
 });
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 const chartOptions = {
   responsive: true,
@@ -248,21 +276,25 @@ const chartOptions = {
 </script>
 
 <template>
-  <BaseCard size="lg">
-    <h2 class="title03 mb-8">자산 한 눈에 보기</h2>
-    <span class="text-body02">
-      {{
-        {
-          '1M': '지난달',
-          '3M': '3개월 전',
-          '6M': '6개월 전',
-          '1Y': '1년 전',
-        }[selectedPeriodKey]
-      }}보다
+  <div>
+    <h2 class="title03 mb-4">
+      나의 순자산
+      <span
+        class="inline-block relative group ml-1 tooltip"
+        data-tip="전체 자산"
+      >
+        <Tooltiip class="w-5 h-5 text-fg-secondary" />
+      </span>
+    </h2>
+    <span v-if="assetDiff.value === 0" class="text-body02">
+      {{ assetDiff.prefix }}과 동일해요
     </span>
-    <span class="text-body02" :class="assetDiff.color">{{
-      assetDiff.message
-    }}</span>
+
+    <span v-else class="text-body02">
+      {{ assetDiff.prefix }}보다
+      <span :class="assetDiff.color">{{ assetDiff.change }}</span>
+      {{ assetDiff.suffix }}
+    </span>
     <p class="mt-1 title02">{{ asset.toLocaleString() }}원</p>
     <div class="mt-12 w-full">
       <Line :data="chartData" :options="chartOptions" />
@@ -287,5 +319,5 @@ const chartOptions = {
         {{ label }}
       </button>
     </div>
-  </BaseCard>
+  </div>
 </template>

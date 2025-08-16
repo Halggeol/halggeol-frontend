@@ -19,14 +19,22 @@ const props = defineProps({
   },
 });
 
-// 카테고리 매핑
-const categoryMap = {
-  D: '예금',
-  S: '적금',
-  A: '연금',
-  C: '연금',
-  F: '펀드',
-  X: '외환',
+const productTypeConfig = {
+  D: { name: '예금', bgColor: 'bg-savings', textColor: 'text-fg-savings' },
+  S: { name: '적금', bgColor: 'bg-cash', textColor: 'text-fg-cash' },
+  A: {
+    name: '연금',
+    bgColor: 'bg-aggressive',
+    textColor: 'text-fg-aggressive',
+  },
+  C: { name: '연금', bgColor: 'bg-pension', textColor: 'text-fg-pension' },
+  F: { name: '펀드', bgColor: 'bg-fund', textColor: 'text-fg-fund' },
+  X: { name: '외환', bgColor: 'bg-forex', textColor: 'text-fg-forex' },
+  default: {
+    name: '기타',
+    bgColor: 'bg-[#F7F7F8]',
+    textColor: 'text-fg-primary',
+  },
 };
 
 // 상세페이지 이동
@@ -48,7 +56,9 @@ function goToDetail(id, event) {
 
 // 패딩값 여부
 const wrapperClass = computed(() => {
-  return props.hasPadding ? 'scroller-wrapper pl-[10.8%]' : 'scroller-wrapper';
+  return props.hasPadding
+    ? 'scroller-wrapper pl-[10.8%] tablet:pl-5'
+    : 'scroller-wrapper';
 });
 
 // 마우스 좌우 끌기 설정 시작
@@ -163,17 +173,34 @@ onBeforeUnmount(() => {
       <BaseCard
         v-for="item in props.items"
         :key="item.productId"
-        @click="goToDetail(item.productId)"
+        @click="goToDetail(item.productId, $event)"
         variant="tinted"
         size="lg"
         ratio="lg"
-        class="scroller-item cursor-pointer"
+        class="scroller-item mr-6 tablet:mr-4 cursor-pointer"
+        :class="
+          (productTypeConfig[item.productId[0]] || productTypeConfig.default)
+            .bgColor
+        "
       >
         <div class="relative">
-          <span class="text-body02 mb-1">{{
-            categoryMap[item.productId[0]]
-          }}</span>
-          <p class="title02 mb-2">{{ item.name }}</p>
+          <span
+            class="text-body02 mb-2"
+            :class="
+              (
+                productTypeConfig[item.productId[0]] ||
+                productTypeConfig.default
+              ).textColor
+            "
+          >
+            {{
+              (
+                productTypeConfig[item.productId[0]] ||
+                productTypeConfig.default
+              ).name
+            }}
+          </span>
+          <p class="title02 mb-2 line-clamp-2">{{ item.name }}</p>
           <div class="mt-20 absolute top-28 right-0 text-right">
             <span class="text-body02">{{ props.isSimilar }}</span>
             <p class="title-lg">{{ item.matchScore }}%</p>
@@ -228,7 +255,6 @@ onBeforeUnmount(() => {
 }
 .scroller-item {
   min-width: 360px;
-  margin-right: 1.5rem;
 }
 
 .scroll-btn {
