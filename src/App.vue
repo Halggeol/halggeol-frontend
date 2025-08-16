@@ -2,7 +2,7 @@
 import { RouterView } from 'vue-router';
 import { onMounted, onUnmounted, ref } from 'vue';
 import { useAuthStore } from './stores/authStore';
-import MobilePage from './pages/MobilePage.vue';
+import MobilePage from './pages/common/MobilePage.vue';
 
 const authStore = useAuthStore();
 authStore.initialize();

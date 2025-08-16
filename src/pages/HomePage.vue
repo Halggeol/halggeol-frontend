@@ -7,7 +7,7 @@ import router from '@/router';
 import { ref, onMounted, provide } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
 import { getDashboardMain } from '@/api/dashboard';
-import LoadingPage from './LoadingPage.vue';
+import LoadingPage from './common/LoadingPage.vue';
 import RegretSummaryCards from '@/components/dashboard/RegretSummaryCards.vue';
 import AssetPortfolioCard from '@/components/dashboard/AssetPortfolioCard.vue';
 

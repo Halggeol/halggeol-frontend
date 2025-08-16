@@ -23,7 +23,7 @@ const props = defineProps({
   },
   variant: {
     type: String,
-    default: 'filled',
+    default: 'tinted',
   },
   shadow: {
     type: Boolean,
