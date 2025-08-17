@@ -17,38 +17,32 @@ const email = ref('');
 
 const result = ref({
   message: '',
-  success: false
+  success: false,
 });
 
 const canSubmit = computed(() => {
   if (activeTab.value === 'findId')
     return name.value !== '' && phone.value !== '';
-  else if (activeTab.value === 'resetPassword')
-    return email.value !== '';
+  else if (activeTab.value === 'resetPassword') return email.value !== '';
   return false;
-})
+});
 
 const displayPhone = computed(() => {
   const digits = phone.value;
 
-  if (digits.includes('-'))
-    return digits;
+  if (digits.includes('-')) return digits;
 
-  if (digits.length < 3)
-    return digits;
+  if (digits.length < 3) return digits;
   if (digits.length <= 6)
     return `${digits.slice(0, 3)}-${digits.slice(3)}${digits.length >= 6 ? '-' + digits.slice(6) : ''}`;
   if (digits.length === 11)
     return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
-  else
-    return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+  else return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
 });
 
 function inputPhone(inputPhone) {
-  if (inputPhone.data != null)
-    phone.value = phone.value + inputPhone.data;
-  else
-    phone.value = phone.value.slice(0, -1);
+  if (inputPhone.data != null) phone.value = phone.value + inputPhone.data;
+  else phone.value = phone.value.slice(0, -1);
 }
 
 function switchTab(tab) {
@@ -60,8 +54,8 @@ function switchTab(tab) {
   idResult.value = [];
   result.value = {
     message: '',
-    success: false
-  }
+    success: false,
+  };
 }
 
 function goToLogin() {
@@ -73,26 +67,31 @@ async function handleFindId() {
   if (canSubmit.value) {
     try {
       console.log('===== findId API 호출 =====');
-      const response = await findEmail({ name: name.value, phone: phone.value });
+      const response = await findEmail({
+        name: name.value,
+        phone: phone.value,
+      });
 
       idResult.value = response.data.email;
       if (idResult.value !== undefined) {
         result.value = {
-          message: '입력하신 정보와 일치하는 아이디는 ' + idResult.value.length + '개입니다.',
-          success: true
-        }
-      }
-      else {
+          message:
+            '입력하신 정보와 일치하는 아이디는 ' +
+            idResult.value.length +
+            '개입니다.',
+          success: true,
+        };
+      } else {
         result.value = {
           message: '일치하는 회원 정보가 없습니다.',
-          success: false
-        }
+          success: false,
+        };
       }
     } catch (error) {
       result.value = {
         message: '오류가 발생했습니다.',
-        success: false
-      }
+        success: false,
+      };
     }
   }
 }
@@ -102,25 +101,24 @@ async function handleRequestResetPassword() {
 
   if (canSubmit.value) {
     try {
-      console.log("===== requestPasswordReset API 호출 =====");
+      console.log('===== requestPasswordReset API 호출 =====');
       const response = await requestPasswordReset({ email: email.value });
 
       if (response.data.success) {
         result.value = {
           message: '입력하신 이메일로 비밀번호 재설정 링크가 전송되었습니다.',
-          success: true
+          success: true,
         };
-      }
-      else {
+      } else {
         result.value = {
           message: '이메일 전송에 실패했습니다.',
-          success: false
+          success: false,
         };
       }
     } catch (error) {
       result.value = {
         message: '오류가 발생했습니다.',
-        success: false
+        success: false,
       };
     }
   }
@@ -128,7 +126,9 @@ async function handleRequestResetPassword() {
 </script>
 
 <template>
-  <div class="h-[calc(100vh-56px)] flex items-center justify-center bg-base-200 relative">
+  <div
+    class="h-[calc(100vh-56px)] flex items-center justify-center bg-gray-secondary-50 relative"
+  >
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
       <h2 class="text-center title02 mb-6">아이디 / 비밀번호 찾기</h2>
 
@@ -136,23 +136,35 @@ async function handleRequestResetPassword() {
       <div class="flex justify-center mb-6 gap-4">
         <button
           @click="switchTab('findId')"
-          :class="['px-4 py-2 rounded-md',
-                   activeTab === 'findId' ? 'bg-gray-secondary text-white' : 'bg-gray-100 text-fg-secondary']"
+          :class="[
+            'px-4 py-2 rounded-md',
+            activeTab === 'findId'
+              ? 'bg-gray-secondary text-white'
+              : 'bg-gray-100 text-fg-secondary',
+          ]"
         >
           아이디 찾기
         </button>
 
         <button
           @click="switchTab('resetPassword')"
-          :class="['px-4 py-2 rounded-md',
-                   activeTab === 'resetPassword' ? 'bg-gray-secondary text-white' : 'bg-gray-100 text-fg-secondary']"
+          :class="[
+            'px-4 py-2 rounded-md',
+            activeTab === 'resetPassword'
+              ? 'bg-gray-secondary text-white'
+              : 'bg-gray-100 text-fg-secondary',
+          ]"
         >
           비밀번호 재설정
         </button>
       </div>
 
       <!-- 아이디 찾기 -->
-      <form v-if="activeTab === 'findId' && result.success === false" @submit.prevent novalidate>
+      <form
+        v-if="activeTab === 'findId' && result.success === false"
+        @submit.prevent
+        novalidate
+      >
         <input
           type="text"
           v-model="name"
@@ -188,8 +200,12 @@ async function handleRequestResetPassword() {
 
       <!-- 아이디 찾기 결과 -->
       <div v-if="activeTab === 'findId' && result.success === true">
-        <p class="text-base text-gray-500 mb-4 text-center">{{ result.message }}</p>
-        <div class="rounded-lg border border-gray-300 bg-gray-50 p-4 max-h-[130px] overflow-y-auto">
+        <p class="text-base text-gray-500 mb-4 text-center">
+          {{ result.message }}
+        </p>
+        <div
+          class="rounded-lg border border-gray-300 bg-gray-50 p-4 max-h-[130px] overflow-y-auto"
+        >
           <ul class="space-y-2">
             <li
               v-for="(email, index) in idResult"

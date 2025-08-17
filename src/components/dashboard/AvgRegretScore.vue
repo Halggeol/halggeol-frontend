@@ -1,8 +1,8 @@
 <script setup>
 import { computed } from 'vue';
-import BadFace from '../icons/regretScore/BadFace.vue';
-import GoodFace from '../icons/regretScore/GoodFace.vue';
-import NormalFace from '../icons/regretScore/NormalFace.vue';
+import BadFace from '@/assets/icons/insight/regretScore/BadFace.vue';
+import GoodFace from '@/assets/icons/insight/regretScore/GoodFace.vue';
+import NormalFace from '@/assets/icons/insight/regretScore/NormalFace.vue';
 
 const props = defineProps({
   regretScore: {

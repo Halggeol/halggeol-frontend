@@ -9,7 +9,7 @@ import {
 
 import InsightDetailPage from '@/pages/insight/InsightDetailPage.vue';
 import LoadingPage from '@/pages/common/LoadingPage.vue';
-import PagenationsButton from '@/components/icons/insight/PagenationsButton.vue';
+import PagenationsButton from '@/assets/icons/insight/PagenationsButton.vue';
 import Error500Page from '../common/Error500Page.vue';
 import EmptyPage from '../common/EmptyPage.vue';
 

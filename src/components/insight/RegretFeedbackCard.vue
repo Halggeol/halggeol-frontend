@@ -15,7 +15,7 @@ const props = defineProps({
 const emit = defineEmits(['survey-submitted']);
 
 const situation = ref(
-  props.isSurveyed ? (props.isRegretted ? '후회해요' : '후회 안 해요') : null
+  props.isSurveyed ? (props.isRegretted ? '후회해요' : '후회 안해요') : null
 );
 const selectedReason = ref(
   props.isSurveyed && props.isRegretted ? props.regrettedReason : null
@@ -105,7 +105,7 @@ const readOnly = computed(() => props.isSurveyed || submitSuccess.value);
         <label>
           <input
             type="radio"
-            value="후회 안 해요"
+            value="후회 안해요"
             v-model="situation"
             :disabled="readOnly"
             class="sr-only peer"
@@ -117,13 +117,13 @@ const readOnly = computed(() => props.isSurveyed || submitSuccess.value);
               'cursor-pointer': !readOnly,
               'cursor-default': readOnly,
               'border-primary bg-white shadow font-semibold':
-                situation === '후회 안 해요',
-              'border-gray-200 bg-white': situation !== '후회 안 해요',
+                situation === '후회 안해요',
+              'border-gray-200 bg-white': situation !== '후회 안해요',
               'hover:bg-primary-50 hover:border-primary-200':
-                !readOnly && situation !== '후회 안 해요',
+                !readOnly && situation !== '후회 안해요',
             }"
           >
-            후회 안 해요
+            후회 안해요
           </div>
         </label>
       </div>

@@ -9,20 +9,18 @@ const email = ref('');
 
 const result = ref({
   message: '',
-  success: false
-})
+  success: false,
+});
 
 const canSubmit = computed(() => {
   return email.value !== '' && error.value.length === 0;
 });
 
 function validateEmail() {
-  if (!email.value)
-    error.value = '이메일을 입력해주세요';
+  if (!email.value) error.value = '이메일을 입력해주세요';
   else if (!regex.email.test(email.value))
     error.value = '올바른 이메일 형식이 아닙니다';
-  else
-    error.value = '';
+  else error.value = '';
 }
 
 async function handleEmailSubmit() {
@@ -31,24 +29,23 @@ async function handleEmailSubmit() {
   validateEmail();
   if (canSubmit.value) {
     try {
-      console.log("===== requestJoin API 호출 =====");
+      console.log('===== requestJoin API 호출 =====');
       await requestJoin({ email: email.value });
 
       result.value = {
         message: '입력하신 이메일로 회원가입 링크가 전송되었습니다.',
-        success: true
+        success: true,
       };
     } catch (error) {
       if (error.response?.status === 409) {
         result.value = {
           message: '이미 가입된 이메일입니다.',
-          success: false
+          success: false,
         };
-      }
-      else {
+      } else {
         result.value = {
           message: '유효하지 않은 이메일입니다.',
-          success: false
+          success: false,
         };
       }
     }
@@ -58,14 +55,17 @@ async function handleEmailSubmit() {
 function inputStyleClass() {
   return [
     'w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors',
-    error.value ? 'border-status-red bg-red-100 placeholder-status-red' : 'border-gray-300 focus:border-status-blue',
+    error.value
+      ? 'border-status-red bg-red-100 placeholder-status-red'
+      : 'border-gray-300 focus:border-status-blue',
   ];
 }
-
 </script>
 
 <template>
-  <div class="h-[calc(100vh-56px)] flex items-center justify-center bg-base-200 relative">
+  <div
+    class="h-[calc(100vh-56px)] flex items-center justify-center bg-gray-secondary-50 relative"
+  >
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
       <h2 class="text-center title02 mb-6">회원가입</h2>
 
@@ -80,7 +80,9 @@ function inputStyleClass() {
             placeholder="이메일"
             :disabled="result.success"
           />
-          <small v-if="error" class="text-status-red mt-1 block">{{ error }}</small>
+          <small v-if="error" class="text-status-red mt-1 block">{{
+            error
+          }}</small>
         </div>
 
         <!-- 본인인증하기 버튼 -->

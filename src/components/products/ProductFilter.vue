@@ -191,7 +191,7 @@
 
 <script setup>
 import { ref, watch, defineEmits, computed, defineProps } from 'vue';
-import Tooltiip from '../icons/common/Tooltiip.vue';
+import Tooltiip from '@/assets/icons/common/Tooltiip.vue';
 
 const props = defineProps({
   initialFilters: {

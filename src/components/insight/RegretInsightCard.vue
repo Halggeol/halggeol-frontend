@@ -13,16 +13,16 @@ import {
 } from 'chart.js';
 
 import BaseCard from '@/components/common/BaseCard.vue';
-import Sunny from '../icons/regretWeather/Sunny.vue';
-import MostlySunny from '../icons/regretWeather/MostlySunny.vue';
-import SunWithCloud from '../icons/regretWeather/SunWithCloud.vue';
-import Cloudy from '../icons/regretWeather/Cloudy.vue';
-import Rain from '../icons/regretWeather/Rain.vue';
-import RainHeavy from '../icons/regretWeather/RainHeavy.vue';
+import Sunny from '@/assets/icons/insight/regretWeather/Sunny.vue';
+import MostlySunny from '@/assets/icons/insight/regretWeather/MostlySunny.vue';
+import SunWithCloud from '@/assets/icons/insight/regretWeather/SunWithCloud.vue';
+import Cloudy from '@/assets/icons/insight/regretWeather/Cloudy.vue';
+import Rain from '@/assets/icons/insight/regretWeather/Rain.vue';
+import RainHeavy from '@/assets/icons/insight/regretWeather/RainHeavy.vue';
 
 import InsightLineChart from '@/components/insight/InsightLineChart.vue';
 import ForexBarChart from '@/components/insight/InsightBarChart.vue';
-import Tooltiip from '../icons/common/Tooltiip.vue';
+import Tooltiip from '@/assets/icons/common/Tooltiip.vue';
 
 ChartJS.register(
   CategoryScale,

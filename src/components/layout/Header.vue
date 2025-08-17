@@ -12,8 +12,8 @@ import { isReverifiedToken, getAccessToken } from '@/utils/authUtil';
 import SearchModal from '../common/SearchModal.vue';
 import ExtendLoginModal from '../user/auth/ExtendLoginModal.vue';
 import UserModal from '../user/mypage/UserModal.vue';
-import User from '../icons/auth/User.vue';
-import Search from '../icons/common/Search.vue';
+import User from '@/assets/icons/auth/User.vue';
+import Search from '@/assets/icons/common/Search.vue';
 
 const authStore = useAuthStore();
 let interval = null;

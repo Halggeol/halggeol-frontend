@@ -1,6 +1,6 @@
 <script setup>
 import BaseButton from '@/components/common/BaseButton.vue';
-import Bad from '@/components/icons/regretScore/BadFace.vue';
+import Bad from '@/assets/icons/insight/regretScore/BadFace.vue';
 import router from '@/router';
 
 function goToHome() {

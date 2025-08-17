@@ -3,9 +3,9 @@ import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { clearEmail } from '@/utils/authUtil';
 import BaseButton from '@/components/common/BaseButton.vue';
-import ProcessDots from '@/components/icons/survey/ProcessDots.vue';
-import Check from '@/components/icons/survey/Check.vue';
-import ThreeFilled from '@/components/icons/survey/ThreeFilled.vue';
+import ProcessDots from '@/assets/icons/auth/survey/ProcessDots.vue';
+import Check from '@/assets/icons/auth/survey/Check.vue';
+import ThreeFilled from '@/assets/icons/auth/survey/ThreeFilled.vue';
 
 const router = useRouter();
 
@@ -16,18 +16,19 @@ async function routeToLoginPage() {
 onMounted(() => {
   clearEmail();
 });
-
 </script>
 
 <template>
-  <div class="h-[calc(100vh-56px)] bg-white flex flex-col items-center justify-center">
+  <div
+    class="h-[calc(100vh-56px)] bg-white flex flex-col items-center justify-center"
+  >
     <!-- 과정 진행도 아이콘 -->
     <div class="w-full max-w-[500px] flex items-center justify-start my-14">
-      <Check/>
-      <ProcessDots/>
-      <Check/>
-      <ProcessDots/>
-      <ThreeFilled/>
+      <Check />
+      <ProcessDots />
+      <Check />
+      <ProcessDots />
+      <ThreeFilled />
     </div>
 
     <div class="w-full max-w-[500px] flex flex-col grow">
@@ -49,7 +50,8 @@ onMounted(() => {
         size="lg"
         variant="filled"
         label="로그인하기"
-        @click="routeToLoginPage">
+        @click="routeToLoginPage"
+      >
       </BaseButton>
     </div>
   </div>

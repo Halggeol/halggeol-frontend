@@ -5,8 +5,8 @@ import { useAuthStore } from '@/stores/authStore';
 import { reverifyPassword, leaveService } from '@/api/user';
 import { setAccessToken } from '@/utils/authUtil';
 import BaseButton from '@/components/common/BaseButton.vue';
-import EyeClose from '@/components/icons/auth/EyeClose.vue';
-import EyeOpen from '@/components/icons/auth/EyeOpen.vue';
+import EyeClose from '@/assets/icons/auth/EyeClose.vue';
+import EyeOpen from '@/assets/icons/auth/EyeOpen.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();

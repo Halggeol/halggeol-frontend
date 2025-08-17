@@ -10,8 +10,8 @@ import {
 import { regex } from '@/utils/validationUtil';
 import PrivacyPolicyModal from '@/components/user/auth/PrivacyPolicyModal.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
-import EyeClose from '@/components/icons/auth/EyeClose.vue';
-import EyeOpen from '@/components/icons/auth/EyeOpen.vue';
+import EyeClose from '@/assets/icons/auth/EyeClose.vue';
+import EyeOpen from '@/assets/icons/auth/EyeOpen.vue';
 
 const router = useRouter();
 const privacyModalRef = ref();
@@ -220,7 +220,7 @@ function openPolicyModal() {
 
 <template>
   <div
-    class="h-[calc(100vh-56px)] flex items-center justify-center bg-base-200 relative"
+    class="h-[calc(100vh-56px)] flex items-center justify-center bg-gray-secondary-50 relative"
   >
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
       <h2 class="text-center title02 mb-6">회원가입</h2>

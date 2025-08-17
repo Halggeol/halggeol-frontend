@@ -6,7 +6,7 @@ import RetakeSurveyModal from '@/components/user/mypage/RetakeSurveyModal.vue';
 import ResetPasswordModal from '@/components/user/mypage/ResetPasswordModal.vue';
 import LeaveServiceModal from '@/components/user/mypage/LeaveServiceModal.vue';
 import ChangeInsightCycleModal from '@/components/user/mypage/ChangeInsightCycleModal.vue';
-import Tooltiip from '@/components/icons/common/Tooltiip.vue';
+import Tooltiip from '@/assets/icons/common/Tooltiip.vue';
 
 const router = useRouter();
 

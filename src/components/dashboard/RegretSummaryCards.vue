@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import BaseCard from '../common/BaseCard.vue';
-import Tooltiip from '../icons/common/Tooltiip.vue';
+import Tooltiip from '@/assets/icons/common/Tooltiip.vue';
 
 const props = defineProps({
   regretScore: {
