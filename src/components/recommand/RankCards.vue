@@ -37,8 +37,8 @@ function hideHighRisk() {
 }
 
 const productTypeConfig = {
-  D: { name: '예금', bgColor: 'bg-savings', textColor: 'text-fg-savings' },
-  S: { name: '적금', bgColor: 'bg-deposit', textColor: 'text-fg-deposit' },
+  D: { name: '예금', bgColor: 'bg-deposit', textColor: 'text-fg-deposit' },
+  S: { name: '적금', bgColor: 'bg-savings', textColor: 'text-fg-savings' },
   A: {
     name: '연금',
     bgColor: 'bg-pension',
