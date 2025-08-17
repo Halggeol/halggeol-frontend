@@ -90,7 +90,7 @@ import Logo from '@/components/icons/Logo.vue';
           <div>
             <h3 class="font-bold text-fg-primary">데이터 시뮬레이션</h3>
             <p class="text-body02 text-fg-secondary mt-1">
-              놓친 상품의 수익률을 추적하고, ‘만약’의 자산 변화를 확인해요.
+              추천 받았던 상품의 예상 수익금과 내 자산의 예상 변화를 확인해요.
             </p>
           </div>
         </div>
@@ -127,10 +127,6 @@ import Logo from '@/components/icons/Logo.vue';
 
     <section class="px-6 pt-8 pb-32 text-center">
       <h2 class="title02 mb-4">이 모든 분석, PC에서 한눈에.</h2>
-      <p class="text-body01 text-fg-secondary">
-        복잡한 금융 데이터를 가장 명확하게 보여드리기 위해<br />PC 환경에
-        최적화했어요.
-      </p>
     </section>
   </div>
 </template>

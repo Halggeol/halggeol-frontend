@@ -6,6 +6,7 @@ import RetakeSurveyModal from '@/components/user/mypage/RetakeSurveyModal.vue';
 import ResetPasswordModal from '@/components/user/mypage/ResetPasswordModal.vue';
 import LeaveServiceModal from '@/components/user/mypage/LeaveServiceModal.vue';
 import ChangeInsightCycleModal from '@/components/user/mypage/ChangeInsightCycleModal.vue';
+import Tooltiip from '@/components/icons/Tooltiip.vue';
 
 const router = useRouter();
 
@@ -74,9 +75,9 @@ onMounted(() => {
 });
 
 function convertCycleString(cycle) {
-  if (cycle === 'WEEKLY_1') return '1주';
-  if (cycle === 'WEEKLY_2') return '2주';
-  if (cycle === 'MONTHLY_1') return '1개월';
+  if (cycle === '0 0 0 1/7 * *') return '1주';
+  if (cycle === '0 0 0 1/14 * *') return '2주';
+  if (cycle === '0 0 0 1 * *') return '1개월';
   return '';
 }
 
@@ -176,7 +177,15 @@ function handleCycleChanged(newCycle) {
 
       <!-- 금융이해도 -->
       <div class="flex items-center justify-between w-full">
-        <div class="w-1/3 text-body02 text-fg-secondary">금융이해도</div>
+        <div class="w-1/3 text-body02 text-fg-secondary flex items-center">
+          금융이해도
+          <span
+            class="inline-block relative group ml-1 tooltip"
+            data-tip="금융이해도는 일상적 금융 거래를 이해하고, 금융 지식을 활용해 금융 선택에 따른 책임을 이해하는 능력이에요. 알맞은 추천을 위해 12개월마다 재검사해야 해요."
+          >
+            <Tooltiip class="text-fg-secondar w-5 h-5" />
+          </span>
+        </div>
         <div class="w-1/2 text-fg-primary">{{ user.knowledge }}</div>
         <div class="w-1/3 text-right">
           <button
@@ -190,7 +199,15 @@ function handleCycleChanged(newCycle) {
 
       <!-- 투자성향 -->
       <div class="flex items-center justify-between w-full">
-        <div class="w-1/3 text-body02 text-fg-secondary">투자성향</div>
+        <div class="w-1/3 text-body02 text-fg-secondary flex items-center">
+          투자성향
+          <span
+            class="inline-block relative group ml-1 tooltip"
+            data-tip="투자성향은 투자 방법을 파악하기 위해 투자자의 투자 경험과 지식, 위험에 대한 태도를 기초로 파악하는 거예요. 성향에 따라 가입할 수 있는 상품의 범위가 달라져요. 알맞은 추천을 위해 12개월마다 재검사해야 해요."
+          >
+            <Tooltiip class="text-fg-secondar w-5 h-5" />
+          </span>
+        </div>
         <div class="w-1/2 text-fg-primary">{{ user.investmentType }}</div>
         <div class="w-1/3 text-right">
           <button
@@ -204,11 +221,17 @@ function handleCycleChanged(newCycle) {
 
       <!-- 인사이트 주기 -->
       <div class="flex items-center justify-between w-full">
-        <div class="w-1/3 text-body02 text-fg-secondary">
+        <div class="w-1/3 text-body02 text-fg-secondary flex items-center">
           인사이트 제공 주기
+          <span
+            class="inline-block relative group ml-1 tooltip"
+            data-tip="회고 인사이트를 받을 기간을 설정해요. 1주/2주/1개월 중 선택할 수 있어요."
+          >
+            <Tooltiip class="text-fg-secondar w-5 h-5" />
+          </span>
         </div>
         <div class="w-1/2 text-fg-primary">
-          {{ convertCycleString(user.insightCycle) || '1개월' }}
+          {{ convertCycleString(user.insightCycle) }}
         </div>
 
         <div class="w-1/3 text-right">

@@ -82,7 +82,15 @@
 
       <!-- 은행 필터 -->
       <div class="mb-6 border-b border-gray-200 pb-6">
-        <h3 class="title03 mb-4 text-fg-primary">은행/판매사</h3>
+        <h3 class="title03 mb-4 text-fg-primary flex items-center">
+          은행/판매사
+          <span
+            class="inline-block relative group ml-1 align-top tooltip"
+            data-tip="1금융권은 은행법의 적용을 받는 금융기관입니다."
+          >
+            <Tooltiip class="text-fg-secondary" />
+          </span>
+        </h3>
         <ul class="space-y-3">
           <li>
             <label
@@ -183,6 +191,7 @@
 
 <script setup>
 import { ref, watch, defineEmits, computed, defineProps } from 'vue';
+import Tooltiip from '../icons/Tooltiip.vue';
 
 const props = defineProps({
   initialFilters: {
@@ -215,7 +224,7 @@ const productTypeValues = productTypes.map(t => t.value);
 const selectedProductTypes = ref([]);
 const banks = [
   { label: '1금융권', value: 1 },
-  { label: '2금융권', value: 2 },
+  { label: '저축은행', value: 2 },
 ];
 const bankValues = banks.map(b => b.value);
 const selectedBanks = ref([]);

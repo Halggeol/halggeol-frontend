@@ -277,7 +277,7 @@ const chartOptions = {
 
 <template>
   <div>
-    <h2 class="title03 mb-4">
+    <h2 class="title03 mb-4 flex items-center">
       나의 순자산
       <span
         class="inline-block relative group ml-1 tooltip"
