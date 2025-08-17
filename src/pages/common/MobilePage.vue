@@ -15,7 +15,7 @@ import Logo from '@/components/icons/Logo.vue';
   <section class="py-16 text-center px-6">
     <Logo class="w-20 h-20 mx-auto mb-6" />
     <h1 class="title01 mb-4">
-      더 넓은 화면에서<br />놓친 기회를 제대로 확인하세요
+      그때 놓친 기회,<br />더 넓은 화면에서 확인하세요
     </h1>
     <p class="text-body01 text-fg-secondary">
       그때 할걸은 PC 환경에 최적화됐어요.
@@ -26,7 +26,7 @@ import Logo from '@/components/icons/Logo.vue';
         <div class="space-y-2 text-body02 text-fg-secondary">
           <p>📈 전에 봤던 상품 수익률이 '훌쩍' 올랐을 때</p>
           <p>📉 가지고 있는 상품 수익률만 '뚝' 떨어졌을 때</p>
-          <p>💸 환전 타이밍을 놓쳐 '아차' 싶었을 때</p>
+          <p>💸 환율 변동에 '아차' 싶었을 때</p>
         </div>
       </div>
     </div>
@@ -43,8 +43,8 @@ import Logo from '@/components/icons/Logo.vue';
       <BaseCard size="lg" :shadow="true">
         <h3 class="title03 mb-2">📈 데이터로 되짚는 나의 선택</h3>
         <p class="text-body02 text-fg-secondary">
-          가입을 망설였던 상품들의 현재 수익률을 추적하고, <br />'만약' 내
-          자산이 어떻게 변했을지 시뮬레이션해요.
+          추천 받았던 상품들의 현재 수익률을 추적하고, <br />'만약' 내 자산이
+          어떻게 변했을지 시뮬레이션해요.
         </p>
       </BaseCard>
 
@@ -104,7 +104,7 @@ import Logo from '@/components/icons/Logo.vue';
           <div>
             <h3 class="font-bold text-fg-primary">개인 맞춤 추천</h3>
             <p class="text-body02 text-fg-secondary mt-1">
-              나의 과거 선택을 분석해, 후회 없는 금융상품을 제안해요.
+              나의 후회 패턴을 학습해, 더 나은 선택을 할 수 있도록 도와드려요.
             </p>
           </div>
         </div>
