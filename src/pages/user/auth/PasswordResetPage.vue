@@ -5,8 +5,8 @@ import { resetPasswordWithoutLogin } from '@/api/user';
 import { getTokenIfExists } from '@/utils/authUtil';
 import { regex } from '@/utils/validationUtil';
 import BaseButton from '@/components/common/BaseButton.vue';
-import EyeClose from '@/components/icons/EyeClose.vue';
-import EyeOpen from '@/components/icons/EyeOpen.vue';
+import EyeClose from '@/assets/icons/auth/EyeClose.vue';
+import EyeOpen from '@/assets/icons/auth/EyeOpen.vue';
 
 const router = useRouter();
 
@@ -20,7 +20,7 @@ const confirmPassword = ref('');
 
 const result = ref({
   message: '',
-  success: false
+  success: false,
 });
 
 const canSubmit = computed(() => {
@@ -29,24 +29,21 @@ const canSubmit = computed(() => {
 
 onMounted(() => {
   token.value = getTokenIfExists();
-  if (token.value === null)
-    router.push('/find');
+  if (token.value === null) router.push('/find');
 });
 
 function validatePasswords() {
-  if (!password.value)
-    errors.value.password = '비밀번호를 입력해주세요';
+  if (!password.value) errors.value.password = '비밀번호를 입력해주세요';
   else if (!regex.password.test(password.value))
-    errors.value.password = '비밀번호는 8자 이상이어야 합니다 (영문자, 숫자, 특수문자 사용 가능)';
-  else
-    delete errors.value.password;
+    errors.value.password =
+      '비밀번호는 8자 이상이어야 합니다 (영문자, 숫자, 특수문자 사용 가능)';
+  else delete errors.value.password;
 
   if (!confirmPassword.value)
     errors.value.confirmPassword = '비밀번호를 다시 입력해주세요';
   else if (password.value !== confirmPassword.value)
     errors.value.confirmPassword = '비밀번호가 일치하지 않습니다';
-  else
-    delete errors.value.confirmPassword;
+  else delete errors.value.confirmPassword;
 }
 
 async function handleResetPassword() {
@@ -56,12 +53,16 @@ async function handleResetPassword() {
 
   if (canSubmit.value) {
     try {
-      console.log("===== resetPasswordWithoutLogin API 호출 =====");
-      await resetPasswordWithoutLogin(token.value, { newPassword: password.value, confirmPassword: confirmPassword.value })
+      console.log('===== resetPasswordWithoutLogin API 호출 =====');
+      await resetPasswordWithoutLogin(token.value, {
+        newPassword: password.value,
+        confirmPassword: confirmPassword.value,
+      });
 
       result.value = {
-        message: '비밀번호 재설정이 완료되었습니다. 로그인 페이지로 이동합니다.',
-        success: true
+        message:
+          '비밀번호 재설정이 완료되었습니다. 로그인 페이지로 이동합니다.',
+        success: true,
       };
 
       setTimeout(() => {
@@ -70,7 +71,7 @@ async function handleResetPassword() {
     } catch (error) {
       result.value = {
         message: '오류가 발생했습니다.',
-        success: false
+        success: false,
       };
     }
   }
@@ -79,14 +80,17 @@ async function handleResetPassword() {
 function inputStyleClass(error) {
   return [
     'w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors',
-    error ? 'border-status-red- bg-red-100 placeholder-status-red-' : 'border-gray-300 focus:border-status-blue',
+    error
+      ? 'border-status-red- bg-red-100 placeholder-status-red-'
+      : 'border-gray-300 focus:border-status-blue',
   ];
 }
-
 </script>
 
 <template>
-  <div class="h-[calc(100vh-56px)] flex items-center justify-center bg-base-200 relative">
+  <div
+    class="h-[calc(100vh-56px)] flex items-center justify-center bg-gray-secondary-50 relative"
+  >
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
       <h2 class="text-center title02 mb-6">비밀번호 재설정</h2>
 
@@ -115,7 +119,9 @@ function inputStyleClass(error) {
             </button>
           </div>
 
-          <small v-if="errors.password" class="text-status-red mt-1 block">{{ errors.password }}</small>
+          <small v-if="errors.password" class="text-status-red mt-1 block">{{
+            errors.password
+          }}</small>
         </div>
 
         <!-- 비밀번호 재입력 -->
@@ -139,9 +145,12 @@ function inputStyleClass(error) {
               <EyeOpen v-if="showconfirmPassword" class="w-4 h-4"></EyeOpen>
               <EyeClose v-if="!showconfirmPassword" class="w-4 h-4"></EyeClose>
             </button>
-
           </div>
-          <small v-if="errors.confirmPassword" class="text-status-red mt-1 block">{{ errors.confirmPassword }}</small>
+          <small
+            v-if="errors.confirmPassword"
+            class="text-status-red mt-1 block"
+            >{{ errors.confirmPassword }}</small
+          >
         </div>
 
         <!-- 변경하기 버튼 -->

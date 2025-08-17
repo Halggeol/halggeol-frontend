@@ -2,12 +2,16 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { join } from '@/api/user';
-import { getTokenIfExists, getEmailFromToken, setEmail } from '@/utils/authUtil';
+import {
+  getTokenIfExists,
+  getEmailFromToken,
+  setEmail,
+} from '@/utils/authUtil';
 import { regex } from '@/utils/validationUtil';
 import PrivacyPolicyModal from '@/components/user/auth/PrivacyPolicyModal.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
-import EyeClose from '@/components/icons/EyeClose.vue';
-import EyeOpen from '@/components/icons/EyeOpen.vue';
+import EyeClose from '@/assets/icons/auth/EyeClose.vue';
+import EyeOpen from '@/assets/icons/auth/EyeOpen.vue';
 
 const router = useRouter();
 const privacyModalRef = ref();
@@ -24,13 +28,13 @@ const form = ref({
   phone: '',
   password: '',
   confirmPassword: '',
-  agree: false
+  agree: false,
 });
 
 const result = ref({
   message: '',
-  success: false
-})
+  success: false,
+});
 
 const canSubmit = computed(() => {
   let allFilled = false;
@@ -42,8 +46,10 @@ const canSubmit = computed(() => {
 });
 
 onMounted(() => {
-  if ((token.value = getTokenIfExists()) === null ||
-      (form.value.email = getEmailFromToken(token.value)) === null)
+  if (
+    (token.value = getTokenIfExists()) === null ||
+    (form.value.email = getEmailFromToken(token.value)) === null
+  )
     router.push('/signup/request');
   setEmail(form.value.email);
 });
@@ -54,13 +60,15 @@ function validateField(field) {
   switch (field) {
     case 'name':
       if (!value) errors.value.name = '이름을 입력해주세요';
-      else if (!regex.name.test(value)) errors.value.name = '이름은 한글 2자 이상이어야 합니다';
+      else if (!regex.name.test(value))
+        errors.value.name = '이름은 한글 2자 이상이어야 합니다';
       else delete errors.value.name;
       break;
 
     case 'phone':
       if (!value) errors.value.phone = '전화번호를 입력해주세요';
-      else if (!regex.phone.test(value)) errors.value.phone = '올바른 전화번호 형식이 아닙니다';
+      else if (!regex.phone.test(value))
+        errors.value.phone = '올바른 전화번호 형식이 아닙니다';
       else delete errors.value.phone;
       break;
 
@@ -82,7 +90,7 @@ function validateBirth() {
     return;
   }
 
-  const formattedDate = `${form.value.birth.slice(0,4)}-${form.value.birth.slice(4,6)}-${form.value.birth.slice(6,8)}`;
+  const formattedDate = `${form.value.birth.slice(0, 4)}-${form.value.birth.slice(4, 6)}-${form.value.birth.slice(6, 8)}`;
   const birthDate = new Date(`${formattedDate}T00:00:00`);
   if (isNaN(birthDate)) {
     errors.value.birth = '존재하지 않는 날짜입니다';
@@ -105,61 +113,56 @@ function validateBirth() {
 }
 
 function validatePasswords() {
-  if (!form.value.password)
-    errors.value.password = '비밀번호를 입력해주세요';
+  if (!form.value.password) errors.value.password = '비밀번호를 입력해주세요';
   else if (!regex.password.test(form.value.password))
-    errors.value.password = '비밀번호는 8자 이상이어야 합니다 (영문자, 숫자, 특수문자 사용 가능)';
-  else
-    delete errors.value.password;
+    errors.value.password =
+      '비밀번호는 8자 이상이어야 합니다 (영문자, 숫자, 특수문자 사용 가능)';
+  else delete errors.value.password;
 
   if (!form.value.confirmPassword)
     errors.value.confirmPassword = '비밀번호를 다시 입력해주세요';
   else if (form.value.password !== form.value.confirmPassword)
     errors.value.confirmPassword = '비밀번호가 일치하지 않습니다';
-  else
-    delete errors.value.confirmPassword;
+  else delete errors.value.confirmPassword;
 }
 
 async function handleJoinSubmit() {
   console.log('===== 회원가입 요청 핸들링 =====');
 
   const originalBirth = form.value.birth;
-  form.value.birth = `${form.value.birth.slice(0,4)}-${form.value.birth.slice(4,6)}-${form.value.birth.slice(6,8)}`;
+  form.value.birth = `${form.value.birth.slice(0, 4)}-${form.value.birth.slice(4, 6)}-${form.value.birth.slice(6, 8)}`;
 
   console.log(form.value.birth);
 
-  Object.keys(form.value).forEach((field) => {
+  Object.keys(form.value).forEach(field => {
     if (field === 'password' || field === 'confirmPassword')
       validatePasswords(field);
-    else
-      validateField(field);
+    else validateField(field);
   });
 
   if (canSubmit.value) {
     try {
-      console.log("===== join API 호출 =====");
+      console.log('===== join API 호출 =====');
       await join(token.value, form.value);
 
       result.value = {
         message: '회원가입이 완료되었습니다.',
-        success: true
+        success: true,
       };
 
       router.push({ name: 'signup/survey', params: { type: 'knowledge' } });
-
     } catch (error) {
       form.value.birth = originalBirth;
 
       if (error.response?.status === 409) {
         result.value = {
           message: '이미 가입된 이메일입니다.',
-          success: false
+          success: false,
         };
-      }
-      else {
+      } else {
         result.value = {
           message: '회원가입에 실패했습니다.',
-          success: false
+          success: false,
         };
       }
     }
@@ -169,62 +172,56 @@ async function handleJoinSubmit() {
 const displayBirth = computed(() => {
   const digits = form.value.birth;
 
-  if (digits.includes('-'))
-    return digits;
+  if (digits.includes('-')) return digits;
 
   if (digits.length >= 4 && digits.length < 6)
     return `${digits.slice(0, 4)}-${digits.slice(4)}`;
   else if (digits.length >= 6)
     return `${digits.slice(0, 4)}-${digits.slice(4, 6)}${digits.length >= 6 ? '-' + digits.slice(6) : ''}`;
-  else
-    return digits;
+  else return digits;
 });
 
 function inputBirth(birth) {
-  if (birth.data != null)
-    form.value.birth = form.value.birth + birth.data;
-  else
-    form.value.birth = form.value.birth.slice(0, -1);
+  if (birth.data != null) form.value.birth = form.value.birth + birth.data;
+  else form.value.birth = form.value.birth.slice(0, -1);
 }
 
 const displayPhone = computed(() => {
   const digits = form.value.phone;
 
-  if (digits.includes('-'))
-    return digits;
+  if (digits.includes('-')) return digits;
 
-  if (digits.length < 3)
-    return digits;
+  if (digits.length < 3) return digits;
   if (digits.length <= 6)
     return `${digits.slice(0, 3)}-${digits.slice(3)}${digits.length >= 6 ? '-' + digits.slice(6) : ''}`;
   if (digits.length === 11)
     return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
-  else
-    return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+  else return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
 });
 
 function inputPhone(phone) {
-  if (phone.data != null)
-    form.value.phone = form.value.phone + phone.data;
-  else
-    form.value.phone = form.value.phone.slice(0, -1);
+  if (phone.data != null) form.value.phone = form.value.phone + phone.data;
+  else form.value.phone = form.value.phone.slice(0, -1);
 }
 
 function inputStyleClass(error) {
   return [
     'w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors',
-    error ? 'border-status-red bg-red-100 placeholder-status-red' : 'border-gray-300 focus:border-status-blue',
+    error
+      ? 'border-status-red bg-red-100 placeholder-status-red'
+      : 'border-gray-300 focus:border-status-blue',
   ];
 }
 
 function openPolicyModal() {
   privacyModalRef.value?.showModal();
 }
-
 </script>
 
 <template>
-  <div class="h-[calc(100vh-56px)] flex items-center justify-center bg-base-200 relative">
+  <div
+    class="h-[calc(100vh-56px)] flex items-center justify-center bg-gray-secondary-50 relative"
+  >
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
       <h2 class="text-center title02 mb-6">회원가입</h2>
 
@@ -240,7 +237,9 @@ function openPolicyModal() {
             placeholder="이름"
             :disabled="result.success"
           />
-          <small v-if="errors.name" class="text-status-red mt-1 block">{{ errors.name }}</small>
+          <small v-if="errors.name" class="text-status-red mt-1 block">{{
+            errors.name
+          }}</small>
         </div>
 
         <!-- 생년월일 -->
@@ -254,7 +253,9 @@ function openPolicyModal() {
             placeholder="생년월일"
             :disabled="result.success"
           />
-          <small v-if="errors.birth" class="text-status-red mt-1 block">{{ errors.birth }}</small>
+          <small v-if="errors.birth" class="text-status-red mt-1 block">{{
+            errors.birth
+          }}</small>
         </div>
 
         <!-- 전화번호 -->
@@ -268,10 +269,12 @@ function openPolicyModal() {
             placeholder="전화번호"
             :disabled="result.success"
           />
-          <small v-if="errors.phone" class="text-status-red mt-1 block">{{ errors.phone }}</small>
+          <small v-if="errors.phone" class="text-status-red mt-1 block">{{
+            errors.phone
+          }}</small>
         </div>
 
-        <hr class="mt-6 mb-7">
+        <hr class="mt-6 mb-7" />
 
         <!-- 이메일 -->
         <div class="mb-3">
@@ -306,7 +309,9 @@ function openPolicyModal() {
             </button>
           </div>
 
-          <small v-if="errors.password" class="text-status-red mt-1 block">{{ errors.password }}</small>
+          <small v-if="errors.password" class="text-status-red mt-1 block">{{
+            errors.password
+          }}</small>
         </div>
 
         <!-- 비밀번호 재입력 -->
@@ -330,9 +335,12 @@ function openPolicyModal() {
               <EyeOpen v-if="showconfirmPassword" class="w-4 h-4"></EyeOpen>
               <EyeClose v-if="!showconfirmPassword" class="w-4 h-4"></EyeClose>
             </button>
-
           </div>
-          <small v-if="errors.confirmPassword" class="text-status-red mt-1 block">{{ errors.confirmPassword }}</small>
+          <small
+            v-if="errors.confirmPassword"
+            class="text-status-red mt-1 block"
+            >{{ errors.confirmPassword }}</small
+          >
         </div>
 
         <!-- 약관 동의 -->
@@ -343,13 +351,19 @@ function openPolicyModal() {
             @change="validateField('agree')"
             class="scale-150 bg-white border-gray-300 rounded w-3 h-3"
             :disabled="result.success"
-            />
+          />
           <span class="leading-snug text-xs">
-            <span class="underline cursor-pointer hover:text-fg-primary" @click="openPolicyModal">
+            <span
+              class="underline cursor-pointer hover:text-fg-primary"
+              @click="openPolicyModal"
+            >
               개인정보 처리방침
             </span>
-            에 따라 개인정보를 수집, 사용, 타사에 대한 제공 및 처리하는 데 동의합니다.
-            <small v-if="errors.agree" class="text-status-red mt-1 block">{{ errors.agree }}</small>
+            에 따라 개인정보를 수집, 사용, 타사에 대한 제공 및 처리하는 데
+            동의합니다.
+            <small v-if="errors.agree" class="text-status-red mt-1 block">{{
+              errors.agree
+            }}</small>
           </span>
         </div>
 

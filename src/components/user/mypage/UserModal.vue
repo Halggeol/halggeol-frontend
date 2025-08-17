@@ -1,10 +1,10 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
-import Heart from '../../icons/Heart.vue';
-import Logout from '../../icons/Logout.vue';
+import Heart from '@/assets/icons/common/Heart.vue';
+import Logout from '@/assets/icons/auth/Logout.vue';
 import BaseCard from '@/components/common/BaseCard.vue';
-import User from '@/components/icons/User.vue';
+import User from '@/assets/icons/auth/User.vue';
 
 defineProps({
   isOpen: Boolean,

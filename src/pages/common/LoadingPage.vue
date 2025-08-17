@@ -1,7 +1,7 @@
 <script setup>
-import Good from '@/components/icons/regretScore/GoodFace.vue';
-import Normal from '@/components/icons/regretScore/NormalFace.vue';
-import Bad from '@/components/icons/regretScore/BadFace.vue';
+import Good from '@/assets/icons/insight/regretScore/GoodFace.vue';
+import Normal from '@/assets/icons/insight/regretScore/NormalFace.vue';
+import Bad from '@/assets/icons/insight/regretScore/BadFace.vue';
 import { onMounted, onUnmounted, ref } from 'vue';
 
 defineProps({

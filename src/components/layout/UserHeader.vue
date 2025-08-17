@@ -4,7 +4,7 @@ import { RouterLink } from 'vue-router';
 
 <template>
   <!-- 헤더 영역 -->
-  <header class="bg-white fixed inset-x-0 top-0 z-50">
+  <header class="bg-gray-secondary-50 fixed inset-x-0 top-0 z-50">
     <nav
       aria-label="Global"
       class="mx-[10.8%] tablet:mx-5 flex items-center justify-between py-4 mobile:hidden"

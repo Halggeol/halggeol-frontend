@@ -114,7 +114,7 @@
 <script setup>
 import BaseCard from '@/components/common/BaseCard.vue';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import Tooltiip from '../icons/Tooltiip.vue';
+import Tooltiip from '@/assets/icons/common/Tooltiip.vue';
 
 const props = defineProps({
   productDetail: {

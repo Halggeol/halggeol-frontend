@@ -5,15 +5,15 @@ import { useAuthStore } from '@/stores/authStore';
 import { reverifyPassword, leaveService } from '@/api/user';
 import { setAccessToken } from '@/utils/authUtil';
 import BaseButton from '@/components/common/BaseButton.vue';
-import EyeClose from '@/components/icons/EyeClose.vue';
-import EyeOpen from '@/components/icons/EyeOpen.vue';
+import EyeClose from '@/assets/icons/auth/EyeClose.vue';
+import EyeOpen from '@/assets/icons/auth/EyeOpen.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
 
 const props = defineProps({
   isOpen: Boolean,
-  onClose: Function
+  onClose: Function,
 });
 
 const errors = ref({});
@@ -23,7 +23,7 @@ const confirmPassword = ref('');
 
 const result = ref({
   message: '',
-  success: false
+  success: false,
 });
 
 const canSubmit = computed(() => {
@@ -33,8 +33,7 @@ const canSubmit = computed(() => {
 function validatePasswords() {
   if (!confirmPassword.value)
     errors.value.confirmPassword = '비밀번호를 입력해주세요';
-  else
-    delete errors.value.confirmPassword;
+  else delete errors.value.confirmPassword;
 }
 
 function handleClose() {
@@ -52,29 +51,30 @@ async function handleLeaveService() {
 
   if (canSubmit.value) {
     try {
-      console.log("===== reverifyPassword API 호출 =====");
-      const response = await reverifyPassword({ confirmPassword: confirmPassword.value });
+      console.log('===== reverifyPassword API 호출 =====');
+      const response = await reverifyPassword({
+        confirmPassword: confirmPassword.value,
+      });
 
       setAccessToken(response.data.reverifyToken);
 
-      console.log("===== leaveService API 호출 =====");
+      console.log('===== leaveService API 호출 =====');
       await leaveService();
 
       authStore.logout();
 
       result.value = {
         message: '회원탈퇴가 완료되었습니다. 홈 화면으로 이동합니다.',
-        success: true
+        success: true,
       };
 
       setTimeout(() => {
         router.push('/');
       }, 1500);
-
     } catch (error) {
       result.value = {
         message: '비밀번호가 올바르지 않습니다.',
-        success: false
+        success: false,
       };
     }
   }
@@ -83,10 +83,11 @@ async function handleLeaveService() {
 function inputStyleClass(error) {
   return [
     'w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors',
-    error ? 'border-red-500 bg-red-100 placeholder-red-500' : 'border-gray-300 focus:border-blue-500',
+    error
+      ? 'border-red-500 bg-red-100 placeholder-red-500'
+      : 'border-gray-300 focus:border-blue-500',
   ];
 }
-
 </script>
 
 <template>
@@ -118,9 +119,12 @@ function inputStyleClass(error) {
               <EyeOpen v-if="showConfirmPassword" class="w-4 h-4"></EyeOpen>
               <EyeClose v-if="!showConfirmPassword" class="w-4 h-4"></EyeClose>
             </button>
-
           </div>
-          <small v-if="errors.confirmPassword" class="text-red-500 mt-1 block">{{ errors.confirmPassword }}</small>
+          <small
+            v-if="errors.confirmPassword"
+            class="text-red-500 mt-1 block"
+            >{{ errors.confirmPassword }}</small
+          >
         </div>
 
         <!-- 탈퇴하기 버튼 -->

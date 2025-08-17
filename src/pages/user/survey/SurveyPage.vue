@@ -5,22 +5,22 @@ import { getEmail } from '@/utils/authUtil';
 import KnowledgeSurvey from '@/components/user/survey/KnowledgeSurvey.vue';
 import TendencySurvey from '@/components/user/survey/TendencySurvey.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
-import ProcessDots from '@/components/icons/survey/ProcessDots.vue';
-import Check from '@/components/icons/survey/Check.vue';
-import OneFilled from '@/components/icons/survey/OneFilled.vue';
-import TwoEmpty from '@/components/icons/survey/TwoEmpty.vue';
-import TwoFilled from '@/components/icons/survey/TwoFilled.vue';
-import ThreeEmpty from '@/components/icons/survey/ThreeEmpty.vue';
+import ProcessDots from '@/assets/icons/auth/survey/ProcessDots.vue';
+import Check from '@/assets/icons/auth/survey/Check.vue';
+import OneFilled from '@/assets/icons/auth/survey/OneFilled.vue';
+import TwoEmpty from '@/assets/icons/auth/survey/TwoEmpty.vue';
+import TwoFilled from '@/assets/icons/auth/survey/TwoFilled.vue';
+import ThreeEmpty from '@/assets/icons/auth/survey/ThreeEmpty.vue';
 
 const route = useRoute();
-const type  = route.params.type; // knowledge, tendency
+const type = route.params.type; // knowledge, tendency
 
 const email = ref(null);
 const started = ref(false);
 
 onMounted(() => {
   email.value = getEmail();
-})
+});
 
 function startSurvey() {
   started.value = true;
@@ -32,27 +32,32 @@ function startSurvey() {
     <div class="h-full w-[500px] flex flex-col items-center">
       <!-- 과정 진행도 아이콘 -->
       <div class="w-full flex justify-start my-12">
-        <OneFilled v-if="type === 'knowledge'"/>
-        <Check v-else-if="type === 'tendency'"/>
+        <OneFilled v-if="type === 'knowledge'" />
+        <Check v-else-if="type === 'tendency'" />
 
-        <ProcessDots/>
+        <ProcessDots />
 
-        <TwoEmpty v-if="type === 'knowledge'"/>
-        <TwoFilled v-else-if="type === 'tendency'"/>
+        <TwoEmpty v-if="type === 'knowledge'" />
+        <TwoFilled v-else-if="type === 'tendency'" />
 
-        <ProcessDots/>
-        <ThreeEmpty/>
+        <ProcessDots />
+        <ThreeEmpty />
       </div>
 
       <!-- 설문 온보딩 -->
-      <div v-if="!started" class="w-full flex flex-col grow whitespace-nowrap text-fg-primary">
+      <div
+        v-if="!started"
+        class="w-full flex flex-col grow whitespace-nowrap text-fg-primary"
+      >
         <!-- 상단 설명 영역 -->
         <div>
           <h1 v-if="type === 'knowledge'" class="text-title-lg">
-            나의 <span class="font-bold">금융 이해도</span>를 <br /> 확인해보세요
+            나의 <span class="font-bold">금융 이해도</span>를 <br />
+            확인해보세요
           </h1>
           <h1 v-else-if="type === 'tendency'" class="text-title-lg">
-            나의 <span class="font-bold">투자성향</span>을 <br/> 파악해보세요
+            나의 <span class="font-bold">투자성향</span>을 <br />
+            파악해보세요
           </h1>
 
           <p class="text-fg-secondary mt-12">
@@ -77,20 +82,15 @@ function startSurvey() {
           variant="filled"
           :disabled="false"
           label="시작하기"
-          @click="startSurvey">
+          @click="startSurvey"
+        >
         </BaseButton>
       </div>
 
       <!-- 설문 컴포넌트 -->
       <div v-if="started" class="grow">
-        <KnowledgeSurvey
-          v-if="type === 'knowledge'"
-          :email="email"
-        />
-        <TendencySurvey
-          v-else-if="type === 'tendency'"
-          :email="email"
-        />
+        <KnowledgeSurvey v-if="type === 'knowledge'" :email="email" />
+        <TendencySurvey v-else-if="type === 'tendency'" :email="email" />
       </div>
     </div>
   </div>

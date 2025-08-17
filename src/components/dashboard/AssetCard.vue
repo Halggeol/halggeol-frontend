@@ -91,7 +91,7 @@ import {
   Filler,
   Tooltip,
 } from 'chart.js';
-import Tooltiip from '../icons/Tooltiip.vue';
+import Tooltiip from '@/assets/icons/common/Tooltiip.vue';
 
 Chart.register(
   LineElement,
@@ -277,11 +277,11 @@ const chartOptions = {
 
 <template>
   <div>
-    <h2 class="title03 mb-4">
+    <h2 class="title03 mb-4 flex items-center">
       나의 순자산
       <span
         class="inline-block relative group ml-1 tooltip"
-        data-tip="전체 자산"
+        data-tip="과거의 선택들이 모여 현재의 자산을 만들었어요. 회고 인사이트를 통해 자산을 더 현명하게 키워보세요."
       >
         <Tooltiip class="w-5 h-5 text-fg-secondary" />
       </span>

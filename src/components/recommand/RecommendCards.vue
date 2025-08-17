@@ -39,7 +39,7 @@ const productTypeConfig = {
 
 // 상세페이지 이동
 import { useRouter } from 'vue-router';
-import { useNavigationStore } from '@/stores/navigation';
+import { useNavigationStore } from '@/stores/navigationStore';
 
 const router = useRouter();
 const navigationStore = useNavigationStore();

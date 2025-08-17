@@ -13,15 +13,16 @@ import {
 } from 'chart.js';
 
 import BaseCard from '@/components/common/BaseCard.vue';
-import Sunny from '../icons/regretWeather/Sunny.vue';
-import MostlySunny from '../icons/regretWeather/MostlySunny.vue';
-import SunWithCloud from '../icons/regretWeather/SunWithCloud.vue';
-import Cloudy from '../icons/regretWeather/Cloudy.vue';
-import Rain from '../icons/regretWeather/Rain.vue';
-import RainHeavy from '../icons/regretWeather/RainHeavy.vue';
+import Sunny from '@/assets/icons/insight/regretWeather/Sunny.vue';
+import MostlySunny from '@/assets/icons/insight/regretWeather/MostlySunny.vue';
+import SunWithCloud from '@/assets/icons/insight/regretWeather/SunWithCloud.vue';
+import Cloudy from '@/assets/icons/insight/regretWeather/Cloudy.vue';
+import Rain from '@/assets/icons/insight/regretWeather/Rain.vue';
+import RainHeavy from '@/assets/icons/insight/regretWeather/RainHeavy.vue';
 
 import InsightLineChart from '@/components/insight/InsightLineChart.vue';
 import ForexBarChart from '@/components/insight/InsightBarChart.vue';
+import Tooltiip from '@/assets/icons/common/Tooltiip.vue';
 
 ChartJS.register(
   CategoryScale,
@@ -66,19 +67,35 @@ function getWeatherLevel(score) {
 <template>
   <div class="flex items-center gap-6 mb-12">
     <div class="flex flex-col justify-start">
-      <p class="text-body02 mr-4">그때 가입하지 않아서 놓친 금액</p>
+      <p class="text-body02 mr-4 flex items-center">
+        그때 가입하지 않아서 놓친 금액
+        <span
+          class="inline-block relative group ml-1 tooltip"
+          data-tip="만약 이 상품에 가입했다면, 지금쯤 이만큼의 수익을 얻을 수 있었을 거예요. 과거의 데이터를 바탕으로 한 예상치이며, 미래 수익을 보장하지는 않아요."
+        >
+          <Tooltiip class="text-fg-secondary w-5 h-5" />
+        </span>
+      </p>
       <span :class="colorClass" class="title03">
         {{ Math.floor(props.missAmount / 10000).toLocaleString() }}만원
       </span>
     </div>
     <div class="flex justify-end items-center">
       <div>
-        <p class="mr-6 text-body">예상 후회지수</p>
+        <p class="mr-6 text-body02 flex items-center">
+          예상 후회지수
+          <span
+            class="inline-block relative group ml-1 tooltip"
+            data-tip="이 상품을 놓쳤을 때 느낄 수 있는 아쉬움의 크기를 0점에서 100점 사이로 나타낸 예측 점수예요. 나의 다음 결정을 위한 참고자료로 활용해 보세요."
+          >
+            <Tooltiip class="text-fg-secondary w-5 h-5" />
+          </span>
+        </p>
         <p :class="colorClass" class="items-end title03">
           {{ props.regretScore }}
         </p>
       </div>
-      <span>
+      <p class="flex items-center">
         <Sunny
           v-if="getWeatherLevel(props.regretScore) === 'Sunny'"
           class="w-10 h-10"
@@ -100,7 +117,13 @@ function getWeatherLevel(score) {
           class="w-10 h-10"
         />
         <RainHeavy v-else />
-      </span>
+        <span
+          class="inline-block relative group ml-1 tooltip"
+          data-tip="예상 후회지수 날씨 가이드 ☀️맑음 🌤️약간 구름 🌥️구름 많음 ☁️흐림 🌧️약간 비 ⛈️비 많음"
+        >
+          <Tooltiip class="text-fg-secondary w-5 h-5" />
+        </span>
+      </p>
     </div>
   </div>
   <BaseCard size="lg" variant="outline" class="mb-20">

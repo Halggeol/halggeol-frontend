@@ -2,8 +2,8 @@
 import BaseCard from '../common/BaseCard.vue';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import Tooltiip from '../icons/Tooltiip.vue';
-import CheckCircle from '../icons/CheckCircle.vue';
+import Tooltiip from '@/assets/icons/common/Tooltiip.vue';
+import CheckCircle from '@/assets/icons/common/CheckCircle.vue';
 
 const router = useRouter();
 
@@ -61,7 +61,7 @@ const productTypeConfig = {
       그때 할걸 후회상품 랭킹
       <span
         class="inline-block relative group ml-1 tooltip"
-        data-tip="사용자가 놓친 상품 중 가입하지 않아 가장 많이 후회하는 상품"
+        data-tip="후회상품은 회고 인사이트에 발행된 상품에 대해 '후회한다'고 응답한 상품이에요. 모두의 소중한 '회고 인사이트'를 바탕으로 만들어졌어요."
       >
         <Tooltiip class="text-fg-secondary" />
       </span>

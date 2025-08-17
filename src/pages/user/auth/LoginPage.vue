@@ -5,8 +5,8 @@ import { login } from '@/api/user';
 import { useAuthStore } from '@/stores/authStore';
 import { regex } from '@/utils/validationUtil';
 import BaseButton from '@/components/common/BaseButton.vue';
-import EyeClose from '@/components/icons/EyeClose.vue';
-import EyeOpen from '@/components/icons/EyeOpen.vue';
+import EyeClose from '@/assets/icons/auth/EyeClose.vue';
+import EyeOpen from '@/assets/icons/auth/EyeOpen.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -110,18 +110,12 @@ function inputStyleClass(field) {
 
 <template>
   <div
-    class="h-[calc(100vh-56px)] flex items-center justify-center relative"
-    style="
-      background-image: url('http://googleusercontent.com/image_generation_content/1');
-      background-size: cover;
-      background-position: center;
-    "
+    class="h-[calc(100vh-56px)] flex items-center justify-center bg-gray-secondary-50 relative"
   >
     <div class="w-full max-w-sm p-8 bg-white shadow-md rounded-2xl">
       <h2 class="text-center title02 mb-6">로그인</h2>
 
       <form @submit.prevent novalidate>
-
         <div class="mb-3 relative">
           <div class="relative">
             <input
@@ -241,7 +235,6 @@ function inputStyleClass(field) {
             </button>
           </div>
 
-
           <small v-if="errors.password" class="text-red-500 mt-1 block">{{
             errors.password
           }}</small>
@@ -264,7 +257,6 @@ function inputStyleClass(field) {
         >
           {{ result.message }}
         </small>
-
 
         <div class="mt-6 text-center text-xs text-gray-500 space-x-3">
           <RouterLink to="/find" class="hover:underline"
