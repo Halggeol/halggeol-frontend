@@ -103,7 +103,7 @@ watch(
       @survey-submitted="onSurveySubmitted"
     />
 
-    <h2 class="title01 pt-40 pb-12">놓친 상품과 유사한 상품</h2>
+    <h2 class="title01 pt-40 pb-12">지금 보고 있는 상품과 유사한 상품</h2>
     <RecommendCards
       :items="similarProducts"
       :has-padding="false"
