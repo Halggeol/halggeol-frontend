@@ -147,7 +147,7 @@ import {
   deleteRecentSearch,
   deleteAllRecentSearches,
 } from '@/api/search';
-import Search from '../icons/Search.vue';
+import Search from '../icons/common/Search.vue';
 
 const props = defineProps({
   isOpen: {

@@ -2,8 +2,8 @@
 import BaseCard from '../common/BaseCard.vue';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import Tooltiip from '../icons/Tooltiip.vue';
-import CheckCircle from '../icons/CheckCircle.vue';
+import Tooltiip from '../icons/common/Tooltiip.vue';
+import CheckCircle from '../icons/common/CheckCircle.vue';
 
 const router = useRouter();
 

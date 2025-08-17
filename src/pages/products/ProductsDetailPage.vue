@@ -8,7 +8,7 @@ import {
   checkRecommendProductStatus,
   analyzeProductWithGemini,
 } from '@/api/product-detail';
-import { useNavigationStore } from '@/stores/navigation';
+import { useNavigationStore } from '@/stores/navigationStore';
 import { useAuthStore } from '@/stores/authStore';
 
 const authStore = useAuthStore();

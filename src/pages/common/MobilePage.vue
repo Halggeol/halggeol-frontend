@@ -1,6 +1,6 @@
 <script setup>
 import BaseCard from '@/components/common/BaseCard.vue';
-import Logo from '@/components/icons/Logo.vue';
+import Logo from '@/components/icons/common/Logo.vue';
 </script>
 
 <template>

@@ -102,7 +102,7 @@
 
 <script setup>
 import { defineProps, defineEmits } from 'vue';
-import Heart from '../icons/Heart.vue';
+import Heart from '../icons/common/Heart.vue';
 
 const props = defineProps({
   product: { type: Object, required: true },

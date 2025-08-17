@@ -5,8 +5,8 @@ import { login } from '@/api/user';
 import { useAuthStore } from '@/stores/authStore';
 import { regex } from '@/utils/validationUtil';
 import BaseButton from '@/components/common/BaseButton.vue';
-import EyeClose from '@/components/icons/EyeClose.vue';
-import EyeOpen from '@/components/icons/EyeOpen.vue';
+import EyeClose from '@/components/icons/auth/EyeClose.vue';
+import EyeOpen from '@/components/icons/auth/EyeOpen.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -121,7 +121,6 @@ function inputStyleClass(field) {
       <h2 class="text-center title02 mb-6">로그인</h2>
 
       <form @submit.prevent novalidate>
-
         <div class="mb-3 relative">
           <div class="relative">
             <input
@@ -241,7 +240,6 @@ function inputStyleClass(field) {
             </button>
           </div>
 
-
           <small v-if="errors.password" class="text-red-500 mt-1 block">{{
             errors.password
           }}</small>
@@ -264,7 +262,6 @@ function inputStyleClass(field) {
         >
           {{ result.message }}
         </small>
-
 
         <div class="mt-6 text-center text-xs text-gray-500 space-x-3">
           <RouterLink to="/find" class="hover:underline"

@@ -91,7 +91,7 @@ import {
   Filler,
   Tooltip,
 } from 'chart.js';
-import Tooltiip from '../icons/Tooltiip.vue';
+import Tooltiip from '../icons/common/Tooltiip.vue';
 
 Chart.register(
   LineElement,

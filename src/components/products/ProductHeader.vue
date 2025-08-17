@@ -144,7 +144,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 import BaseButton from '@/components/common/BaseButton.vue';
-import Heart from '@/components/icons/Heart.vue';
+import Heart from '@/components/icons/common/Heart.vue';
 import { addScrap, delScrap } from '@/api/product-detail';
 import { useAuthStore } from '@/stores/authStore';
 

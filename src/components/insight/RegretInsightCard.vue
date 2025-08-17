@@ -22,7 +22,7 @@ import RainHeavy from '../icons/regretWeather/RainHeavy.vue';
 
 import InsightLineChart from '@/components/insight/InsightLineChart.vue';
 import ForexBarChart from '@/components/insight/InsightBarChart.vue';
-import Tooltiip from '../icons/Tooltiip.vue';
+import Tooltiip from '../icons/common/Tooltiip.vue';
 
 ChartJS.register(
   CategoryScale,

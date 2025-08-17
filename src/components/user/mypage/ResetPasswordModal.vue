@@ -4,8 +4,8 @@ import { useRouter } from 'vue-router';
 import { reverifyPassword, resetPasswordWithLogin, logout } from '@/api/user';
 import { setAccessToken } from '@/utils/authUtil';
 import BaseButton from '@/components/common/BaseButton.vue';
-import EyeClose from '@/components/icons/EyeClose.vue';
-import EyeOpen from '@/components/icons/EyeOpen.vue';
+import EyeClose from '@/components/icons/auth/EyeClose.vue';
+import EyeOpen from '@/components/icons/auth/EyeOpen.vue';
 
 const router = useRouter();
 
@@ -15,7 +15,7 @@ const regex = {
 
 const props = defineProps({
   isOpen: Boolean,
-  onClose: Function
+  onClose: Function,
 });
 
 const errors = ref({});
@@ -29,32 +29,32 @@ const confirmPassword = ref('');
 
 const result = ref({
   message: '',
-  success: false
+  success: false,
 });
 
 const canSubmit = computed(() => {
-  return oldPassword.value !== '' && newPassword.value !== '' && confirmPassword.value !== '';
+  return (
+    oldPassword.value !== '' &&
+    newPassword.value !== '' &&
+    confirmPassword.value !== ''
+  );
 });
 
 function validatePasswords() {
-  if (!oldPassword.value)
-    errors.value.oldPassword = '비밀번호를 입력해주세요';
-  else
-    delete errors.value.oldPassword;
+  if (!oldPassword.value) errors.value.oldPassword = '비밀번호를 입력해주세요';
+  else delete errors.value.oldPassword;
 
-  if (!newPassword.value)
-    errors.value.newPassword = '비밀번호를 입력해주세요';
+  if (!newPassword.value) errors.value.newPassword = '비밀번호를 입력해주세요';
   else if (!regex.password.test(newPassword.value))
-    errors.value.newPassword = '비밀번호는 8자 이상이어야 합니다 (영문자, 숫자, 특수문자 사용 가능)';
-  else
-    delete errors.value.newPassword;
+    errors.value.newPassword =
+      '비밀번호는 8자 이상이어야 합니다 (영문자, 숫자, 특수문자 사용 가능)';
+  else delete errors.value.newPassword;
 
   if (newPassword.value && !confirmPassword.value)
     errors.value.confirmPassword = '비밀번호를 다시 입력해주세요';
   else if (newPassword.value !== confirmPassword.value)
     errors.value.confirmPassword = '비밀번호가 일치하지 않습니다';
-  else
-    delete errors.value.confirmPassword;
+  else delete errors.value.confirmPassword;
 }
 
 function handleClose() {
@@ -76,17 +76,22 @@ async function handleResetPassword() {
 
   if (canSubmit.value) {
     try {
-      console.log("===== reverifyPassword API 호출 =====");
-      const response = await reverifyPassword({ confirmPassword: oldPassword.value });
+      console.log('===== reverifyPassword API 호출 =====');
+      const response = await reverifyPassword({
+        confirmPassword: oldPassword.value,
+      });
 
       setAccessToken(response.data.reverifyToken);
 
-      console.log("===== resetPasswordWithLogin API 호출 =====");
-      await resetPasswordWithLogin({ newPassword: newPassword.value, confirmPassword: confirmPassword.value })
+      console.log('===== resetPasswordWithLogin API 호출 =====');
+      await resetPasswordWithLogin({
+        newPassword: newPassword.value,
+        confirmPassword: confirmPassword.value,
+      });
 
       result.value = {
         message: '비밀번호 재설정이 완료되었습니다. 다시 로그인 해주세요.',
-        success: true
+        success: true,
       };
 
       await logout();
@@ -94,11 +99,10 @@ async function handleResetPassword() {
       setTimeout(() => {
         router.push('/login');
       }, 1500);
-
     } catch (error) {
       result.value = {
         message: '오류가 발생했습니다.',
-        success: false
+        success: false,
       };
     }
   }
@@ -107,10 +111,11 @@ async function handleResetPassword() {
 function inputStyleClass(error) {
   return [
     'w-full px-3 py-3 my-1 border rounded-md outline-none transition-colors',
-    error ? 'border-red-500 bg-red-100 placeholder-red-500' : 'border-gray-300 focus:border-blue-500',
+    error
+      ? 'border-red-500 bg-red-100 placeholder-red-500'
+      : 'border-gray-300 focus:border-blue-500',
   ];
 }
-
 </script>
 
 <template>
@@ -144,7 +149,9 @@ function inputStyleClass(error) {
             </button>
           </div>
 
-          <small v-if="errors.oldPassword" class="text-status-red mt-1 block">{{ errors.oldPassword }}</small>
+          <small v-if="errors.oldPassword" class="text-status-red mt-1 block">{{
+            errors.oldPassword
+          }}</small>
         </div>
 
         <!-- 새 비밀번호 -->
@@ -170,7 +177,9 @@ function inputStyleClass(error) {
             </button>
           </div>
 
-          <small v-if="errors.newPassword" class="text-status-red mt-1 block">{{ errors.newPassword }}</small>
+          <small v-if="errors.newPassword" class="text-status-red mt-1 block">{{
+            errors.newPassword
+          }}</small>
         </div>
 
         <!-- 비밀번호 재입력 -->
@@ -194,9 +203,12 @@ function inputStyleClass(error) {
               <EyeOpen v-if="showConfirmPassword" class="w-4 h-4"></EyeOpen>
               <EyeClose v-if="!showConfirmPassword" class="w-4 h-4"></EyeClose>
             </button>
-
           </div>
-          <small v-if="errors.confirmPassword" class="text-status-red mt-1 block">{{ errors.confirmPassword }}</small>
+          <small
+            v-if="errors.confirmPassword"
+            class="text-status-red mt-1 block"
+            >{{ errors.confirmPassword }}</small
+          >
         </div>
 
         <!-- 변경하기 버튼 -->
