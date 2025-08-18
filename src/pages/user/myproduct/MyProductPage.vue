@@ -2,7 +2,8 @@
   <div class="flex mr-[10.8%] tablet:mr-5">
     <MyProductFilter
       :isOpen="isFilterOpen"
-      @update:filters="handleFilterChange"
+      @filtersChanged="handleFilterChange"
+      :initialFilters="currentFilters"
       @close="isFilterOpen = false"
     />
     <div class="flex-1 py-5 pl-5">
@@ -39,7 +40,7 @@
             </g>
           </svg>
         </button>
-        <h2 class="title02 text-fg-primary">상품 목록</h2>
+        <h2 class="title02 text-fg-primary">가입 상품 목록</h2>
       </div>
       <LoadingPage v-if="loading" :loading-text="'가입한 상품 불러오는 중'" />
 
@@ -91,7 +92,7 @@ const error = ref(null);
 const isFilterOpen = ref(false);
 
 const currentFilters = ref({
-  productTypes: [],
+  types: [],
 });
 
 const fetchMyProducts = async () => {
@@ -155,8 +156,8 @@ const getProductType = product => {
 };
 
 const handleFilterChange = filters => {
-  currentFilters.value = filters;
-  console.log('MyProduct filters:', filters);
+  currentFilters.value.types = filters.types;
+  console.log('MyProduct filters:', filters.value);
 };
 
 const handleToggleScrap = async ({ productId, isLiked }) => {
@@ -190,12 +191,12 @@ const filteredProducts = computed(() => {
   const filters = currentFilters.value;
 
   if (
-    filters.productTypes &&
-    filters.productTypes.length > 0 &&
-    !filters.productTypes.includes('all')
+    filters.types &&
+    filters.types.length > 0 &&
+    !filters.types.includes('all')
   ) {
     productsToFilter = productsToFilter.filter(product =>
-      filters.productTypes.includes(product.product_type)
+      filters.types.includes(product.product_type)
     );
   }
 

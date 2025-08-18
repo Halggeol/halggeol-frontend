@@ -1,95 +1,97 @@
 <template>
-  <!-- 모바일/태블릿용 모달 -->
-  <div
-    v-if="isOpen"
-    class="fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity hidden tablet:block"
-    @click="$emit('close')"
-  ></div>
+  <div>
+    <!-- 모바일/태블릿용 모달 -->
+    <div
+      v-if="isOpen"
+      class="fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity hidden tablet:block"
+      @click="$emit('close')"
+    ></div>
 
-  <aside
-    :class="[
-      'bg-white w-72 h-screen sticky top-0 flex-shrink-0',
-      'tablet:fixed tablet:top-14 tablet:left-0 tablet:h-full tablet:z-50 tablet:transition-transform tablet:duration-300 tablet:ease-in-out',
-      isOpen ? 'tablet:translate-x-0' : 'tablet:-translate-x-full',
-    ]"
-  >
-    <div class="p-5 border-r border-gray-200 h-full overflow-y-auto">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-body02 font-bold text-fg-primary">필터</h2>
-        <!-- 모바일/태블릿용 닫기 버튼 -->
-        <button
-          @click="$emit('close')"
-          class="hidden tablet:block text-gray-500 hover:text-gray-800"
-        >
-          <svg
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+    <aside
+      :class="[
+        'bg-white w-72 h-screen sticky top-0 flex-shrink-0',
+        'tablet:fixed tablet:top-14 tablet:left-0 tablet:h-full tablet:z-50 tablet:transition-transform tablet:duration-300 tablet:ease-in-out',
+        isOpen ? 'tablet:translate-x-0' : 'tablet:-translate-x-full',
+      ]"
+    >
+      <div class="p-5 border-r border-gray-200 h-full overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-body02 font-bold text-fg-primary">필터</h2>
+          <!-- 모바일/태블릿용 닫기 버튼 -->
+          <button
+            @click="$emit('close')"
+            class="hidden tablet:block text-gray-500 hover:text-gray-800"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-        <!-- 데스크톱용 초기화 버튼 -->
-        <button
-          @click="resetFilters"
-          class="tablet:hidden text-callout text-fg-gray hover:text-fg-secondary hover:underline focus:outline-none"
-        >
-          초기화
-        </button>
-      </div>
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <!-- 데스크톱용 초기화 버튼 -->
+          <button
+            @click="resetFilters"
+            class="tablet:hidden text-callout text-fg-gray hover:text-fg-secondary hover:underline focus:outline-none"
+          >
+            초기화
+          </button>
+        </div>
 
-      <!-- 상품 유형 필터 -->
-      <div class="mb-6 relative">
-        <h3 class="title03 mb-3 text-fg-primary">상품 유형</h3>
-        <ul class="space-y-3">
-          <li class="mb-2 flex items-center">
-            <input
-              type="checkbox"
-              id="typeAll"
-              :checked="
-                selectedProductTypes.length === productTypeValues.length
-              "
-              @change="toggleAllProductTypes"
-              class="form-checkbox h-4 w-4 text-primary-500 rounded border-gray-300 focus:ring-primary-500"
-            />
-            <label
-              for="typeAll"
-              class="ml-2 text-callout text-fg-primary cursor-pointer"
-              >전체</label
+        <!-- 상품 유형 필터 -->
+        <div class="mb-6 relative">
+          <h3 class="title03 mb-3 text-fg-primary">상품 유형</h3>
+          <ul class="space-y-3">
+            <li class="mb-2 flex items-center">
+              <input
+                type="checkbox"
+                id="typeAll"
+                :checked="
+                  selectedProductTypes.length === productTypeValues.length
+                "
+                @change="toggleAllProductTypes"
+                class="form-checkbox h-4 w-4 text-primary-500 rounded border-gray-300 focus:ring-primary-500"
+              />
+              <label
+                for="typeAll"
+                class="ml-2 text-callout text-fg-primary cursor-pointer"
+                >전체</label
+              >
+            </li>
+            <li
+              v-for="type in productTypes"
+              :key="type.value"
+              class="mb-2 flex items-center"
             >
-          </li>
-          <li
-            v-for="type in productTypes"
-            :key="type.value"
-            class="mb-2 flex items-center"
-          >
-            <input
-              type="checkbox"
-              :id="'type' + type.value"
-              :value="type.value"
-              v-model="selectedProductTypes"
-              class="form-checkbox h-4 w-4 text-primary-500 rounded border-gray-300 focus:ring-primary-500"
-            />
-            <label
-              :for="'type' + type.value"
-              class="ml-2 text-callout text-fg-primary cursor-pointer"
-              >{{ type.label }}</label
-            >
-          </li>
-        </ul>
+              <input
+                type="checkbox"
+                :id="'type' + type.value"
+                :value="type.value"
+                v-model="selectedProductTypes"
+                class="form-checkbox h-4 w-4 text-primary-500 rounded border-gray-300 focus:ring-primary-500"
+              />
+              <label
+                :for="'type' + type.value"
+                class="ml-2 text-callout text-fg-primary cursor-pointer"
+                >{{ type.label }}</label
+              >
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
-  </aside>
+    </aside>
+  </div>
 </template>
 
 <script setup>
-import { ref, watch, defineEmits, defineProps } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   initialFilters: {
@@ -135,10 +137,6 @@ const resetFilters = () => {
 const emitFilters = () => {
   const filters = {
     types: selectedProductTypes.value,
-    // 다른 필터들이 추가될 경우를 대비해 구조 유지
-    fSectors: props.initialFilters.fSectors || [],
-    saveTerm: props.initialFilters.saveTerm || null,
-    minAmount: props.initialFilters.minAmount || null,
   };
   emit('filtersChanged', filters);
 };
