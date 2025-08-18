@@ -95,7 +95,7 @@ import ProductSort from '@/components/products/ProductSort.vue';
 import ScrapSection from '@/components/scrap/ScrapSection.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { delScrap } from '@/api/product-detail';
-import api from '@/api';
+import api from '@/utils/axios';
 import MyProductFilter from '@/components/products/MyProductFilter.vue';
 import LoadingPage from '@/pages/common/LoadingPage.vue';
 
@@ -129,7 +129,7 @@ const fetchProducts = async () => {
 
     console.log('API 호출 파라미터:', params);
 
-    const response = await api.get('/api/scrap', { params });
+    const response = await api.get('/scrap', { params });
     console.log('API 응답 데이터:', response.data);
     products.value = response.data;
   } catch (err) {

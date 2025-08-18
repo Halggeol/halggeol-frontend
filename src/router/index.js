@@ -96,7 +96,7 @@ const commonRoutes = [
       {
         path: '',
         name: 'scrap',
-        component: () => import('@/pages/user/mypage/ScrapPage.vue'),
+        component: () => import('@/pages/scrap/ScrapPage.vue'),
       },
     ],
   },

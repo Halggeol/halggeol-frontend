@@ -99,7 +99,7 @@ import ProductSort from '@/components/products/ProductSort.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { addScrap, delScrap } from '@/api/product-detail';
 import { getScrapedProductIds } from '@/api/scrap';
-import api from '@/api';
+import api from '@/utils/axios';
 import LoadingPage from '../common/LoadingPage.vue';
 
 const route = useRoute();
@@ -137,8 +137,7 @@ const fetchProducts = async () => {
       params.append('minAmount', currentFilters.value.minAmount);
     if (currentSort.value) params.append('sort', currentSort.value);
 
-    const apiUrl = `https://54.175.115.255:8080/backend-1.0-SNAPSHOT/api/products?${params.toString()}`;
-    // const apiUrl = `http://localhost:8080/api/products?${params.toString()}`;
+    const apiUrl = `/products?${params.toString()}`;
     const [productsResponse, scrapedIdsResponse] = await Promise.all([
       api.get(apiUrl),
       getScrapedProductIds(),
