@@ -21,7 +21,7 @@ const props = defineProps({
 const regretScoreDisplay = computed(() => {
   if (props.regretScore == null) {
     return {
-      value: '아직 후회하지 않았어요',
+      value: '인사이트 발행 전이에요',
       colorClass: 'text-fg-primary',
       bgColor: 'bg-[#DDE1E4]',
     };
@@ -47,7 +47,7 @@ const regretScoreDisplay = computed(() => {
 const feedbackRatioDisplay = computed(() => {
   if (props.feedbackRatio == null) {
     return {
-      value: '인사이트 발행 전이에요',
+      value: '아직 후회하지 않았어요',
       colorClass: 'text-fg-primary',
       bgColor: 'bg-[#DDE1E4]',
     };
@@ -117,7 +117,7 @@ const assetAnalysisDisplay = computed(() => {
         그때 할걸 후회지수
         <span
           class="inline-block relative group ml-1 align-top tooltip"
-          data-tip="상품을 놓쳤을 때 느낄 수 있는 아쉬움의 크기를 예측한 점수예요. 과거 회고 인사이트의 '후회해요' 응답을 평균 내어 계산했어요. • 좋음: 40점 미만 • 보통: 40점 이상 70점 미만 • 나쁨: 70점 미만"
+          data-tip="상품을 놓쳤을 때 느낄 수 있는 아쉬움의 크기를 예측한 점수예요. 과거 회고 인사이트의 예상 후회지수를 평균 내어 계산했어요. • 좋음: 40점 미만 • 보통: 40점 이상 70점 미만 • 나쁨: 70점 미만"
         >
           <Tooltiip class="w-5 h-5 text-fg-secondary" />
         </span>
