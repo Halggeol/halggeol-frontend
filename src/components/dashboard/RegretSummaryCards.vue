@@ -79,7 +79,7 @@ const assetAnalysisDisplay = computed(() => {
   }
 
   // AssetPortfolioCard에서 가져온 로직
-  const aggressiveTypes = ['fund', 'aggressive pension', 'stock'];
+  const aggressiveTypes = ['fund', 'aggressive'];
   const aggressiveRatio = portfolio
     .filter(item => aggressiveTypes.includes(item.type))
     .reduce((sum, item) => sum + item.ratio, 0);
@@ -117,7 +117,7 @@ const assetAnalysisDisplay = computed(() => {
         그때 할걸 후회지수
         <span
           class="inline-block relative group ml-1 align-top tooltip"
-          data-tip="상품을 놓쳤을 때 느낄 수 있는 아쉬움의 크기를 예측한 점수예요. 과거 회고 인사이트의 '아쉬워요' 응답을 평균 내어 계산했어요. • 좋음: 40점 미만 • 보통: 40점 이상 70점 미만 • 나쁨: 70점 미만"
+          data-tip="상품을 놓쳤을 때 느낄 수 있는 아쉬움의 크기를 예측한 점수예요. 과거 회고 인사이트의 '후회해요' 응답을 평균 내어 계산했어요. • 좋음: 40점 미만 • 보통: 40점 이상 70점 미만 • 나쁨: 70점 미만"
         >
           <Tooltiip class="w-5 h-5 text-fg-secondary" />
         </span>
@@ -135,7 +135,7 @@ const assetAnalysisDisplay = computed(() => {
         후회상품비율
         <span
           class="inline-block relative group ml-1 align-top tooltip"
-          data-tip="후회상품은 회고 인사이트에 발행된 상품에 대해 '후회한다'고 응답한 상품이에요. 이 비율은 전체 회고 중 후회상품이 얼마나 되는지 보여줘요."
+          data-tip="후회상품은 회고 인사이트에 발행된 상품에 대해 '후회해요' 응답한 상품이에요. 이 비율은 전체 회고 중 후회상품이 얼마나 되는지 보여줘요."
         >
           <Tooltiip class="w-5 h-5 text-fg-secondary" />
         </span>

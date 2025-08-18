@@ -8,7 +8,7 @@
 
   <aside
     :class="[
-      'bg-white w-64 h-screen sticky top-0 flex-shrink-0',
+      'bg-white w-72 h-screen sticky top-0 flex-shrink-0',
       'tablet:fixed tablet:top-14 tablet:left-0 tablet:h-full tablet:z-50 tablet:transition-transform tablet:duration-300 tablet:ease-in-out',
       isOpen ? 'tablet:translate-x-0' : 'tablet:-translate-x-full',
     ]"

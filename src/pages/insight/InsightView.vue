@@ -122,14 +122,14 @@ const getRegretStatusInfo = product => {
     return {
       text: status.isRegretted ? '후회함' : '후회안함',
       class: status.isRegretted
-        ? 'bg-red-100 text-red-800'
-        : 'bg-blue-100 text-blue-800',
+        ? 'bg-status-red-100 text-status-red'
+        : 'bg-status-blue-100 text-status-blue',
     };
   }
 
   return {
     text: '상태 확인',
-    class: 'bg-gray-100 text-gray-500',
+    class: 'bg-fg-gray-100 text-fg-gray',
   };
 };
 
@@ -246,13 +246,13 @@ watch(
     <div class="text-footnote text-fg-secondary pb-10">
       <span class="font-bold">발행일 </span> {{ currentRecDate }}
     </div>
-    <div class="mb-8 border-b border-gray-200">
-      <div class="-mb-px flex space-x-6 px-4">
+    <div class="mb-8 overflow-x-scroll overflow-y-hidden">
+      <div class="-mb-px flex space-x-6 px-4 border-b border-gray-200">
         <button
           v-for="product in currentProducts"
           :key="product.productId"
           @click="handleProductClick(product.productId)"
-          class="whitespace-nowrap border-b-2 py-3 text-sm font-semibold transition-colors duration-200 ease-in-out"
+          class="whitespace-nowrap border-b-2 py-3 text-callout font-semibold transition-colors duration-200 ease-in-out"
           :class="[
             product.productId === currentProductId
               ? 'border-primary text-secondary'
@@ -264,17 +264,17 @@ watch(
       </div>
     </div>
 
-    <div v-if="selectedProductData" class="flex items-center mb-12">
-      <h3 class="title01 text-fg-primary mr-4">
+    <div v-if="selectedProductData" class="flex flex-wrap items-center mb-12">
+      <h3 class="title01 text-fg-primary mr-4 line-clamp-1">
         {{ selectedProductData.name }}
       </h3>
-      <span
+      <p
         v-if="getRegretStatusInfo(selectedProductData)"
         :class="getRegretStatusInfo(selectedProductData).class"
-        class="text-sm font-medium px-3 py-1 rounded-full"
+        class="text-callout font-medium px-3 py-1 rounded-full"
       >
         {{ getRegretStatusInfo(selectedProductData).text }}
-      </span>
+      </p>
     </div>
     <InsightDetailPage
       :is-loading="isLoading"
