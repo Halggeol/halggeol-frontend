@@ -1,10 +1,13 @@
 <script setup>
 import BaseButton from '@/components/common/BaseButton.vue';
 import Bad from '@/assets/icons/insight/regretScore/BadFace.vue';
-// import router from '@/router';
+import router from '@/router';
 
+function goToBack() {
+  // router.back();
+  router.go();
+}
 function reload() {
-  // router.go();
   location.reload();
 }
 </script>
@@ -17,6 +20,7 @@ function reload() {
       노력하고 있습니다<br />잠시 후 다시 확인해 주세요
     </p>
     <div class="flex w-full gap-4 justify-center">
+      <BaseButton variant="outline" :label="'그때 할걸 홈'" @click="goToBack" />
       <BaseButton :label="'새로고침'" @click="reload" />
     </div>
   </div>

@@ -20,7 +20,7 @@ function goToBack() {
     </p>
     <div class="flex w-full gap-4 justify-center">
       <BaseButton variant="outline" :label="'이전 페이지'" @click="goToBack" />
-      <BaseButton :label="'그때 할 걸 홈'" @click="goToHome" />
+      <BaseButton :label="'그때 할걸 홈'" @click="goToHome" />
     </div>
   </div>
 </template>

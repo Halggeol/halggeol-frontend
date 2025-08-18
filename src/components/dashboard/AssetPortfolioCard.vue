@@ -22,16 +22,34 @@ const normalizedPortfolio = computed(() => {
 });
 
 // 공격형 자산 비율 계산
-const aggressiveTypes = ['fund', 'aggressive', 'stock'];
+const aggressiveTypes = ['fund', 'aggressive'];
 const aggressiveRatio = computed(() =>
   normalizedPortfolio.value
     .filter(item => aggressiveTypes.includes(item.type))
     .reduce((sum, item) => sum + item.ratio, 0)
 );
 
-const type = computed(() =>
-  aggressiveRatio.value > 0.5 ? '공격형' : '안정형'
-);
+const type = computed(() => {
+  if (aggressiveRatio.value > 0.5) {
+    return {
+      value: '공격형',
+      colorClass: 'text-status-red',
+      bgColor: 'bg-[#FCD9D9]',
+    };
+  } else if (aggressiveRatio.value == 0.5) {
+    return {
+      value: '혼합형',
+      colorClass: 'text-primary',
+      bgColor: 'bg-[#FFFAE5]',
+    };
+  } else {
+    return {
+      value: '안정형',
+      colorClass: 'text-status-blue',
+      bgColor: 'bg-[#EAF2FF]',
+    };
+  }
+});
 
 const detailedPortfolio = computed(() => {
   return normalizedPortfolio.value
@@ -55,7 +73,7 @@ const detailedPortfolio = computed(() => {
   <div>
     <p class="title03 mb-4">자산 포트폴리오</p>
     <p v-if="hasAssets" class="text-body02 mb-4">
-      {{ type }} 자산 비율이 높아요
+      {{ type.value }} 자산 비율이 높아요
     </p>
     <p v-else class="text-body02 mb-4">아직 자산 연동을 안했어요</p>
     <div class="flex w-full h-8 rounded-full overflow-hidden mb-4">

@@ -19,25 +19,28 @@ const priceOptions = computed(() => {
   // asset 값과 maxLimit 중 더 작은 값을 최대값으로 설정
   const max = Math.min(props.maxLimit, props.asset);
 
-  const niceSteps = [1, 2, 2.5, 5, 10];
   const range = max - min;
   if (range <= 0) {
     const value = min === 0 ? 10000 : min;
     return [{ value, label: `${(min / 10000).toLocaleString()}만원` }];
   }
 
-  const step = Math.pow(10, Math.floor(Math.log10(range / 4)));
-  const niceStep = niceSteps.find(s => s * step >= range / 4) * step;
-
   const options = new Set();
-  let current = Math.floor(min / niceStep) * niceStep;
+  options.add(min);
 
-  while (current <= max) {
-    if (current >= min) {
-      options.add(current);
+  const multipliers = [1, 2, 5];
+  let powerOf10 = 10000; // 1만원부터 시작
+
+  while (powerOf10 <= max) {
+    for (const m of multipliers) {
+      const value = m * powerOf10;
+      if (value > min && value < max) {
+        options.add(value);
+      }
     }
-    current += niceStep;
+    powerOf10 *= 10;
   }
+
   const roundedMax = Math.round(max / 10000) * 10000;
   options.add(roundedMax); // 최대값 항상 포함
 
@@ -46,6 +49,18 @@ const priceOptions = computed(() => {
   if (finalOptions.includes(0)) {
     finalOptions = finalOptions.map(opt => (opt === 0 ? 10000 : opt));
     finalOptions = [...new Set(finalOptions)].sort((a, b) => a - b);
+  }
+
+  const maxOptionCount = 6;
+  if (finalOptions.length > maxOptionCount) {
+    const newOptions = [finalOptions[0]];
+    const total = finalOptions.length;
+    const step = total / (maxOptionCount - 1);
+    for (let i = 1; i < maxOptionCount - 1; i++) {
+      newOptions.push(finalOptions[Math.floor(i * step)]);
+    }
+    newOptions.push(finalOptions[total - 1]);
+    finalOptions = [...new Set(newOptions)].sort((a, b) => a - b);
   }
 
   return finalOptions.map(value => ({

@@ -60,7 +60,7 @@ const productTypeConfig = {
     <h2 class="title01">
       그때 할걸 후회상품 랭킹
       <span
-        class="inline-block relative group ml-1 tooltip"
+        class="inline-block relative group ml-1 tooltip font-normal"
         data-tip="후회상품은 회고 인사이트에 발행된 상품에 대해 '후회한다'고 응답한 상품이에요. 모두의 소중한 '회고 인사이트'를 바탕으로 만들어졌어요."
       >
         <Tooltiip class="text-fg-secondary" />
