@@ -130,32 +130,32 @@ const regretTable = [
     threshold: 3000000,
     text: ['유럽 여행을✈️ ', '갈 수 있었어요'],
     video: {
-      webm: '/video/europe.webm',
-      poster: '/video/poster/europe.jpg',
+      webm: './video/europe.webm',
+      poster: './video/poster/europe.jpg',
     },
   },
   {
     threshold: 2500000,
     text: ['월급을💵 한번 더 ', '받을 수 있었어요'],
     video: {
-      webm: '/video/salary.webm',
-      poster: '/video/poster/salary.jpg',
+      webm: './video/salary.webm',
+      poster: './video/poster/salary.jpg',
     },
   },
   {
     threshold: 2000000,
     text: ['노트북을💻 ', '바꿀 수 있었어요'],
     video: {
-      webm: '/video/laptop.webm',
-      poster: '/video/poster/laptop.jpg',
+      webm: './video/laptop.webm',
+      poster: './video/poster/laptop.jpg',
     },
   },
   {
     threshold: 1500000,
     text: ['DSLR 카메라를📷 ', '살 수 있었어요'],
     video: {
-      webm: '/video/dslr.webm',
-      poster: '/video/poster/dslr.jpg',
+      webm: './video/dslr.webm',
+      poster: './video/poster/dslr.jpg',
     },
   },
   {
@@ -163,8 +163,8 @@ const regretTable = [
     text: ['가전제품을🧺 ', '살 수 있었어요'],
 
     video: {
-      webm: '/video/washing.webm',
-      poster: '/video/poster/washing.jpg',
+      webm: './video/washing.webm',
+      poster: './video/poster/washing.jpg',
     },
   },
   {
@@ -172,8 +172,8 @@ const regretTable = [
     text: ['핸드폰을📱 ', '바꿀 수 있었어요'],
 
     video: {
-      webm: '/video/phone.webm',
-      poster: '/video/poster/phone.jpg',
+      webm: './video/phone.webm',
+      poster: './video/poster/phone.jpg',
     },
   },
   {
@@ -181,8 +181,8 @@ const regretTable = [
     text: ['게임기기를🎮 ', '살 수 있었어요'],
 
     video: {
-      webm: '/video/game.webm',
-      poster: '/video/poster/game.jpg',
+      webm: './video/game.webm',
+      poster: './video/poster/game.jpg',
     },
   },
   {
@@ -190,8 +190,8 @@ const regretTable = [
     text: ['제주도를🏝️ ', '갈 수 있었어요'],
 
     video: {
-      webm: '/video/jeju.webm',
-      poster: '/video/poster/jeju.jpg',
+      webm: './video/jeju.webm',
+      poster: './video/poster/jeju.jpg',
     },
   },
   {
@@ -199,8 +199,8 @@ const regretTable = [
     text: ['로봇 청소기를🤖 ', '살 수 있었어요'],
 
     video: {
-      webm: '/video/robot.webm',
-      poster: '/video/poster/robot.jpg',
+      webm: './video/robot.webm',
+      poster: './video/poster/robot.jpg',
     },
   },
   {
@@ -208,8 +208,8 @@ const regretTable = [
     text: ['브랜드 신발을👟 ', '살 수 있었어요'],
 
     video: {
-      webm: '/video/shoes.webm',
-      poster: '/video/poster/shoes.jpg',
+      webm: './video/shoes.webm',
+      poster: './video/poster/shoes.jpg',
     },
   },
   {
@@ -217,8 +217,8 @@ const regretTable = [
     text: ['레스토랑에서 외식을🍾 ', '할 수 있었어요'],
 
     video: {
-      webm: '/video/out.webm',
-      poster: '/video/poster/out.jpg',
+      webm: './video/out.webm',
+      poster: './video/poster/out.jpg',
     },
   },
   {
@@ -226,8 +226,8 @@ const regretTable = [
     text: ['기차 여행을🚞 ', '갈 수 있었어요'],
 
     video: {
-      webm: '/video/train.webm',
-      poster: '/video/poster/train.jpg',
+      webm: './video/train.webm',
+      poster: './video/poster/train.jpg',
     },
   },
   {
@@ -235,8 +235,8 @@ const regretTable = [
     text: ['카페에서 디저트를🍰 ', '먹을 수 있었어요'],
 
     video: {
-      webm: '/video/desert.webm',
-      poster: '/video/poster/desert.jpg',
+      webm: './video/desert.webm',
+      poster: './video/poster/desert.jpg',
     },
   },
   {
@@ -244,8 +244,8 @@ const regretTable = [
     text: ['친구와 커피를☕️ ', '마실 수 있었어요'],
 
     video: {
-      webm: '/video/coffee.webm',
-      poster: '/video/poster/coffee.jpg',
+      webm: './video/coffee.webm',
+      poster: './video/poster/coffee.jpg',
     },
   },
   {
@@ -253,8 +253,8 @@ const regretTable = [
     text: ['작은 기쁨을🎁 ', '누릴 수 있었어요'],
 
     video: {
-      webm: '/video/small.webm',
-      poster: '/video/poster/small.jpg',
+      webm: './video/small.webm',
+      poster: './video/poster/small.jpg',
     },
   },
 ];
